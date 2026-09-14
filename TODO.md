@@ -35,13 +35,11 @@
 
 ---
 
-## 🔄 IN PROGRESS
-
-### PHASE 2 — Smoke Test & Fix
-- [ ] Run dev server and verify no compile errors
-- [ ] Check Three.js canvas renders
-- [ ] Verify scroll drives camera movement
-- [ ] Fix any runtime errors
+## ✅ PHASE 2 — Build Verified
+- [x] `npm run build` passes — 0 errors, 0 TypeScript errors
+- [x] All 7 routes compiled (/, /_not-found, 3x project pages)
+- [x] Turbopack config fixed for Next.js 16
+- [x] Git checkpoint: `cb79507` — Phase 1 complete
 
 ---
 

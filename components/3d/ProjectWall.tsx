@@ -2,76 +2,80 @@
 
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html } from "@react-three/drei";
+import { Html, Text } from "@react-three/drei";
 import * as THREE from "three";
 import { useRouter } from "next/navigation";
 import { projects, type Project } from "@/data/projects";
 
-/**
- * ProjectFrame — a single framed project display on the left wall.
- *
- * Geometry:
- * - Outer frame (dark wood)
- * - Matte / artwork area (placeholder color gradient)
- * - Project info overlay (HTML label via Drei Html)
- *
- * Interaction:
- * - Hover: brightness increase, cursor change
- * - Click: navigate to /projects/[id]
- */
+// ── Per-project accent colours ──
+const PROJECT_BG: Record<string, string> = {
+  "jobpilot-ai":           "#0a1520",
+  businessflow:            "#0a1810",
+  "ai-automation-platform": "#180a1e",
+};
+const PROJECT_ACCENT: Record<string, string> = {
+  "jobpilot-ai":           "#2060c0",
+  businessflow:            "#208040",
+  "ai-automation-platform": "#802080",
+};
 
-interface ProjectFrameProps {
+// ── Frame dimensions ──
+const FW = 1.3;   // width
+const FH = 1.0;   // height
+const FD = 0.045; // depth
+const BORDER = 0.055; // matte border
+
+interface FrameProps {
   project: Project;
   position: [number, number, number];
 }
 
-export function ProjectFrame({ project, position }: ProjectFrameProps) {
+function ProjectFrame({ project, position }: FrameProps) {
   const router = useRouter();
-  const meshRef = useRef<THREE.Mesh>(null!);
+  const glowRef = useRef<THREE.PointLight>(null!);
+  const matteRef = useRef<THREE.MeshStandardMaterial>(null!);
   const [hovered, setHovered] = useState(false);
-  const emissiveRef = useRef(0);
+  const emissive = useRef(0);
+  const glowIntensity = useRef(0);
 
   useFrame((_, delta) => {
-    // Smooth emissive glow on hover
-    const target = hovered ? 0.12 : 0;
-    emissiveRef.current += (target - emissiveRef.current) * 0.08;
+    const targetE = hovered ? 0.08 : 0;
+    const targetG = hovered ? 0.6 : 0;
+    const speed = 6 * delta;
 
-    if (meshRef.current) {
-      const mat = meshRef.current.material as THREE.MeshStandardMaterial;
-      mat.emissiveIntensity = emissiveRef.current;
+    emissive.current += (targetE - emissive.current) * Math.min(speed, 1);
+    glowIntensity.current += (targetG - glowIntensity.current) * Math.min(speed, 1);
+
+    if (matteRef.current) {
+      matteRef.current.emissiveIntensity = emissive.current;
+    }
+    if (glowRef.current) {
+      glowRef.current.intensity = glowIntensity.current;
     }
   });
 
-  const handleClick = () => {
-    router.push(`/projects/${project.id}`);
-  };
-
-  // Frame dimensions
-  const fw = 1.2; // frame width
-  const fh = 0.9; // frame height
-  const fd = 0.04; // frame depth
-  const border = 0.06;
+  const bg = PROJECT_BG[project.id] ?? "#0f0f18";
+  const accent = PROJECT_ACCENT[project.id] ?? "#204080";
 
   return (
     <group
+      name={`frame-${project.id}`}
       position={position}
       rotation={[0, Math.PI / 2, 0]}
-      name={`frame-${project.id}`}
     >
       {/* ── OUTER FRAME ── */}
       <mesh castShadow receiveShadow>
-        <boxGeometry args={[fw, fh, fd]} />
+        <boxGeometry args={[FW, FH, FD]} />
         <meshStandardMaterial
-          color="#1e1c18"
-          roughness={0.4}
-          metalness={0.2}
+          color="#1c1a16"
+          roughness={0.35}
+          metalness={0.25}
         />
       </mesh>
 
-      {/* ── ARTWORK AREA ── */}
+      {/* ── INNER MATTE / ARTWORK ── */}
       <mesh
-        ref={meshRef}
-        position={[0, 0, fd / 2 + 0.001]}
+        position={[0, 0, FD / 2 + 0.001]}
         onPointerEnter={(e) => {
           e.stopPropagation();
           setHovered(true);
@@ -84,132 +88,129 @@ export function ProjectFrame({ project, position }: ProjectFrameProps) {
         }}
         onClick={(e) => {
           e.stopPropagation();
-          handleClick();
+          router.push(`/projects/${project.id}`);
         }}
       >
-        <planeGeometry args={[fw - border * 2, fh - border * 2]} />
+        <planeGeometry args={[FW - BORDER * 2, FH - BORDER * 2]} />
         <meshStandardMaterial
-          color={PROJECT_COLORS[project.id] || "#1a1a2e"}
-          roughness={0.8}
+          ref={matteRef}
+          color={bg}
+          roughness={0.85}
           metalness={0}
-          emissive={PROJECT_COLORS[project.id] || "#1a1a2e"}
+          emissive={accent}
           emissiveIntensity={0}
         />
       </mesh>
 
-      {/* ── PROJECT INFO OVERLAY ── */}
-      <Html
-        position={[0, 0, fd / 2 + 0.012]}
-        center
-        style={{ pointerEvents: "none", width: `${(fw - border * 2) * 120}px` }}
-        transform
-        occlude={false}
+      {/* ── PROJECT INFO via drei Text (no HTML rendering) ── */}
+      {/* Number */}
+      <Text
+        position={[-(FW / 2 - BORDER - 0.03), FH / 2 - BORDER - 0.04, FD / 2 + 0.012]}
+        fontSize={0.048}
+        color="#604030"
+        anchorX="left"
+        anchorY="top"
+        letterSpacing={0.18}
       >
-        <div
-          style={{
-            fontFamily: "var(--font-geist-sans), sans-serif",
-            color: "#f5f0e8",
-            textAlign: "left",
-            padding: "8px",
-            userSelect: "none",
-            width: "100%",
-          }}
+        {project.number}
+      </Text>
+
+      {/* Title */}
+      <Text
+        position={[-(FW / 2 - BORDER - 0.03), FH / 2 - BORDER - 0.12, FD / 2 + 0.012]}
+        fontSize={0.085}
+        color="#e8e0d4"
+        anchorX="left"
+        anchorY="top"
+        letterSpacing={0.06}
+        fontWeight={700}
+        maxWidth={FW - BORDER * 2 - 0.04}
+      >
+        {project.title.toUpperCase()}
+      </Text>
+
+      {/* Subtitle */}
+      <Text
+        position={[-(FW / 2 - BORDER - 0.03), FH / 2 - BORDER - 0.26, FD / 2 + 0.012]}
+        fontSize={0.048}
+        color="#7a7060"
+        anchorX="left"
+        anchorY="top"
+        letterSpacing={0.05}
+        maxWidth={FW - BORDER * 2 - 0.04}
+        lineHeight={1.4}
+      >
+        {project.subtitle}
+      </Text>
+
+      {/* Tech stack */}
+      <Text
+        position={[-(FW / 2 - BORDER - 0.03), -(FH / 2 - BORDER - 0.06), FD / 2 + 0.012]}
+        fontSize={0.038}
+        color="#504840"
+        anchorX="left"
+        anchorY="bottom"
+        letterSpacing={0.12}
+        maxWidth={FW - BORDER * 2 - 0.04}
+      >
+        {project.technologies.slice(0, 5).join("  ·  ")}
+      </Text>
+
+      {/* ── HOVER GLOW LIGHT ── */}
+      <pointLight
+        ref={glowRef}
+        position={[0.5, 0, 0.3]}
+        intensity={0}
+        color={accent}
+        distance={2.5}
+        decay={2}
+      />
+
+      {/* ── HOVER LABEL (HTML) ── */}
+      {hovered && (
+        <Html
+          position={[0, 0, FD / 2 + 0.012]}
+          center
+          style={{ pointerEvents: "none" }}
+          transform
+          occlude={false}
         >
           <div
             style={{
-              fontFamily: "var(--font-geist-mono), monospace",
-              fontSize: "9px",
-              color: "#a09080",
-              letterSpacing: "0.15em",
-              marginBottom: "6px",
-            }}
-          >
-            {project.number}
-          </div>
-          <div
-            style={{
-              fontSize: "14px",
-              fontWeight: 700,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              marginBottom: "4px",
-              lineHeight: 1.2,
-            }}
-          >
-            {project.title}
-          </div>
-          <div
-            style={{
-              fontSize: "8px",
-              color: "#a09080",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              marginBottom: "8px",
-            }}
-          >
-            {project.subtitle}
-          </div>
-          {/* Tech tags */}
-          <div
-            style={{
-              fontFamily: "var(--font-geist-mono), monospace",
-              fontSize: "7px",
-              color: "#706050",
-              letterSpacing: "0.08em",
-              lineHeight: 1.8,
-            }}
-          >
-            {project.technologies.slice(0, 4).join(" · ")}
-          </div>
-        </div>
-
-        {/* Hover label */}
-        {hovered && (
-          <div
-            style={{
               position: "absolute",
-              bottom: 8,
-              right: 8,
-              fontFamily: "var(--font-geist-mono), monospace",
-              fontSize: "8px",
+              bottom: `${((FH / 2 - BORDER) * 0.5 + 0.02) * 120}px`,
+              right: `${(BORDER * 0.5) * 120}px`,
+              fontFamily: "var(--font-geist-mono, monospace)",
+              fontSize: "7.5px",
+              letterSpacing: "0.2em",
               color: "#c8b89a",
-              letterSpacing: "0.15em",
               textTransform: "uppercase",
+              whiteSpace: "nowrap",
             }}
           >
             VIEW →
           </div>
-        )}
-      </Html>
+        </Html>
+      )}
     </group>
   );
 }
 
-// Distinct but muted color per project
-const PROJECT_COLORS: Record<string, string> = {
-  "jobpilot-ai": "#0d1520",
-  businessflow: "#0f1a10",
-  "ai-automation-platform": "#1a0d1a",
-};
+// ── Frame positions on left wall ──
+const FRAME_POSITIONS: [number, number, number][] = [
+  [-5.92, 2.05, -2.0],
+  [-5.92, 2.05,  0.0],
+  [-5.92, 2.05,  2.0],
+];
 
-/**
- * ProjectWall — the left wall containing all three project frames.
- */
 export default function ProjectWall() {
-  // Frame positions on the left wall (X = -5.95 is near the wall)
-  const framePositions: [number, number, number][] = [
-    [-5.95, 2.0, -1.6],
-    [-5.95, 2.0, 0.0],
-    [-5.95, 2.0, 1.6],
-  ];
-
   return (
     <group name="project-wall">
       {projects.map((project, i) => (
         <ProjectFrame
           key={project.id}
           project={project}
-          position={framePositions[i]}
+          position={FRAME_POSITIONS[i]}
         />
       ))}
     </group>

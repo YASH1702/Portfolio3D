@@ -8,10 +8,12 @@ import { interpolateCameraKeyframes } from "@/lib/cameraKeyframes";
 import Navigation from "@/components/ui/Navigation";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import Cursor from "@/components/ui/Cursor";
+import ScrollIndicator from "@/components/ui/ScrollIndicator";
+import AboutOverlay from "@/components/sections/AboutOverlay";
+import ContactSection from "@/components/sections/ContactSection";
 
 /**
- * StudioScene is dynamically imported — never server-rendered.
- * Three.js requires browser APIs (WebGL) unavailable on the server.
+ * StudioScene dynamically imported — Three.js needs browser APIs.
  */
 const StudioScene = dynamic(() => import("@/components/3d/StudioScene"), {
   ssr: false,
@@ -19,10 +21,14 @@ const StudioScene = dynamic(() => import("@/components/3d/StudioScene"), {
 });
 
 /**
- * VIRTUAL SCROLL HEIGHT
- * The canvas stays fixed; this tall div creates the scroll distance
- * that drives the camera. 500vh gives a comfortable scroll experience
- * across all four sections.
+ * VIRTUAL SCROLL HEIGHT — 500vh creates the scroll distance
+ * that drives all camera movement across 4 sections.
+ *
+ * Section breakdown (approximate):
+ *  0–25%   Home / Hero
+ *  25–45%  About / Workspace
+ *  45–75%  Projects / Left wall
+ *  75–100% Contact
  */
 const SCROLL_HEIGHT = "500vh";
 
@@ -30,83 +36,130 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const { progress } = useScrollProgress();
 
-  // Derive current section from scroll progress
   const { section } = interpolateCameraKeyframes(progress);
 
-  // Mark as loaded after a short delay (gives Three.js time to initialize)
+  // Section visibility thresholds
+  const showAbout   = progress >= 0.22 && progress <= 0.52;
+  const showContact = progress >= 0.78;
+
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
+    // Allow scene to initialise before fading out loading screen
+    const timer = setTimeout(() => setIsLoading(false), 900);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      {/* ── LOADING SCREEN ── */}
+      {/* ── LOADING ── */}
       <LoadingScreen isLoading={isLoading} />
 
-      {/* ── CUSTOM CURSOR (desktop only) ── */}
+      {/* ── CURSOR (desktop only — hidden on touch via CSS) ── */}
       <Cursor />
 
       {/* ── NAVIGATION ── */}
       <Navigation scrollProgress={progress} currentSection={section} />
 
+      {/* ── SCROLL PROGRESS + SECTION LABEL ── */}
+      <ScrollIndicator progress={progress} section={section} />
+
       {/* ── FIXED 3D CANVAS ── */}
-      <div className="canvas-fixed" aria-hidden="true">
+      <div
+        className="canvas-fixed"
+        aria-hidden="true"
+        role="presentation"
+      >
         <StudioScene scrollProgress={progress} />
       </div>
 
+      {/* ── SECTION OVERLAYS ── */}
+      <AboutOverlay   visible={showAbout} />
+      <ContactSection visible={showContact} />
+
       {/* ── VIRTUAL SCROLL DRIVER ──
-          This div is taller than the viewport to create scroll distance.
-          It is pointer-events: none so the 3D canvas below receives events.
-          Accessibility content is placed here for screen readers. ── */}
+          This element creates the scroll height.
+          pointer-events: none so the 3D canvas receives all mouse events.
+          Accessible content for screen readers is placed here. ── */}
       <div
         className="scroll-driver"
         style={{ height: SCROLL_HEIGHT }}
         role="main"
+        aria-label="Portfolio content"
       >
-        {/* Accessible content for screen readers / non-JS users */}
-        <div
-          style={{
-            position: "absolute",
-            width: 1,
-            height: 1,
-            overflow: "hidden",
-            clip: "rect(0,0,0,0)",
-            whiteSpace: "nowrap",
-          }}
-        >
+        {/* ── SCREEN-READER CONTENT ──
+            Visually hidden — accessible alternative to the 3D experience. ── */}
+        <div className="sr-only">
           <h1>Yashwant Kariha — Full-Stack Developer</h1>
           <p>
             Building digital products, AI systems & modern web experiences.
             React · Next.js · TypeScript · Node.js · PostgreSQL · AI.
           </p>
-          <section aria-label="Projects">
+
+          <nav aria-label="Skip to section">
+            <a href="#about-sr">About</a>
+            <a href="#projects-sr">Projects</a>
+            <a href="#contact-sr">Contact</a>
+          </nav>
+
+          <section id="about-sr">
+            <h2>About</h2>
+            <p>
+              Full-Stack Developer focused on building modern web applications,
+              AI-powered products, and scalable digital experiences. Primary
+              technologies: React, Next.js, TypeScript, Node.js, PostgreSQL,
+              Prisma, Tailwind CSS, OpenAI APIs.
+            </p>
+          </section>
+
+          <section id="projects-sr">
             <h2>Projects</h2>
             <ul>
               <li>
                 <a href="/projects/jobpilot-ai">
-                  JobPilot AI — Autonomous Job Application & Career Copilot
+                  JobPilot AI — Autonomous Job Application &amp; Career Copilot
+                  (Next.js, TypeScript, OpenAI, PostgreSQL)
                 </a>
               </li>
               <li>
                 <a href="/projects/businessflow">
                   BusinessFlow — Business Website + Booking Platform
+                  (Next.js, Stripe, Inngest, Redis)
                 </a>
               </li>
               <li>
                 <a href="/projects/ai-automation-platform">
-                  AI Automation Platform — AI-powered business & workflow
-                  automation
+                  AI Automation Platform — Workflow automation with AI
+                  (Next.js, Node.js, OpenAI, Redis)
                 </a>
               </li>
             </ul>
           </section>
-          <section aria-label="Contact">
+
+          <section id="contact-sr">
             <h2>Contact</h2>
-            <p>Get in touch to build something together.</p>
+            <address>
+              <p>
+                <a href="mailto:yashwant@example.com">Email</a> ·{" "}
+                <a href="https://github.com" rel="noopener noreferrer">GitHub</a> ·{" "}
+                <a href="https://linkedin.com" rel="noopener noreferrer">LinkedIn</a>
+              </p>
+            </address>
           </section>
         </div>
       </div>
+
+      <style>{`
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border-width: 0;
+        }
+      `}</style>
     </>
   );
 }

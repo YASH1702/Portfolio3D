@@ -53,11 +53,18 @@ body {
   overflow-x: hidden;
 }
 
-/* Hide default cursor on desktop — custom cursor takes over */
+/* Hide default cursor on desktop (fine pointer devices only) — custom cursor takes over */
 @media (hover: hover) and (pointer: fine) {
   body,
-  * {
+  *:not(input):not(textarea):not(select) {
     cursor: none !important;
+  }
+}
+
+/* Mobile: show normal cursor, simplify layout */
+@media (max-width: 768px) {
+  .canvas-fixed {
+    /* Slightly reduced visual complexity on mobile handled in StudioScene */
   }
 }
 

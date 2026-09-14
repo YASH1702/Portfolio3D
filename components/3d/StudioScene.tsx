@@ -2,7 +2,8 @@
 
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, AdaptiveDpr, AdaptiveEvents } from "@react-three/drei";
+import { AdaptiveDpr, AdaptiveEvents } from "@react-three/drei";
+import * as THREE from "three";
 
 import Room from "./Room";
 import Desk from "./Desk";
@@ -11,30 +12,26 @@ import Lighting from "./Lighting";
 import HeroWall from "./HeroWall";
 import ProjectWall from "./ProjectWall";
 import ScrollCamera from "./ScrollCamera";
+import Environment from "./Environment";
 
 interface StudioSceneProps {
   scrollProgress: number;
 }
 
 /**
- * StudioScene — the root R3F Canvas component.
+ * StudioScene — root R3F Canvas.
  *
  * Performance settings:
- * - dpr: capped at [1, 2] — avoids extreme pixel density on 4K screens
- * - shadows: enabled, PCFSoft for quality/perf balance
- * - camera: initial position set to match keyframe 0
- * - gl: powerPreference "high-performance", antialias true
- * - AdaptiveDpr: automatically lowers DPR during interaction
- * - AdaptiveEvents: defers raycasting to improve scroll performance
- *
- * OrbitControls are removed in production — ScrollCamera takes over.
- * Temporarily enabled in development for debugging (comment out for prod).
+ * - dpr [1, 1.5]: capped lower than 2 for better perf on hi-DPI screens
+ * - shadows: true with PCFShadowMap (PCFSoftShadowMap deprecated in Three r169+)
+ * - AdaptiveDpr / AdaptiveEvents for runtime adaptation
+ * - camera FOV 55 — natural interior perspective
  */
 export default function StudioScene({ scrollProgress }: StudioSceneProps) {
   return (
     <Canvas
-      shadows="soft"
-      dpr={[1, 2]}
+      shadows
+      dpr={[1, 1.5]}
       camera={{
         position: [0, 1.6, 5],
         fov: 55,
@@ -46,17 +43,26 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         powerPreference: "high-performance",
         alpha: false,
       }}
-      style={{ background: "#e8e0d4" }}
+      onCreated={({ gl }) => {
+        gl.shadowMap.enabled = true;
+        gl.shadowMap.type = THREE.PCFShadowMap;
+        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        gl.toneMappingExposure = 0.9;
+      }}
+      style={{ background: "#d8d0c4" }}
     >
-      {/* Performance adapters */}
       <AdaptiveDpr pixelated />
       <AdaptiveEvents />
+
+      {/* Subtle fog for depth */}
+      <fog attach="fog" args={["#d8d0c4", 8, 22]} />
 
       {/* Lighting */}
       <Lighting />
 
-      {/* Room architecture */}
+      {/* Scene */}
       <Suspense fallback={null}>
+        <Environment />
         <Room />
         <Desk />
         <Couch />
@@ -64,7 +70,7 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         <ProjectWall />
       </Suspense>
 
-      {/* Scroll-driven camera — this is the heart of the experience */}
+      {/* Scroll-driven camera */}
       <ScrollCamera scrollProgress={scrollProgress} />
     </Canvas>
   );
