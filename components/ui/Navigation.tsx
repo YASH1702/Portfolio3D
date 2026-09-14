@@ -9,9 +9,9 @@ interface NavigationProps {
 }
 
 const NAV_ITEMS = [
-  { label: "About", section: "about",    scrollTarget: 0.35 },
-  { label: "Work",  section: "projects", scrollTarget: 0.60 },
-  { label: "Contact", section: "contact", scrollTarget: 0.85 },
+  { label: "About", section: "about",    scrollTarget: 0.42 },
+  { label: "Work",  section: "projects", scrollTarget: 0.74 },
+  { label: "Contact", section: "contact", scrollTarget: 0.95 },
 ];
 
 function scrollToProgress(progress: number) {

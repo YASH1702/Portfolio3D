@@ -6,112 +6,131 @@ import { Text } from "@react-three/drei";
 import * as THREE from "three";
 
 /**
- * HeroWall — front wall typography.
+ * HeroWall — Front wall architectural identity.
  *
- * Positioned at Z = -5.85 (just in front of the wall plane at -6).
- * All text uses drei <Text> which renders via SDFText (crisp at any distance).
+ * Designed to look like physical architectural lettering mounted onto
+ * the gallery/studio plaster wall.
  *
- * Hierarchy:
- *  1. YASHWANT KARIHA     — largest, bold, near-black
- *  2. Thin rule line      — warm tan separator
- *  3. FULL-STACK DEVELOPER — medium weight, wide tracking
- *  4. Tagline             — smaller, two lines
- *  5. Tech stack          — monospace, muted warm
- *  6. Scroll indicator    — very small, subtle pulse
- *
- * The scroll arrow has a very subtle up-down animation (≤2px equiv).
+ * Typography:
+ *  1. YASHWANT KARIHA     — Dominant, bold architectural lettering with subtle drop shadow
+ *  2. Brass divider bar   — Minimal architectural metalwork
+ *  3. FULL-STACK DEVELOPER — High tracking, refined editorial weight
+ *  4. Tagline             — Dual-line positioning statement
+ *  5. Tech metadata       — Monospace specification
+ *  6. Scroll indicator    — Subtle floating arrow indicator
  */
 export default function HeroWall() {
   const arrowRef = useRef<THREE.Group>(null!);
   const timeRef = useRef(0);
 
-  // Very subtle arrow float — 0.004 units ≈ imperceptible but alive
+  // Very slow, subtle breathing float for scroll indicator
   useFrame((_, delta) => {
-    timeRef.current += delta * 0.8;
+    timeRef.current += delta * 0.9;
     if (arrowRef.current) {
       arrowRef.current.position.y =
-        1.16 + Math.sin(timeRef.current * Math.PI * 2) * 0.004;
+        0.92 + Math.sin(timeRef.current * Math.PI * 2) * 0.006;
     }
   });
 
-  const WALL_Z = -5.85;
+  const WALL_Z = -5.86;
 
   return (
     <group name="hero-wall">
-      {/* ── NAME ── */}
+      {/* ── ARCHITECTURAL WALL EMBOSSING / SHADOW LAYER ── */}
+      {/* Subtle depth backing behind the name */}
       <Text
-        position={[0, 2.45, WALL_Z]}
-        fontSize={0.26}
-        color="#18180f"
+        position={[0.005, 2.615, WALL_Z - 0.003]}
+        fontSize={0.46}
+        color="#c8beaf"
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.14}
-        maxWidth={9}
+        maxWidth={10}
         textAlign="center"
         fontWeight={700}
       >
         YASHWANT KARIHA
       </Text>
 
-      {/* ── DIVIDER ── */}
-      <mesh position={[0, 2.16, WALL_Z]}>
-        <planeGeometry args={[2.4, 0.005]} />
-        <meshStandardMaterial color="#c4a882" roughness={0.8} metalness={0} />
+      {/* ── MAIN NAME (DOMINANT ELEMENT) ── */}
+      <Text
+        position={[0, 2.62, WALL_Z]}
+        fontSize={0.46}
+        color="#151410"
+        anchorX="center"
+        anchorY="middle"
+        letterSpacing={0.14}
+        maxWidth={10}
+        textAlign="center"
+        fontWeight={700}
+      >
+        YASHWANT KARIHA
+      </Text>
+
+      {/* ── BRUSHED BRASS ARCHITECTURAL DIVIDER ── */}
+      <mesh position={[0, 2.26, WALL_Z]}>
+        <planeGeometry args={[3.4, 0.008]} />
+        <meshStandardMaterial
+          color="#b09060"
+          roughness={0.4}
+          metalness={0.65}
+        />
       </mesh>
 
       {/* ── ROLE ── */}
       <Text
-        position={[0, 1.97, WALL_Z]}
-        fontSize={0.088}
-        color="#2e2c24"
+        position={[0, 2.02, WALL_Z]}
+        fontSize={0.135}
+        color="#28261e"
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.24}
         maxWidth={9}
         textAlign="center"
+        fontWeight={600}
       >
         FULL-STACK DEVELOPER
       </Text>
 
-      {/* ── TAGLINE ── */}
+      {/* ── EDITORIAL POSITIONING TAGLINE ── */}
       <Text
-        position={[0, 1.70, WALL_Z]}
-        fontSize={0.065}
-        color="#5a5750"
+        position={[0, 1.66, WALL_Z]}
+        fontSize={0.092}
+        color="#4d4a42"
         anchorX="center"
         anchorY="middle"
-        letterSpacing={0.06}
-        lineHeight={1.7}
-        maxWidth={5.5}
+        letterSpacing={0.07}
+        lineHeight={1.65}
+        maxWidth={7.5}
         textAlign="center"
       >
         {`BUILDING DIGITAL PRODUCTS,\nAI SYSTEMS & MODERN WEB EXPERIENCES.`}
       </Text>
 
-      {/* ── TECH STACK ── */}
+      {/* ── TECHNICAL METADATA SPECIFICATION ── */}
       <Text
-        position={[0, 1.44, WALL_Z]}
-        fontSize={0.045}
-        color="#8b7050"
+        position={[0, 1.30, WALL_Z]}
+        fontSize={0.062}
+        color="#826848"
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.18}
-        maxWidth={8}
+        maxWidth={9}
         textAlign="center"
       >
         React  ·  Next.js  ·  TypeScript  ·  Node.js  ·  PostgreSQL  ·  AI
       </Text>
 
-      {/* ── SCROLL INDICATOR ── */}
+      {/* ── SCROLL TO EXPLORE INDICATOR ── */}
       <group ref={arrowRef}>
         <Text
-          position={[0, 1.16, WALL_Z]}
-          fontSize={0.034}
-          color="#a09078"
+          position={[0, 0.92, WALL_Z]}
+          fontSize={0.046}
+          color="#988a76"
           anchorX="center"
           anchorY="middle"
-          letterSpacing={0.22}
-          maxWidth={4}
+          letterSpacing={0.24}
+          maxWidth={5}
           textAlign="center"
         >
           SCROLL TO EXPLORE  ↓

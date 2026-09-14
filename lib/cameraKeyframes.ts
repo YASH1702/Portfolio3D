@@ -17,45 +17,52 @@ export interface CameraKeyframe {
 
 export const CAMERA_KEYFRAMES: CameraKeyframe[] = [
   {
-    // 0%: Initial position — inside the room, facing the front wall
-    progress: 0,
-    position: [0, 1.6, 5],
-    target: [0, 1.4, 0],
+    // 0%: Initial establishing shot — whole studio visible, facing front wall
+    progress: 0.0,
+    position: [0.0, 1.65, 5.0],
+    target: [0.0, 1.80, -5.86],
     section: "home",
   },
   {
-    // 25%: Moved slightly closer to the front wall / workspace
-    progress: 0.25,
-    position: [0.5, 1.55, 3.2],
-    target: [0, 1.4, 0],
+    // 22%: Gliding closer to the front wall — typography becomes commanding
+    progress: 0.22,
+    position: [0.1, 1.65, 3.0],
+    target: [0.0, 1.80, -5.86],
     section: "home",
   },
   {
-    // 45%: Oriented toward the desk / workspace area (About)
-    progress: 0.45,
-    position: [1.8, 1.5, 1.8],
-    target: [1.5, 1.2, -1],
+    // 42%: Pivot and focus on the modern developer desk / workspace
+    progress: 0.42,
+    position: [1.3, 1.35, 0.4],
+    target: [2.2, 1.05, -1.2],
     section: "about",
   },
   {
-    // 65%: Facing the left wall — project frames in view
-    progress: 0.65,
-    position: [-1.5, 1.6, 0.5],
-    target: [-4, 1.5, 0],
+    // 64%: Transition toward the LEFT wall containing the 3 project frames
+    progress: 0.64,
+    position: [-1.4, 1.95, 0.0],
+    target: [-5.92, 1.95, 0.0],
     section: "projects",
   },
   {
-    // 80%: Closer to project frames
-    progress: 0.8,
-    position: [-2.5, 1.6, 0.2],
-    target: [-4.5, 1.5, 0],
+    // 74%: Direct, perpendicular gallery view of all 3 framed projects
+    progress: 0.74,
+    position: [-2.3, 1.95, 0.0],
+    target: [-5.92, 1.95, 0.0],
     section: "projects",
   },
   {
-    // 100%: Final position — contact area
-    progress: 1,
-    position: [0, 1.5, -1.5],
-    target: [0, 1.2, -4],
+    // 84%: Intimate inspection view of project frames
+    progress: 0.84,
+    position: [-2.9, 1.95, 0.0],
+    target: [-5.92, 1.95, 0.0],
+    section: "projects",
+  },
+  {
+    // 100%: Wide, calm final composition — contact card is presented
+    progress: 1.0,
+    position: [0.0, 1.7, 3.6],
+    target: [0.0, 1.4, -2.0],
     section: "contact",
   },
 ];
@@ -69,10 +76,8 @@ export function interpolateCameraKeyframes(progress: number): {
   target: [number, number, number];
   section: CameraKeyframe["section"];
 } {
-  // Clamp progress
   const t = Math.max(0, Math.min(1, progress));
 
-  // Find surrounding keyframes
   let fromFrame = CAMERA_KEYFRAMES[0];
   let toFrame = CAMERA_KEYFRAMES[CAMERA_KEYFRAMES.length - 1];
 
@@ -87,12 +92,9 @@ export function interpolateCameraKeyframes(progress: number): {
     }
   }
 
-  // Local t within this segment
   const segmentDuration = toFrame.progress - fromFrame.progress;
   const localT =
-    segmentDuration === 0
-      ? 0
-      : (t - fromFrame.progress) / segmentDuration;
+    segmentDuration === 0 ? 0 : (t - fromFrame.progress) / segmentDuration;
 
   // Smoothstep easing
   const easedT = smoothstep(localT);
@@ -105,7 +107,8 @@ export function interpolateCameraKeyframes(progress: number): {
 }
 
 function smoothstep(t: number): number {
-  return t * t * (3 - 2 * t);
+  const x = Math.max(0, Math.min(1, t));
+  return x * x * (3 - 2 * x);
 }
 
 function lerpV3(

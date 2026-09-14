@@ -9,8 +9,8 @@ interface ContactSectionProps {
 /**
  * ContactSection — final section overlay.
  *
- * Appears as a centred-bottom panel when scroll reaches 75–100%.
- * Simple, direct — LET'S BUILD SOMETHING. + links.
+ * Appears as a centred-bottom panel when scroll reaches 88–100%.
+ * Direct, architectural — LET'S BUILD SOMETHING. + 4 primary links.
  */
 export default function ContactSection({ visible }: ContactSectionProps) {
   return (
@@ -18,7 +18,7 @@ export default function ContactSection({ visible }: ContactSectionProps) {
       {visible && (
         <motion.section
           key="contact"
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 24 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -31,22 +31,23 @@ export default function ContactSection({ visible }: ContactSectionProps) {
             zIndex: 50,
             display: "flex",
             justifyContent: "center",
-            paddingBottom: "clamp(24px, 5vh, 56px)",
+            paddingBottom: "clamp(24px, 6vh, 60px)",
             pointerEvents: "all",
           }}
         >
           <div
             style={{
-              background: "rgba(240, 235, 224, 0.94)",
-              backdropFilter: "blur(12px)",
-              border: "1px solid rgba(196, 168, 130, 0.35)",
-              padding: "40px 56px",
+              background: "rgba(242, 237, 228, 0.95)",
+              backdropFilter: "blur(14px)",
+              border: "1px solid rgba(196, 168, 130, 0.38)",
+              padding: "36px clamp(24px, 5vw, 56px)",
               textAlign: "center",
-              maxWidth: "580px",
-              width: "90vw",
+              maxWidth: "680px",
+              width: "calc(100vw - 32px)",
+              boxShadow: "0 24px 48px -15px rgba(24, 20, 16, 0.1)",
             }}
           >
-            {/* Label */}
+            {/* Section Tag */}
             <div
               style={{
                 fontFamily: "var(--font-geist-mono, monospace)",
@@ -54,16 +55,17 @@ export default function ContactSection({ visible }: ContactSectionProps) {
                 letterSpacing: "0.26em",
                 color: "#8b7355",
                 textTransform: "uppercase",
-                marginBottom: "20px",
+                marginBottom: "16px",
               }}
             >
-              03 · Contact
+              04 · Contact &amp; Inquiry
             </div>
 
             {/* CTA */}
             <h2
               style={{
-                fontSize: "clamp(22px, 4vw, 34px)",
+                fontFamily: "var(--font-geist-sans, sans-serif)",
+                fontSize: "clamp(24px, 4.5vw, 38px)",
                 fontWeight: 800,
                 letterSpacing: "-0.02em",
                 color: "#18180f",
@@ -76,28 +78,32 @@ export default function ContactSection({ visible }: ContactSectionProps) {
 
             <p
               style={{
-                fontSize: "13px",
-                color: "#6a6858",
+                fontFamily: "var(--font-geist-sans, sans-serif)",
+                fontSize: "13.5px",
+                color: "#5c584d",
                 lineHeight: 1.7,
-                marginBottom: "32px",
+                marginBottom: "28px",
+                maxWidth: "480px",
+                margin: "0 auto 28px auto",
               }}
             >
-              Open to full-time roles, freelance projects, and interesting collaborations.
+              Available for full-stack engineering roles, technical advisory,
+              and selective high-impact digital product builds.
             </p>
 
-            {/* Links */}
+            {/* 4 Contact / Social Links */}
             <div
               style={{
-                display: "flex",
-                gap: "12px",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+                gap: "10px",
                 justifyContent: "center",
-                flexWrap: "wrap",
               }}
             >
               <ContactLink
-                href="mailto:yashwant@example.com"
+                href="mailto:yashwant.kariha@gmail.com"
                 label="Email"
-                mono="hello@yashwant.dev"
+                mono="yashwant.kariha"
               />
               <ContactLink
                 href="https://github.com"
@@ -111,20 +117,33 @@ export default function ContactSection({ visible }: ContactSectionProps) {
                 mono="in/yashwantkariha"
                 external
               />
+              <ContactLink
+                href="#resume"
+                label="Resume"
+                mono="Curriculum Vitae"
+              />
             </div>
 
-            {/* Footer line */}
+            {/* Minimal Footer */}
             <div
               style={{
-                marginTop: "28px",
+                marginTop: "26px",
+                paddingTop: "20px",
+                borderTop: "1px solid rgba(196, 168, 130, 0.25)",
                 fontFamily: "var(--font-geist-mono, monospace)",
                 fontSize: "9px",
                 letterSpacing: "0.18em",
-                color: "#a09880",
+                color: "#9c8d78",
                 textTransform: "uppercase",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "8px",
               }}
             >
-              Yashwant Kariha · {new Date().getFullYear()} · Built with Next.js & Three.js
+              <span>Yashwant Kariha · {new Date().getFullYear()}</span>
+              <span>Next.js 15 · Three.js · React Three Fiber</span>
             </div>
           </div>
         </motion.section>
@@ -153,27 +172,31 @@ function ContactLink({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: "3px",
-        padding: "10px 18px",
+        gap: "4px",
+        padding: "12px 14px",
         border: "1px solid rgba(139, 115, 85, 0.35)",
         textDecoration: "none",
-        transition: "border-color 0.2s ease, background 0.2s ease",
-        minWidth: "130px",
+        background: "rgba(255, 255, 255, 0.4)",
+        transition: "all 0.2s ease",
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = "#8b7355";
-        (e.currentTarget as HTMLElement).style.background = "rgba(196, 168, 130, 0.1)";
+        const el = e.currentTarget as HTMLElement;
+        el.style.borderColor = "#8b7355";
+        el.style.background = "rgba(196, 168, 130, 0.18)";
+        el.style.transform = "translateY(-1px)";
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = "rgba(139, 115, 85, 0.35)";
-        (e.currentTarget as HTMLElement).style.background = "transparent";
+        const el = e.currentTarget as HTMLElement;
+        el.style.borderColor = "rgba(139, 115, 85, 0.35)";
+        el.style.background = "rgba(255, 255, 255, 0.4)";
+        el.style.transform = "translateY(0)";
       }}
     >
       <span
         style={{
           fontFamily: "var(--font-geist-sans, sans-serif)",
           fontSize: "11px",
-          fontWeight: 600,
+          fontWeight: 700,
           letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: "#18180f",
@@ -186,7 +209,7 @@ function ContactLink({
           fontFamily: "var(--font-geist-mono, monospace)",
           fontSize: "9px",
           color: "#8b7355",
-          letterSpacing: "0.08em",
+          letterSpacing: "0.06em",
         }}
       >
         {mono}

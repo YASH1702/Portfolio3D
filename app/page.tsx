@@ -39,8 +39,8 @@ export default function Home() {
   const { section } = interpolateCameraKeyframes(progress);
 
   // Section visibility thresholds
-  const showAbout   = progress >= 0.22 && progress <= 0.52;
-  const showContact = progress >= 0.78;
+  const showAbout   = progress >= 0.28 && progress <= 0.52;
+  const showContact = progress >= 0.88;
 
   useEffect(() => {
     // Allow scene to initialise before fading out loading screen

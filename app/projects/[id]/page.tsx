@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProjectById, projects } from "@/data/projects";
+import ProjectPreviewMockup from "@/components/ui/ProjectPreviewMockup";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -157,61 +158,8 @@ export default async function ProjectPage({ params }: PageProps) {
           </span>
         </div>
 
-        {/* ── PLACEHOLDER IMAGE ── */}
-        <div
-          aria-label={`${project.title} project preview`}
-          style={{
-            width: "100%",
-            aspectRatio: "16/9",
-            background:
-              project.id === "jobpilot-ai"
-                ? "#0d1520"
-                : project.id === "businessflow"
-                ? "#0f1a10"
-                : "#1a0d1a",
-            borderRadius: "4px",
-            marginBottom: "56px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-            gap: "8px",
-          }}
-        >
-          <div
-            style={{
-              fontFamily: "var(--font-geist-mono, monospace)",
-              fontSize: "10px",
-              letterSpacing: "0.2em",
-              color: "#5a5870",
-              textTransform: "uppercase",
-            }}
-          >
-            Project Preview
-          </div>
-          <div
-            style={{
-              fontSize: "20px",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              color: "#8090b0",
-              textTransform: "uppercase",
-            }}
-          >
-            {project.title}
-          </div>
-          <div
-            style={{
-              fontFamily: "var(--font-geist-mono, monospace)",
-              fontSize: "9px",
-              color: "#404050",
-              letterSpacing: "0.1em",
-              marginTop: "4px",
-            }}
-          >
-            Screenshot placeholder — replace with actual screenshot
-          </div>
-        </div>
+        {/* ── PROJECT PREVIEW SHOWCASE ── */}
+        <ProjectPreviewMockup project={project} />
 
         {/* ── OVERVIEW ── */}
         <Section title="Overview">

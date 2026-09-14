@@ -9,19 +9,7 @@
 - **Owner**: Yashwant Kariha
 - **Role**: Full-Stack Developer
 - **Tagline**: Building digital products, AI systems & modern web experiences.
-- **Stack (personal)**: React, Next.js, TypeScript, Node.js, PostgreSQL, Prisma, OpenAI, Tailwind CSS
-
----
-
-## What This Is
-
-A **cinematic scroll-driven 3D portfolio website**. The user never controls a character or navigates pages in the traditional sense. Instead:
-
-1. The entire page is a tall div (500vh) that creates scroll distance.
-2. A **fixed R3F (React Three Fiber) canvas** sits behind everything, rendering a 3D room.
-3. Scrolling changes `window.scrollY`, which is converted to a `progress` value (0–1).
-4. `progress` drives **camera keyframe interpolation** — the camera smoothly moves through the room.
-5. The room contains the portfolio content as **physical objects**: text on the front wall, project frames on the left wall, desk showing developer workspace.
+- **Stack**: Next.js 16, React, TypeScript, Three.js, React Three Fiber, Drei, Tailwind CSS, Framer Motion
 
 ---
 
@@ -30,221 +18,119 @@ A **cinematic scroll-driven 3D portfolio website**. The user never controls a ch
 ```
 app/
 ├── layout.tsx          — Root layout, fonts, metadata
-├── globals.css         — Design tokens, base styles, canvas utilities
-├── page.tsx            — Main page: canvas + scroll driver + UI overlays
+├── globals.css         — Design tokens, base styles, cursor and scrollbar rules
+├── not-found.tsx       — 404 page styled in studio aesthetic
+├── page.tsx            — Main page: fixed R3F canvas + scroll driver + UI overlays
 └── projects/
     └── [id]/
-        └── page.tsx    — Project case study (server component, static params)
+        └── page.tsx    — Project case study (server component with static params)
 
 components/
 ├── 3d/
-│   ├── StudioScene.tsx — Root R3F <Canvas> (dynamic import, ssr: false)
-│   ├── Room.tsx        — Room geometry: walls, floor, ceiling, window
-│   ├── Desk.tsx        — Procedural desk with all accessories
-│   ├── Couch.tsx       — Procedural modern sofa
-│   ├── Lighting.tsx    — All lights: hemisphere + directional + 3 point lights
-│   ├── HeroWall.tsx    — Front wall typography using drei Text
+│   ├── StudioScene.tsx — Root R3F <Canvas> (dynamic import, ssr: false, PCF shadows)
+│   ├── Room.tsx        — Room geometry: walls, floor, ceiling, window panels
+│   ├── Desk.tsx        — Developer workstation: desk, accessories, lamp, notebook
+│   ├── Monitor.tsx     — Animated monitor screen with syntax-highlighted code & cursor
+│   ├── Couch.tsx       — Modern fabric couch with pillows & wooden legs
+│   ├── Lighting.tsx    — Studio lighting: hemisphere + sun + desk lamp + fill lights
+│   ├── Environment.tsx — Area rug, side table, floor plant, bookshelf, ceiling fixture
+│   ├── HeroWall.tsx    — Front wall architectural typography (drei Text)
 │   ├── ProjectWall.tsx — Left wall: 3 interactive ProjectFrame components
 │   └── ScrollCamera.tsx — Mounts useScrollCamera hook inside Canvas
-├── sections/           — (Phase 7+) HTML overlays for About/Contact
+├── sections/
+│   ├── AboutOverlay.tsx   — Left-positioned editorial card during workspace view
+│   └── ContactSection.tsx — Bottom-centered "LET'S BUILD SOMETHING." overlay with 4 links
 └── ui/
-    ├── LoadingScreen.tsx — Fades out after 3D scene initialises
-    ├── Navigation.tsx    — Fixed minimal nav (wordmark + 3 links)
-    └── Cursor.tsx        — Custom dot+ring cursor for desktop
+    ├── LoadingScreen.tsx         — Fades out smoothly when 3D scene initialises
+    ├── Navigation.tsx            — Minimal fixed header (wordmark + numbered section links)
+    ├── Cursor.tsx                — Precision dot + lagged ring + "VIEW CASE STUDY" badge
+    ├── ScrollIndicator.tsx       — Vertical progress bar and current section indicator
+    └── ProjectPreviewMockup.tsx  — Stylized interactive browser UI mock for case studies
 
 hooks/
 ├── useScrollProgress.ts — Reads window.scrollY → smooth progress (0–1)
-├── useScrollCamera.ts   — R3F hook: drives camera based on progress
+├── useScrollCamera.ts   — R3F hook: camera keyframe interpolation & mobile FOV compensation
 └── useReducedMotion.ts  — prefers-reduced-motion media query
 
 data/
 └── projects.ts          — Single source of truth for all project data
 
 lib/
-├── cameraKeyframes.ts   — Camera keyframe definitions + interpolation
-└── easings.ts           — Smoothstep, dampedLerp, lerp, mapRange
+├── cameraKeyframes.ts   — Calibrated camera positions and targets
+├── easings.ts           — Smoothstep, dampedLerp, lerp, mapRange
+└── projectTextures.ts   — Procedural 1024x720 canvas textures for framed project artwork
 ```
 
 ---
 
-## 3D Scene Structure
+## 3D Scene Coordinate System
 
-### Room Coordinate System
-- X axis: left (negative) → right (positive)
-- Y axis: floor (0) → ceiling (4)
-- Z axis: back (-6) → front (camera starts at Z=5)
+- **X axis**: Left (`-6.0`) to Right (`+6.0`)
+- **Y axis**: Floor (`0.0`) to Ceiling (`4.0`)
+- **Z axis**: Front Wall (`-6.0`) to Back Wall (`+6.0`)
 
-### Key Positions
-| Object | Position | Notes |
-|--------|----------|-------|
-| Camera start | `[0, 1.6, 5]` | Facing front wall |
-| Front wall | `Z = -6` | Hero typography |
-| Left wall | `X = -6` | Project frames |
-| Desk | `[2.2, 0, -1.2]` | Right side |
-| Couch | `[-1.5, 0, 1.5]` | Center-left |
-| Project frame 1 | `[-5.95, 2.0, -1.6]` | JobPilot AI |
-| Project frame 2 | `[-5.95, 2.0, 0.0]` | BusinessFlow |
-| Project frame 3 | `[-5.95, 2.0, 1.6]` | AI Automation |
-
-### Room Dimensions
-- Width (X): 12 units
-- Height (Y): 4 units  
-- Depth (Z): 12 units
-- All walls are simple `<planeGeometry>` — no heavy models
+| Object | Coordinates | Description |
+|--------|-------------|-------------|
+| Front Wall | `Z = -6.0` | Contains HeroWall architectural lettering |
+| Left Wall | `X = -6.0` | Contains the 3 framed project artwork displays |
+| Right Wall | `X = +6.0` | Contains the large 4-pane natural window |
+| Couch | `[-1.5, 0, 1.5]` | Foreground left modern fabric sofa |
+| Desk | `[2.2, 0, -1.2]` | Midground right workstation with monitor & accessories |
+| Bookshelf | `[5.2, 0, -3.5]` | Wall bookshelf with colored books |
+| Floor Plant | `[-5.4, 0, -4.2]`| Large potted plant in back-left corner |
+| Project 01 | `[-5.92, 1.95, -2.2]` | JobPilot AI framed display |
+| Project 02 | `[-5.92, 1.95,  0.0]` | BusinessFlow framed display |
+| Project 03 | `[-5.92, 1.95,  2.2]` | AI Automation Platform framed display |
 
 ---
 
-## Camera System
+## Camera Timeline & Navigation Targets
 
-### How It Works
-1. `useScrollProgress` → smooth `progress` (0–1) from scroll position
-2. `progress` passed as prop from `page.tsx` → `StudioScene` → `ScrollCamera`
-3. `ScrollCamera` mounts `useScrollCamera` hook inside R3F Canvas
-4. `useScrollCamera` reads `progress`, calls `interpolateCameraKeyframes(progress)`
-5. Returns target `position` and `target` (lookAt point)
-6. Uses `dampedLerp` (exponential decay, lambda=5) to smooth camera toward target
-7. Applies via `camera.position.copy()` and `camera.lookAt()` each frame
+Virtual scroll height is set to `500vh` in `app/page.tsx`.
+`useScrollProgress` reads window scroll and dampens target progress at ~6% per RAF tick.
 
-### Camera Keyframes
-| Progress | Position | Target | Section |
-|----------|----------|--------|---------|
-| 0% | [0, 1.6, 5] | [0, 1.4, 0] | home |
-| 25% | [0.5, 1.55, 3.2] | [0, 1.4, 0] | home |
-| 45% | [1.8, 1.5, 1.8] | [1.5, 1.2, -1] | about |
-| 65% | [-1.5, 1.6, 0.5] | [-4, 1.5, 0] | projects |
-| 80% | [-2.5, 1.6, 0.2] | [-4.5, 1.5, 0] | projects |
-| 100% | [0, 1.5, -1.5] | [0, 1.2, -4] | contact |
+| Scroll % | Camera Position | Target (LookAt) | Active Section | UI Overlay Visible |
+|----------|-----------------|-----------------|----------------|--------------------|
+| 0% – 22% | `[0.0, 1.65, 5.0]` → `[0.1, 1.65, 3.0]` | `[0.0, 1.80, -5.86]` | Home | None (Scroll indicator active) |
+| 28% – 52% | `[1.3, 1.35, 0.4]` | `[2.2, 1.05, -1.2]` | About | `AboutOverlay` (left side) |
+| 58% – 86% | `[-2.3, 1.95, 0.0]` | `[-5.92, 1.95, 0.0]` | Work / Projects | None (3D frames interactive) |
+| 88% – 100% | `[0.0, 1.7, 3.6]` | `[0.0, 1.4, -2.0]` | Contact | `ContactSection` (bottom center) |
 
 ---
 
-## Scroll System
+## Mobile & Responsive Behavior
 
-- **Virtual scroll height**: 500vh (set in `page.tsx` → `SCROLL_HEIGHT`)
-- **Canvas**: `position: fixed; inset: 0` — never moves
-- **Scroll driver**: `height: 500vh` div with `pointer-events: none`
-- **Smooth progress**: `useScrollProgress` applies ~6% per-frame damping
-
-To change scroll speed: adjust `SCROLL_HEIGHT` in `app/page.tsx`.
-To change camera smoothness: adjust `lambda` in `useScrollCamera.ts` (default: 5).
-
----
-
-## Project Data
-
-Projects live in `data/projects.ts`. Each project has:
-- `id`, `number`, `title`, `subtitle`, `description`
-- `problem`, `solution`, `features[]`, `technologies[]`
-- `techCategories` (organized by layer)
-- `challenges`, `whatIBuilt`
-- `image` (placeholder path), `github?`, `demo?`
-- `status`, `year`
-- `wallPosition` (3D coordinates for left wall)
-- `frameRotation` (pre-set to face camera)
-
-To add a project: add entry to `projects[]` array and add a `wallPosition`.
+1. **Aspect Ratio & FOV Compensation**:
+   In `hooks/useScrollCamera.ts`, when `size.width / size.height < 1.0` (portrait mobile):
+   Vertical FOV dynamically increases from 55° up to 72° to preserve horizontal room coverage.
+   During the Projects section, camera X shifts back from `-2.3` to `-1.5` so all 3 frames fit comfortably.
+2. **Touch Devices**:
+   `globals.css` applies `cursor: none` only under `@media (hover: hover) and (pointer: fine)`.
+   `Cursor.tsx` checks `window.matchMedia("(pointer: fine)")` and stays inert on phones.
+3. **Performance on Mobile**:
+   DPR capped at `[1, 1.5]`.
+   `AdaptiveDpr pixelated` automatically drops DPR under heavy load.
+   `PauseOnHidden` pauses WebGL when browser tab loses visibility.
 
 ---
 
-## Design System
+## Interaction Architecture
 
-### Colors (CSS variables in `globals.css`)
-```
---color-wall:          #f0ebe0  (warm off-white)
---color-floor:         #c8a87a  (natural wood)
---color-text-primary:  #1a1a18  (near-black)
---color-text-secondary:#5a5850
---color-text-mono:     #8b7355  (warm brown)
---color-accent-warm:   #c4a882
---color-bg:            #e8e0d4  (canvas background)
-```
-
-### Typography
-- `--font-display`: Geist Sans (Next.js Google Fonts)
-- `--font-mono`: Geist Mono (Next.js Google Fonts)
-- Hero name: 0.28 units (drei Text), letter-spacing 0.12em
-- Role: 0.1 units, tracking 0.22em
-- Mono metadata: `--font-geist-mono`, small sizes
+- **Hovering Project Frames**:
+  Dispatches `window.dispatchEvent(new CustomEvent("project-hover", { detail: { active: true, title: project.title } }))`.
+  `Cursor.tsx` catches this event, expands the outer ring, and displays `"VIEW CASE STUDY →"`.
+  The 3D frame scales to `1.025`, emissive intensity rises to `0.12`, and local point light brightens to `0.75`.
+- **Clicking Project Frames**:
+  Routes cleanly to `/projects/${project.id}` case study page.
+- **Navigation Links**:
+  Smoothly scrolls `window.scrollTo` to the corresponding virtual scroll progress.
 
 ---
 
-## Lighting Setup (`components/3d/Lighting.tsx`)
-
-| Light | Type | Color | Intensity | Purpose |
-|-------|------|-------|-----------|---------|
-| Hemisphere | hemisphere | warm/cool | 0.4 | Ground bounce |
-| Ambient | ambient | warm white | 0.3 | Soft fill |
-| Sun | directional | warm white | 1.0 (variable) | Window sunlight |
-| Desk lamp | point | warm amber | 0.8 | Desk work light |
-| Screen | point | cool white | 0.15 | Monitor glow |
-| Window bounce | point | cool white | 0.3 | Room fill |
-
-Sun intensity oscillates very slowly (period ~20s) for a subtle breathing effect.
-
----
-
-## Interaction
-
-### Project Frames
-- **Hover**: emissive intensity increases from 0 → 0.12 (smooth, 8% per frame)
-- **Click**: `router.push('/projects/${project.id}')`
-- **Cursor**: set via `document.body.style.cursor` on pointer enter/leave
-
-### Navigation
-- Clicking a nav item calls `scrollToProgress(target)` where target is a progress % 
-- Uses `window.scrollTo({ top, behavior: 'smooth' })`
-- Active section derived from `interpolateCameraKeyframes(progress).section`
-
----
-
-## Performance Strategy
-
-- Three.js loaded **client-side only** (`dynamic(() => import(...), { ssr: false })`)
-- DPR capped at `[1, 2]` via Canvas `dpr` prop
-- `AdaptiveDpr` + `AdaptiveEvents` from drei for runtime adaptation
-- Shadows: `soft` (PCFSoft), shadow map 1024×1024
-- Max 3 shadow-casting lights (only directional casts shadows)
-- Animation budget: mostly scroll-driven, not continuous
-- Sunlight animation: extremely slow (delta × 0.05), near-zero CPU cost
-- `delta` capped at 50ms in `useScrollCamera` to prevent large jumps
-
----
-
-## Accessibility
-
-- 3D canvas has `aria-hidden="true"` — decorative layer
-- Semantic HTML content in hidden div for screen readers (in `page.tsx`)
-- Navigation uses `<button>` elements with `aria-label` / `aria-current`
-- `useReducedMotion()` causes camera to snap (lambda=100) instead of animate
-- Focus states: `outline: 2px solid #8b7355` on `:focus-visible`
-- Loading screen has `aria-live="polite"` and `aria-label="Loading portfolio"`
-
----
-
-## File Naming Conventions
-
-- 3D components: PascalCase, exported as default
-- Hooks: camelCase, prefixed with `use`
-- Lib utilities: camelCase functions, named exports
-- Data: camelCase variable names, named exports
-
----
-
-## Known Limitations (Phase 1)
-
-1. `HeroWall.tsx` uses drei `Text` default font — will look generic until custom font added in Phase 12
-2. Project frames show colored placeholder backgrounds — replace with actual screenshots
-3. Camera keyframe positions are estimates — need tuning after visual testing
-4. No contact section content yet (Phase 8)
-5. Mobile not yet optimized (Phase 9)
-6. No actual GLB models (procedural geometry only) — fine for performance
-
----
-
-## Development Commands
+## Development & Build
 
 ```bash
-cd d:\Portfolioz\portfolio
-npm run dev       # Start dev server at localhost:3000
-npm run build     # Production build
-npm run lint      # ESLint check
+npm run dev     # Starts development server (http://localhost:3001)
+npm run build   # Production static generation (all 7 routes pre-rendered)
+npm run lint    # ESLint verification
 ```

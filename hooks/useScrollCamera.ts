@@ -15,29 +15,61 @@ interface UseScrollCameraProps {
 /**
  * Drives the R3F camera based on scroll progress.
  * Smoothly interpolates between camera keyframes using damped lerp.
- *
- * Must be used inside an R3F <Canvas> context.
+ * Automatically compensates FOV on portrait/mobile viewports so the
+ * room remains beautifully framed on all devices.
  */
 export function useScrollCamera({
   scrollProgress,
   enabled = true,
 }: UseScrollCameraProps) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const prefersReduced = useReducedMotion();
 
   // Current animated camera state (refs to avoid re-renders)
-  const currentPos = useRef(new THREE.Vector3(0, 1.6, 5));
-  const currentTarget = useRef(new THREE.Vector3(0, 1.4, 0));
-  const targetPos = useRef(new THREE.Vector3(0, 1.6, 5));
-  const targetLook = useRef(new THREE.Vector3(0, 1.4, 0));
+  const currentPos = useRef(new THREE.Vector3(0.0, 1.65, 5.0));
+  const currentTarget = useRef(new THREE.Vector3(0.0, 1.80, -5.86));
+  const targetPos = useRef(new THREE.Vector3(0.0, 1.65, 5.0));
+  const targetLook = useRef(new THREE.Vector3(0.0, 1.80, -5.86));
+
+  // Responsive FOV compensation for mobile portrait aspect ratios
+  useEffect(() => {
+    if (!(camera instanceof THREE.PerspectiveCamera)) return;
+
+    const aspect = size.width / Math.max(1, size.height);
+    // On landscape (desktop), keep standard 55 FOV
+    // On portrait (mobile/tablet), increase FOV so room width is not cropped
+    const responsiveFov =
+      aspect < 1.0
+        ? Math.min(72, Math.max(55, 55 / (aspect * 1.05)))
+        : 55;
+
+    if (Math.abs(camera.fov - responsiveFov) > 0.5) {
+      camera.fov = responsiveFov;
+      camera.updateProjectionMatrix();
+    }
+  }, [size, camera]);
 
   // Update target whenever scroll changes
   const updateTarget = useCallback(() => {
     if (!enabled) return;
-    const { position, target } = interpolateCameraKeyframes(scrollProgress);
-    targetPos.current.set(...position);
+    const { position, target, section } = interpolateCameraKeyframes(scrollProgress);
+
+    const aspect = size.width / Math.max(1, size.height);
+    const isMobilePortrait = aspect < 0.9;
+
+    // Mobile adjustment for Project section: pull camera back slightly so all frames fit
+    let px = position[0];
+    let py = position[1];
+    let pz = position[2];
+
+    if (isMobilePortrait && section === "projects") {
+      // Pull back in +X direction to widen view of the left wall
+      px = Math.min(-1.0, px + 0.8);
+    }
+
+    targetPos.current.set(px, py, pz);
     targetLook.current.set(...target);
-  }, [scrollProgress, enabled]);
+  }, [scrollProgress, enabled, size]);
 
   useEffect(() => {
     updateTarget();
@@ -48,9 +80,8 @@ export function useScrollCamera({
     if (!enabled) return;
 
     // With reduced motion, snap directly — no damping
-    const lambda = prefersReduced ? 100 : 5;
-
-    const dt = Math.min(delta, 0.05); // cap delta to avoid large jumps
+    const lambda = prefersReduced ? 100 : 5.5;
+    const dt = Math.min(delta, 0.05);
 
     currentPos.current.x = dampedLerp(
       currentPos.current.x,
