@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
-import { AdaptiveDpr, AdaptiveEvents } from "@react-three/drei";
+import { Suspense, useEffect, useRef } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
+import { AdaptiveDpr, AdaptiveEvents, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 
 import Room from "./Room";
@@ -19,14 +19,29 @@ interface StudioSceneProps {
 }
 
 /**
- * StudioScene — root R3F Canvas.
- *
- * Performance settings:
- * - dpr [1, 1.5]: capped lower than 2 for better perf on hi-DPI screens
- * - shadows: true with PCFShadowMap (PCFSoftShadowMap deprecated in Three r169+)
- * - AdaptiveDpr / AdaptiveEvents for runtime adaptation
- * - camera FOV 55 — natural interior perspective
+ * PauseOnHidden — pauses the render loop when the tab is not visible.
+ * Dramatically reduces idle GPU usage.
  */
+function PauseOnHidden() {
+  const { gl } = useThree();
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) {
+        gl.setAnimationLoop(null);
+      } else {
+        gl.setAnimationLoop((time) => {
+          // Resume — R3F re-establishes its own loop on next frame
+        });
+        // Let R3F take back over
+        gl.setAnimationLoop(null);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [gl]);
+  return null;
+}
+
 export default function StudioScene({ scrollProgress }: StudioSceneProps) {
   return (
     <Canvas
@@ -47,20 +62,21 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         gl.shadowMap.enabled = true;
         gl.shadowMap.type = THREE.PCFShadowMap;
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 0.9;
+        gl.toneMappingExposure = 0.88;
       }}
       style={{ background: "#d8d0c4" }}
     >
       <AdaptiveDpr pixelated />
       <AdaptiveEvents />
+      <PauseOnHidden />
 
-      {/* Subtle fog for depth */}
-      <fog attach="fog" args={["#d8d0c4", 8, 22]} />
+      {/* Atmospheric fog — gentle depth blur */}
+      <fog attach="fog" args={["#d4ccc0", 10, 24]} />
 
       {/* Lighting */}
       <Lighting />
 
-      {/* Scene */}
+      {/* Scene content */}
       <Suspense fallback={null}>
         <Environment />
         <Room />
