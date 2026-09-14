@@ -118,9 +118,9 @@ export default function ContactSection({ visible }: ContactSectionProps) {
                 external
               />
               <ContactLink
-                href="#resume"
+                href="/resume"
                 label="Resume"
-                mono="Curriculum Vitae"
+                mono="View Full CV"
               />
             </div>
 
@@ -143,7 +143,7 @@ export default function ContactSection({ visible }: ContactSectionProps) {
               }}
             >
               <span>Yashwant Kariha · {new Date().getFullYear()}</span>
-              <span>Next.js 15 · Three.js · React Three Fiber</span>
+              <span>Shortcuts: [1-4] Navigate · [N] Day/Night · [L] Lamp</span>
             </div>
           </div>
         </motion.section>

@@ -260,6 +260,22 @@ const FRAME_POSITIONS: [number, number, number][] = [
 export default function ProjectWall() {
   return (
     <group name="project-wall">
+      {/* Gallery Floor Light Pools beneath each frame */}
+      {FRAME_POSITIONS.map((pos, i) => (
+        <mesh
+          key={`floor-pool-${i}`}
+          rotation={[-Math.PI / 2, 0, 0]}
+          position={[-5.3, 0.005, pos[2]]}
+        >
+          <planeGeometry args={[1.5, 1.1]} />
+          <meshBasicMaterial
+            color="#fff4df"
+            transparent
+            opacity={0.07}
+          />
+        </mesh>
+      ))}
+
       {projects.map((project, i) => (
         <ProjectFrame
           key={project.id}

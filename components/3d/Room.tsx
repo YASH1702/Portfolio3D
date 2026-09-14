@@ -1,33 +1,91 @@
 "use client";
 
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+import { useStudio } from "@/context/StudioContext";
+import { dampedLerp } from "@/lib/easings";
+
 /**
- * Room — the architectural shell.
+ * Room — Architectural studio shell.
  *
- * Room dimensions: 12 (W) × 4 (H) × 12 (D)
- * Origin: center of floor plane.
- *
- * Walls use a slightly rougher texture than default
- * to pick up light naturally without looking plastic.
+ * Dimensions: 12 (W) × 4 (H) × 12 (D)
+ * Features:
+ * - Natural oak floor with soft light bounce
+ * - Architectural 4-pane window with Day/Night adaptive glass emission
+ * - Projected sunlight pool with window frame shadows on the floor in Day Mode
+ * - Perimeter ceiling cornice and skirting baseboards
  */
 
-// Material palette
-const WALL     = "#ede8de";   // warm off-white
-const WALL_SIDE = "#e8e3d8";  // slightly cooler for side walls
-const CEIL     = "#f0ece4";   // lightest — ceiling
-const FLOOR    = "#b89a6a";   // warm wood
-const BASE     = "#d8d2c6";   // skirting boards
+const WALL      = "#ede8de";
+const WALL_SIDE = "#e8e3d8";
+const CEIL      = "#f0ece4";
+const FLOOR     = "#b89a6a";
+const BASE      = "#d8d2c6";
 
-const W = 12, H = 4, D = 12; // room dimensions
+const W = 12, H = 4, D = 12;
 
 export default function Room() {
+  const { isNightMode } = useStudio();
+
+  const glassMatRef = useRef<THREE.MeshStandardMaterial>(null!);
+  const sunPatchRef = useRef<THREE.MeshBasicMaterial>(null!);
+
+  const glassEmissive = useRef(0.4);
+  const sunPatchOpacity = useRef(0.18);
+
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.05);
+
+    const targetGlass = isNightMode ? 0.03 : 0.4;
+    const targetSunPatch = isNightMode ? 0.0 : 0.16;
+
+    glassEmissive.current = dampedLerp(glassEmissive.current, targetGlass, 4, dt);
+    sunPatchOpacity.current = dampedLerp(sunPatchOpacity.current, targetSunPatch, 4, dt);
+
+    if (glassMatRef.current) {
+      glassMatRef.current.emissiveIntensity = glassEmissive.current;
+      glassMatRef.current.color.lerp(
+        new THREE.Color(isNightMode ? "#0d1326" : "#d4e8ff"),
+        0.05
+      );
+    }
+    if (sunPatchRef.current) {
+      sunPatchRef.current.opacity = sunPatchOpacity.current;
+    }
+  });
+
   return (
     <group name="room">
-
       {/* ── FLOOR ── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[W, D]} />
         <meshStandardMaterial color={FLOOR} roughness={0.75} metalness={0.02} />
       </mesh>
+
+      {/* ── PROJECTED ARCHITECTURAL SUNLIGHT PATCH ON FLOOR (Day Mode) ── */}
+      <group position={[1.4, 0.008, 0.2]} rotation={[-Math.PI / 2, 0, -0.35]}>
+        {/* Soft golden sunlight pool */}
+        <mesh>
+          <planeGeometry args={[3.2, 2.4]} />
+          <meshBasicMaterial
+            ref={sunPatchRef}
+            color="#fff2cc"
+            transparent
+            opacity={0.16}
+          />
+        </mesh>
+        {/* Horizontal window mullion shadow line */}
+        <mesh position={[0, 0, 0.001]}>
+          <planeGeometry args={[3.2, 0.06]} />
+          <meshBasicMaterial color="#7a6240" transparent opacity={0.12} />
+        </mesh>
+        {/* Vertical window mullion shadow line */}
+        <mesh position={[0, 0, 0.001]}>
+          <planeGeometry args={[0.06, 2.4]} />
+          <meshBasicMaterial color="#7a6240" transparent opacity={0.12} />
+        </mesh>
+      </group>
 
       {/* ── CEILING ── */}
       <mesh position={[0, H, 0]} rotation={[Math.PI / 2, 0, 0]}>
@@ -35,138 +93,102 @@ export default function Room() {
         <meshStandardMaterial color={CEIL} roughness={0.98} metalness={0} />
       </mesh>
 
-      {/* ── FRONT WALL (hero) — at -Z ── */}
+      {/* ── FRONT WALL (Hero Identity) ── */}
       <mesh receiveShadow position={[0, H / 2, -D / 2]}>
         <planeGeometry args={[W, H]} />
         <meshStandardMaterial color={WALL} roughness={0.88} metalness={0} />
       </mesh>
 
-      {/* ── BACK WALL — behind camera ── */}
+      {/* ── BACK WALL ── */}
       <mesh position={[0, H / 2, D / 2]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[W, H]} />
         <meshStandardMaterial color={WALL} roughness={0.9} metalness={0} />
       </mesh>
 
-      {/* ── LEFT WALL (project frames) ── */}
+      {/* ── LEFT WALL (Project Gallery) ── */}
       <mesh receiveShadow position={[-W / 2, H / 2, 0]} rotation={[0, Math.PI / 2, 0]}>
         <planeGeometry args={[D, H]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
 
-      {/* ── RIGHT WALL (window side) ── */}
-      {/* Lower solid panel */}
+      {/* ── RIGHT WALL (Window Wall) ── */}
       <mesh receiveShadow position={[W / 2, 0.85, 0]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[D, 1.7]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
-      {/* Upper solid panel */}
       <mesh receiveShadow position={[W / 2, 3.45, 0]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[D, 1.1]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
-      {/* Left of window */}
       <mesh receiveShadow position={[W / 2, H / 2, 4]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[4, H]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
-      {/* Right of window */}
       <mesh receiveShadow position={[W / 2, H / 2, -4]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[4, H]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
 
-      {/* ── WINDOW — right wall, mid-room ── */}
-      <group position={[W / 2 - 0.02, 0, -1.2]}>
-        {/* Window frame — outer */}
+      {/* ── 4-PANE ARCHITECTURAL WINDOW ── */}
+      <group position={[W / 2 - 0.02, 2.0, -1.2]}>
+        {/* Frame Outer */}
         <mesh>
           <boxGeometry args={[0.06, 2.1, 2.6]} />
           <meshStandardMaterial color="#d8d0c4" roughness={0.5} metalness={0.1} />
         </mesh>
-        {/* Window frame — horizontal bar */}
+        {/* Horizontal bar */}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.07, 0.06, 2.6]} />
           <meshStandardMaterial color="#d0c8bc" roughness={0.5} metalness={0.1} />
         </mesh>
-        {/* Window frame — vertical bar */}
+        {/* Vertical bar */}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.07, 2.1, 0.06]} />
           <meshStandardMaterial color="#d0c8bc" roughness={0.5} metalness={0.1} />
         </mesh>
-        {/* Glass panel — emissive daylight */}
-        <mesh position={[-0.04, 0.52, -0.65]}>
-          <planeGeometry args={[0.04, 0.98]} />
-          <meshStandardMaterial
-            color="#d4e8ff"
-            emissive="#88b8f0"
-            emissiveIntensity={0.4}
-            roughness={0.08}
-            metalness={0.05}
-            transparent
-            opacity={0.55}
-          />
-        </mesh>
-        <mesh position={[-0.04, 0.52, 0.65]}>
-          <planeGeometry args={[0.04, 0.98]} />
-          <meshStandardMaterial
-            color="#d4e8ff"
-            emissive="#88b8f0"
-            emissiveIntensity={0.4}
-            roughness={0.08}
-            metalness={0.05}
-            transparent
-            opacity={0.55}
-          />
-        </mesh>
-        <mesh position={[-0.04, -0.52, -0.65]}>
-          <planeGeometry args={[0.04, 0.98]} />
-          <meshStandardMaterial
-            color="#d4e8ff"
-            emissive="#88b8f0"
-            emissiveIntensity={0.4}
-            roughness={0.08}
-            metalness={0.05}
-            transparent
-            opacity={0.55}
-          />
-        </mesh>
-        <mesh position={[-0.04, -0.52, 0.65]}>
-          <planeGeometry args={[0.04, 0.98]} />
-          <meshStandardMaterial
-            color="#d4e8ff"
-            emissive="#88b8f0"
-            emissiveIntensity={0.4}
-            roughness={0.08}
-            metalness={0.05}
-            transparent
-            opacity={0.55}
-          />
-        </mesh>
+
+        {/* 4 Glass Panes */}
+        {[
+          { y: 0.52, z: -0.65 },
+          { y: 0.52, z: 0.65 },
+          { y: -0.52, z: -0.65 },
+          { y: -0.52, z: 0.65 },
+        ].map((pane, i) => (
+          <mesh key={i} position={[-0.04, pane.y, pane.z]} rotation={[0, -Math.PI / 2, 0]}>
+            <planeGeometry args={[1.2, 0.96]} />
+            <meshStandardMaterial
+              ref={i === 0 ? glassMatRef : undefined}
+              color="#d4e8ff"
+              emissive="#88b8f0"
+              emissiveIntensity={0.4}
+              roughness={0.08}
+              metalness={0.05}
+              transparent
+              opacity={0.55}
+            />
+          </mesh>
+        ))}
       </group>
 
       {/* ── SKIRTING BOARDS ── */}
-      {/* Front wall */}
       <mesh position={[0, 0.06, -D / 2 + 0.03]}>
         <boxGeometry args={[W, 0.12, 0.05]} />
         <meshStandardMaterial color={BASE} roughness={0.7} metalness={0} />
       </mesh>
-      {/* Left wall */}
       <mesh position={[-W / 2 + 0.03, 0.06, 0]} rotation={[0, Math.PI / 2, 0]}>
         <boxGeometry args={[D, 0.12, 0.05]} />
         <meshStandardMaterial color={BASE} roughness={0.7} metalness={0} />
       </mesh>
-      {/* Back wall */}
       <mesh position={[0, 0.06, D / 2 - 0.03]}>
         <boxGeometry args={[W, 0.12, 0.05]} />
         <meshStandardMaterial color={BASE} roughness={0.7} metalness={0} />
       </mesh>
 
-      {/* ── CEILING CORNICE ── thin band where ceiling meets walls ── */}
-      {/* Front */}
+      {/* ── CEILING CORNICE ── */}
       <mesh position={[0, H - 0.04, -D / 2 + 0.03]}>
         <boxGeometry args={[W, 0.08, 0.06]} />
         <meshStandardMaterial color={CEIL} roughness={0.9} metalness={0} />
       </mesh>
-      {/* Left */}
       <mesh position={[-W / 2 + 0.03, H - 0.04, 0]} rotation={[0, Math.PI / 2, 0]}>
         <boxGeometry args={[D, 0.08, 0.06]} />
         <meshStandardMaterial color={CEIL} roughness={0.9} metalness={0} />

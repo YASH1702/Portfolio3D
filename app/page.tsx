@@ -5,15 +5,17 @@ import dynamic from "next/dynamic";
 
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { interpolateCameraKeyframes } from "@/lib/cameraKeyframes";
+import { StudioProvider } from "@/context/StudioContext";
 import Navigation from "@/components/ui/Navigation";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import Cursor from "@/components/ui/Cursor";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
+import StudioControls from "@/components/ui/StudioControls";
 import AboutOverlay from "@/components/sections/AboutOverlay";
 import ContactSection from "@/components/sections/ContactSection";
 
 /**
- * StudioScene dynamically imported — Three.js needs browser APIs.
+ * StudioScene dynamically imported — Three.js requires browser APIs.
  */
 const StudioScene = dynamic(() => import("@/components/3d/StudioScene"), {
   ssr: false,
@@ -21,18 +23,12 @@ const StudioScene = dynamic(() => import("@/components/3d/StudioScene"), {
 });
 
 /**
- * VIRTUAL SCROLL HEIGHT — 500vh creates the scroll distance
- * that drives all camera movement across 4 sections.
- *
- * Section breakdown (approximate):
- *  0–25%   Home / Hero
- *  25–45%  About / Workspace
- *  45–75%  Projects / Left wall
- *  75–100% Contact
+ * VIRTUAL SCROLL HEIGHT — 500vh creates comfortable scroll distance
+ * across all 4 zones.
  */
 const SCROLL_HEIGHT = "500vh";
 
-export default function Home() {
+function PortfolioExperience() {
   const [isLoading, setIsLoading] = useState(true);
   const { progress } = useScrollProgress();
 
@@ -43,17 +39,16 @@ export default function Home() {
   const showContact = progress >= 0.88;
 
   useEffect(() => {
-    // Allow scene to initialise before fading out loading screen
     const timer = setTimeout(() => setIsLoading(false), 900);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      {/* ── LOADING ── */}
+      {/* ── LOADING SCREEN ── */}
       <LoadingScreen isLoading={isLoading} />
 
-      {/* ── CURSOR (desktop only — hidden on touch via CSS) ── */}
+      {/* ── CURSOR (desktop only) ── */}
       <Cursor />
 
       {/* ── NAVIGATION ── */}
@@ -61,6 +56,9 @@ export default function Home() {
 
       {/* ── SCROLL PROGRESS + SECTION LABEL ── */}
       <ScrollIndicator progress={progress} section={section} />
+
+      {/* ── STUDIO CONTROLS (Day/Night mode & Lamp toggle) ── */}
+      <StudioControls />
 
       {/* ── FIXED 3D CANVAS ── */}
       <div
@@ -75,22 +73,18 @@ export default function Home() {
       <AboutOverlay   visible={showAbout} />
       <ContactSection visible={showContact} />
 
-      {/* ── VIRTUAL SCROLL DRIVER ──
-          This element creates the scroll height.
-          pointer-events: none so the 3D canvas receives all mouse events.
-          Accessible content for screen readers is placed here. ── */}
+      {/* ── VIRTUAL SCROLL DRIVER ── */}
       <div
         className="scroll-driver"
         style={{ height: SCROLL_HEIGHT }}
         role="main"
         aria-label="Portfolio content"
       >
-        {/* ── SCREEN-READER CONTENT ──
-            Visually hidden — accessible alternative to the 3D experience. ── */}
+        {/* Screen-reader accessible hidden content */}
         <div className="sr-only">
           <h1>Yashwant Kariha — Full-Stack Developer</h1>
           <p>
-            Building digital products, AI systems & modern web experiences.
+            Building digital products, AI systems &amp; modern web experiences.
             React · Next.js · TypeScript · Node.js · PostgreSQL · AI.
           </p>
 
@@ -138,7 +132,7 @@ export default function Home() {
             <h2>Contact</h2>
             <address>
               <p>
-                <a href="mailto:yashwant@example.com">Email</a> ·{" "}
+                <a href="mailto:yashwant.kariha@gmail.com">Email</a> ·{" "}
                 <a href="https://github.com" rel="noopener noreferrer">GitHub</a> ·{" "}
                 <a href="https://linkedin.com" rel="noopener noreferrer">LinkedIn</a>
               </p>
@@ -161,5 +155,13 @@ export default function Home() {
         }
       `}</style>
     </>
+  );
+}
+
+export default function Home() {
+  return (
+    <StudioProvider>
+      <PortfolioExperience />
+    </StudioProvider>
   );
 }

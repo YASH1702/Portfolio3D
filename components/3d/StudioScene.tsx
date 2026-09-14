@@ -1,9 +1,11 @@
 "use client";
 
 import { Suspense, useEffect, useRef } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
-import { AdaptiveDpr, AdaptiveEvents, PerformanceMonitor } from "@react-three/drei";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { AdaptiveDpr, AdaptiveEvents } from "@react-three/drei";
 import * as THREE from "three";
+import { useStudio } from "@/context/StudioContext";
+import { dampedLerp } from "@/lib/easings";
 
 import Room from "./Room";
 import Desk from "./Desk";
@@ -19,8 +21,29 @@ interface StudioSceneProps {
 }
 
 /**
- * PauseOnHidden — pauses the render loop when the tab is not visible.
- * Dramatically reduces idle GPU usage.
+ * AtmosphereManager — smoothly shifts fog and scene background between
+ * daylight and late-night studio modes.
+ */
+function AtmosphereManager() {
+  const { isNightMode } = useStudio();
+  const { scene } = useThree();
+  const fogColor = useRef(new THREE.Color("#d4ccc0"));
+
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.05);
+    const targetHex = isNightMode ? "#121520" : "#d4ccc0";
+    fogColor.current.lerp(new THREE.Color(targetHex), 0.06);
+
+    if (scene.fog) {
+      scene.fog.color.copy(fogColor.current);
+    }
+  });
+
+  return null;
+}
+
+/**
+ * PauseOnHidden — pauses the render loop when the browser tab is not visible.
  */
 function PauseOnHidden() {
   const { gl } = useThree();
@@ -29,10 +52,6 @@ function PauseOnHidden() {
       if (document.hidden) {
         gl.setAnimationLoop(null);
       } else {
-        gl.setAnimationLoop((time) => {
-          // Resume — R3F re-establishes its own loop on next frame
-        });
-        // Let R3F take back over
         gl.setAnimationLoop(null);
       }
     };
@@ -43,12 +62,14 @@ function PauseOnHidden() {
 }
 
 export default function StudioScene({ scrollProgress }: StudioSceneProps) {
+  const { isNightMode } = useStudio();
+
   return (
     <Canvas
       shadows
       dpr={[1, 1.5]}
       camera={{
-        position: [0, 1.6, 5],
+        position: [0.0, 1.65, 5.0],
         fov: 55,
         near: 0.1,
         far: 50,
@@ -64,19 +85,23 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
         gl.toneMappingExposure = 0.88;
       }}
-      style={{ background: "#d8d0c4" }}
+      style={{
+        background: isNightMode ? "#0f121a" : "#d8d0c4",
+        transition: "background 0.8s ease",
+      }}
     >
       <AdaptiveDpr pixelated />
       <AdaptiveEvents />
       <PauseOnHidden />
+      <AtmosphereManager />
 
-      {/* Atmospheric fog — gentle depth blur */}
-      <fog attach="fog" args={["#d4ccc0", 10, 24]} />
+      {/* Atmospheric depth fog */}
+      <fog attach="fog" args={["#d4ccc0", 9, 24]} />
 
-      {/* Lighting */}
+      {/* Lighting setup */}
       <Lighting />
 
-      {/* Scene content */}
+      {/* Studio scene objects */}
       <Suspense fallback={null}>
         <Environment />
         <Room />
@@ -86,7 +111,7 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         <ProjectWall />
       </Suspense>
 
-      {/* Scroll-driven camera */}
+      {/* Scroll-driven camera with micro-parallax */}
       <ScrollCamera scrollProgress={scrollProgress} />
     </Canvas>
   );

@@ -15,8 +15,10 @@ interface UseScrollCameraProps {
 /**
  * Drives the R3F camera based on scroll progress.
  * Smoothly interpolates between camera keyframes using damped lerp.
- * Automatically compensates FOV on portrait/mobile viewports so the
- * room remains beautifully framed on all devices.
+ * Features:
+ * - Automatic vertical FOV compensation for portrait/mobile screens
+ * - Subtle, weighted mouse micro-parallax (disabled on touch / reduced motion)
+ * - Safe clamped delta time to prevent large jumps
  */
 export function useScrollCamera({
   scrollProgress,
@@ -25,19 +27,36 @@ export function useScrollCamera({
   const { camera, size } = useThree();
   const prefersReduced = useReducedMotion();
 
-  // Current animated camera state (refs to avoid re-renders)
+  // Base keyframe animated camera state
   const currentPos = useRef(new THREE.Vector3(0.0, 1.65, 5.0));
   const currentTarget = useRef(new THREE.Vector3(0.0, 1.80, -5.86));
   const targetPos = useRef(new THREE.Vector3(0.0, 1.65, 5.0));
   const targetLook = useRef(new THREE.Vector3(0.0, 1.80, -5.86));
+
+  // Mouse normalized coordinates [-1, 1] for micro-parallax
+  const mouseNorm = useRef({ x: 0, y: 0 });
+  const parallaxPos = useRef({ x: 0, y: 0 });
+  const parallaxLook = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (prefersReduced) return;
+    const isFinePointer = window.matchMedia("(pointer: fine)").matches;
+    if (!isFinePointer) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseNorm.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseNorm.current.y = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [prefersReduced]);
 
   // Responsive FOV compensation for mobile portrait aspect ratios
   useEffect(() => {
     if (!(camera instanceof THREE.PerspectiveCamera)) return;
 
     const aspect = size.width / Math.max(1, size.height);
-    // On landscape (desktop), keep standard 55 FOV
-    // On portrait (mobile/tablet), increase FOV so room width is not cropped
     const responsiveFov =
       aspect < 1.0
         ? Math.min(72, Math.max(55, 55 / (aspect * 1.05)))
@@ -57,13 +76,11 @@ export function useScrollCamera({
     const aspect = size.width / Math.max(1, size.height);
     const isMobilePortrait = aspect < 0.9;
 
-    // Mobile adjustment for Project section: pull camera back slightly so all frames fit
     let px = position[0];
     let py = position[1];
     let pz = position[2];
 
     if (isMobilePortrait && section === "projects") {
-      // Pull back in +X direction to widen view of the left wall
       px = Math.min(-1.0, px + 0.8);
     }
 
@@ -79,10 +96,10 @@ export function useScrollCamera({
   useFrame((_, delta) => {
     if (!enabled) return;
 
-    // With reduced motion, snap directly — no damping
     const lambda = prefersReduced ? 100 : 5.5;
     const dt = Math.min(delta, 0.05);
 
+    // Primary scroll position interpolation
     currentPos.current.x = dampedLerp(
       currentPos.current.x,
       targetPos.current.x,
@@ -102,6 +119,7 @@ export function useScrollCamera({
       dt
     );
 
+    // Primary scroll target lookAt interpolation
     currentTarget.current.x = dampedLerp(
       currentTarget.current.x,
       targetLook.current.x,
@@ -121,7 +139,51 @@ export function useScrollCamera({
       dt
     );
 
-    camera.position.copy(currentPos.current);
-    camera.lookAt(currentTarget.current);
+    // Gentle micro-parallax offset calculation
+    if (!prefersReduced) {
+      const targetParallaxPosX = mouseNorm.current.x * 0.045;
+      const targetParallaxPosY = -mouseNorm.current.y * 0.035;
+      const targetParallaxLookX = mouseNorm.current.x * 0.07;
+      const targetParallaxLookY = -mouseNorm.current.y * 0.045;
+
+      parallaxPos.current.x = dampedLerp(
+        parallaxPos.current.x,
+        targetParallaxPosX,
+        3.5,
+        dt
+      );
+      parallaxPos.current.y = dampedLerp(
+        parallaxPos.current.y,
+        targetParallaxPosY,
+        3.5,
+        dt
+      );
+
+      parallaxLook.current.x = dampedLerp(
+        parallaxLook.current.x,
+        targetParallaxLookX,
+        3.5,
+        dt
+      );
+      parallaxLook.current.y = dampedLerp(
+        parallaxLook.current.y,
+        targetParallaxLookY,
+        3.5,
+        dt
+      );
+    }
+
+    // Apply combined camera position and lookAt
+    camera.position.set(
+      currentPos.current.x + parallaxPos.current.x,
+      currentPos.current.y + parallaxPos.current.y,
+      currentPos.current.z
+    );
+
+    camera.lookAt(
+      currentTarget.current.x + parallaxLook.current.x,
+      currentTarget.current.y + parallaxLook.current.y,
+      currentTarget.current.z
+    );
   });
 }

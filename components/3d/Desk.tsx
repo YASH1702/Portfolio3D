@@ -1,12 +1,13 @@
 "use client";
 
 import Monitor from "./Monitor";
+import { useStudio } from "@/context/StudioContext";
 
 /**
  * Desk — a modern developer workstation.
  *
- * Uses the Monitor component for the animated screen.
- * Everything else is procedural geometry.
+ * Uses the Monitor component for the interactive screen.
+ * Interactive Desk Lamp toggles warm illumination on/off on click.
  *
  * Position: [2.2, 0, -1.2] — right side of room, slightly angled.
  */
@@ -18,6 +19,23 @@ const NOTEBOOK  = "#f0ede5";
 const CUP       = "#d4c5a0";
 
 export default function Desk() {
+  const { isLampOn, toggleLamp } = useStudio();
+
+  const handleLampEnter = (e: any) => {
+    e.stopPropagation();
+    document.body.style.cursor = "pointer";
+  };
+
+  const handleLampLeave = (e: any) => {
+    e.stopPropagation();
+    document.body.style.cursor = "default";
+  };
+
+  const handleLampClick = (e: any) => {
+    e.stopPropagation();
+    toggleLamp();
+  };
+
   return (
     <group name="desk" position={[2.2, 0, -1.2]} rotation={[0, -0.08, 0]}>
 
@@ -46,7 +64,7 @@ export default function Desk() {
         </mesh>
       ))}
 
-      {/* ── MONITOR ── */}
+      {/* ── MONITOR (CLICKABLE DISPLAY) ── */}
       <Monitor position={[-0.08, 0.76, -0.16]} />
 
       {/* ── KEYBOARD ── */}
@@ -54,7 +72,7 @@ export default function Desk() {
         <boxGeometry args={[0.38, 0.011, 0.14]} />
         <meshStandardMaterial color="#1a1a1a" roughness={0.65} metalness={0.12} />
       </mesh>
-      {/* Keyboard key rows — 3 thin planes */}
+      {/* Keyboard key rows */}
       {[0.06, 0.0, -0.06].map((z, i) => (
         <mesh key={i} position={[-0.02, 0.77, 0.1 + z]}>
           <boxGeometry args={[0.34, 0.003, 0.02]} />
@@ -68,8 +86,13 @@ export default function Desk() {
         <meshStandardMaterial color="#1a1a1a" roughness={0.5} metalness={0.18} />
       </mesh>
 
-      {/* ── DESK LAMP ── */}
-      <group position={[0.68, 0.762, -0.25]}>
+      {/* ── INTERACTIVE DESK LAMP (CLICKABLE TOGGLE) ── */}
+      <group
+        position={[0.68, 0.762, -0.25]}
+        onPointerEnter={handleLampEnter}
+        onPointerLeave={handleLampLeave}
+        onClick={handleLampClick}
+      >
         {/* Base disc */}
         <mesh castShadow>
           <cylinderGeometry args={[0.065, 0.072, 0.018, 14]} />
@@ -95,13 +118,13 @@ export default function Desk() {
             side={2}
           />
         </mesh>
-        {/* Inner cone — warm emissive */}
+        {/* Inner cone — illuminates when lamp is on */}
         <mesh position={[0.04, 0.56, -0.06]} rotation={[0.8, 0, 0]}>
           <coneGeometry args={[0.065, 0.1, 14, 1, true]} />
           <meshStandardMaterial
             color="#ffd080"
-            emissive="#ffaa30"
-            emissiveIntensity={0.5}
+            emissive={isLampOn ? "#ffaa30" : "#221808"}
+            emissiveIntensity={isLampOn ? 0.7 : 0.0}
             roughness={0.6}
             metalness={0}
             side={2}
@@ -130,7 +153,6 @@ export default function Desk() {
 
       {/* ── COFFEE CUP ── */}
       <group position={[0.58, 0.762, -0.1]}>
-        {/* Cup body */}
         <mesh castShadow>
           <cylinderGeometry args={[0.028, 0.022, 0.072, 12]} />
           <meshStandardMaterial color={CUP} roughness={0.85} metalness={0} />
@@ -163,7 +185,7 @@ export default function Desk() {
         </mesh>
       </group>
 
-      {/* ── CABLE ── a subtle detail ── */}
+      {/* ── CABLE DETAIL ── */}
       <mesh position={[-0.08, 0.765, -0.3]} rotation={[0, 0, 0.3]}>
         <cylinderGeometry args={[0.003, 0.003, 0.18, 4]} />
         <meshStandardMaterial color="#1a1a1a" roughness={0.8} metalness={0} />

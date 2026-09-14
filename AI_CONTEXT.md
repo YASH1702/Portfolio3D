@@ -21,21 +21,26 @@ app/
 ├── globals.css         — Design tokens, base styles, cursor and scrollbar rules
 ├── not-found.tsx       — 404 page styled in studio aesthetic
 ├── page.tsx            — Main page: fixed R3F canvas + scroll driver + UI overlays
+├── resume/
+│   └── page.tsx        — Printable Curriculum Vitae (/resume)
 └── projects/
     └── [id]/
         └── page.tsx    — Project case study (server component with static params)
 
+context/
+└── StudioContext.tsx   — Day/Night mode, desk lamp state, monitor screen mode, hotkeys
+
 components/
 ├── 3d/
 │   ├── StudioScene.tsx — Root R3F <Canvas> (dynamic import, ssr: false, PCF shadows)
-│   ├── Room.tsx        — Room geometry: walls, floor, ceiling, window panels
-│   ├── Desk.tsx        — Developer workstation: desk, accessories, lamp, notebook
-│   ├── Monitor.tsx     — Animated monitor screen with syntax-highlighted code & cursor
+│   ├── Room.tsx        — Room geometry: walls, floor, ceiling, window panels, floor sunlight
+│   ├── Desk.tsx        — Developer workstation: desk, accessories, interactive lamp, notebook
+│   ├── Monitor.tsx     — Interactive monitor screen (Code, Terminal, Architecture modes)
 │   ├── Couch.tsx       — Modern fabric couch with pillows & wooden legs
 │   ├── Lighting.tsx    — Studio lighting: hemisphere + sun + desk lamp + fill lights
 │   ├── Environment.tsx — Area rug, side table, floor plant, bookshelf, ceiling fixture
 │   ├── HeroWall.tsx    — Front wall architectural typography (drei Text)
-│   ├── ProjectWall.tsx — Left wall: 3 interactive ProjectFrame components
+│   ├── ProjectWall.tsx — Left wall: 3 interactive ProjectFrame components + floor spotlights
 │   └── ScrollCamera.tsx — Mounts useScrollCamera hook inside Canvas
 ├── sections/
 │   ├── AboutOverlay.tsx   — Left-positioned editorial card during workspace view
@@ -45,11 +50,13 @@ components/
     ├── Navigation.tsx            — Minimal fixed header (wordmark + numbered section links)
     ├── Cursor.tsx                — Precision dot + lagged ring + "VIEW CASE STUDY" badge
     ├── ScrollIndicator.tsx       — Vertical progress bar and current section indicator
+    ├── StudioControls.tsx        — Day/Night and Lamp toggle buttons (keys N and L)
+    ├── PrintButton.tsx           — Client print / save as PDF button for /resume
     └── ProjectPreviewMockup.tsx  — Stylized interactive browser UI mock for case studies
 
 hooks/
 ├── useScrollProgress.ts — Reads window.scrollY → smooth progress (0–1)
-├── useScrollCamera.ts   — R3F hook: camera keyframe interpolation & mobile FOV compensation
+├── useScrollCamera.ts   — R3F hook: camera keyframe interpolation, micro-parallax & mobile FOV
 └── useReducedMotion.ts  — prefers-reduced-motion media query
 
 data/

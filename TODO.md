@@ -107,9 +107,20 @@
 - [x] `useReducedMotion` hook snaps camera and disables animations
 
 ### PHASE 14 — Production QA
-- [x] `npm run build` succeeds with zero errors
+- [x] `npm run build` succeeds with zero errors (all 8 static routes pre-rendered)
 - [x] Dev server running smoothly at `http://localhost:3001`
 - [x] Git commits tracking each phase
+
+---
+
+## ✅ ADVANCED POLISH & ENHANCEMENTS
+- [x] **Subtle Camera Micro-Parallax**: Smooth, weighted mouse coordinate tracking with damped lerp (lambda: 3.5), disabled on touch / reduced-motion.
+- [x] **Day / Night Studio Mode**: Global context toggle switching directional sun, ambient fill, window emission, fog, and background between natural daylight and late-night coding studio.
+- [x] **Interactive Desk Lamp**: 3D clickable desk lamp with smooth illumination dimming and hotkey ('L').
+- [x] **Interactive 3D Monitor**: Clickable screen cycling between Code Editor, Turbopack Terminal Logs, and Visual System Architecture.
+- [x] **Architectural Sunlight & Gallery Spots**: Floor sunlight patch with window mullion shadows (Day mode) + 3 circular floor pools beneath project frames.
+- [x] **Curriculum Vitae at `/resume`**: Printable, clean web resume with technical competencies, project metrics, and education.
+- [x] **Keyboard Navigation & Hotkeys**: Keys `1-4` for instant section glide, `N` for Day/Night, `L` for Lamp.
 
 ---
 
