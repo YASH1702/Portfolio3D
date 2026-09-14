@@ -1,69 +1,112 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+
+import { useScrollProgress } from "@/hooks/useScrollProgress";
+import { interpolateCameraKeyframes } from "@/lib/cameraKeyframes";
+import Navigation from "@/components/ui/Navigation";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import Cursor from "@/components/ui/Cursor";
+
+/**
+ * StudioScene is dynamically imported — never server-rendered.
+ * Three.js requires browser APIs (WebGL) unavailable on the server.
+ */
+const StudioScene = dynamic(() => import("@/components/3d/StudioScene"), {
+  ssr: false,
+  loading: () => null,
+});
+
+/**
+ * VIRTUAL SCROLL HEIGHT
+ * The canvas stays fixed; this tall div creates the scroll distance
+ * that drives the camera. 500vh gives a comfortable scroll experience
+ * across all four sections.
+ */
+const SCROLL_HEIGHT = "500vh";
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
+  const { progress } = useScrollProgress();
+
+  // Derive current section from scroll progress
+  const { section } = interpolateCameraKeyframes(progress);
+
+  // Mark as loaded after a short delay (gives Three.js time to initialize)
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      {/* ── LOADING SCREEN ── */}
+      <LoadingScreen isLoading={isLoading} />
+
+      {/* ── CUSTOM CURSOR (desktop only) ── */}
+      <Cursor />
+
+      {/* ── NAVIGATION ── */}
+      <Navigation scrollProgress={progress} currentSection={section} />
+
+      {/* ── FIXED 3D CANVAS ── */}
+      <div className="canvas-fixed" aria-hidden="true">
+        <StudioScene scrollProgress={progress} />
+      </div>
+
+      {/* ── VIRTUAL SCROLL DRIVER ──
+          This div is taller than the viewport to create scroll distance.
+          It is pointer-events: none so the 3D canvas below receives events.
+          Accessibility content is placed here for screen readers. ── */}
+      <div
+        className="scroll-driver"
+        style={{ height: SCROLL_HEIGHT }}
+        role="main"
+      >
+        {/* Accessible content for screen readers / non-JS users */}
+        <div
+          style={{
+            position: "absolute",
+            width: 1,
+            height: 1,
+            overflow: "hidden",
+            clip: "rect(0,0,0,0)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <h1>Yashwant Kariha — Full-Stack Developer</h1>
+          <p>
+            Building digital products, AI systems & modern web experiences.
+            React · Next.js · TypeScript · Node.js · PostgreSQL · AI.
           </p>
+          <section aria-label="Projects">
+            <h2>Projects</h2>
+            <ul>
+              <li>
+                <a href="/projects/jobpilot-ai">
+                  JobPilot AI — Autonomous Job Application & Career Copilot
+                </a>
+              </li>
+              <li>
+                <a href="/projects/businessflow">
+                  BusinessFlow — Business Website + Booking Platform
+                </a>
+              </li>
+              <li>
+                <a href="/projects/ai-automation-platform">
+                  AI Automation Platform — AI-powered business & workflow
+                  automation
+                </a>
+              </li>
+            </ul>
+          </section>
+          <section aria-label="Contact">
+            <h2>Contact</h2>
+            <p>Get in touch to build something together.</p>
+          </section>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 }

@@ -1,26 +1,171 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Color palette — warm neutral interior */
+  --color-wall: #f0ebe0;
+  --color-floor: #c8a87a;
+  --color-text-primary: #1a1a18;
+  --color-text-secondary: #5a5850;
+  --color-text-mono: #8b7355;
+  --color-accent-warm: #c4a882;
+  --color-accent-dark: #2a1f14;
+  --color-bg: #e8e0d4;
+
+  /* Typography */
+  --font-display: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "JetBrains Mono", monospace;
+
+  /* Spacing */
+  --nav-height: 72px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text-primary);
+  --font-sans: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto; /* We manage smooth scroll ourselves */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Hide default cursor on desktop — custom cursor takes over */
+@media (hover: hover) and (pointer: fine) {
+  body,
+  * {
+    cursor: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   ACCESSIBILITY — REDUCED MOTION
+═══════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   FOCUS STYLES
+═══════════════════════════════════════ */
+
+:focus-visible {
+  outline: 2px solid var(--color-text-mono);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════
+   SCROLLBAR — subtle, on-brand
+═══════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-wall);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent-warm);
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════
+   SELECTION
+═══════════════════════════════════════ */
+
+::selection {
+  background: var(--color-accent-warm);
+  color: var(--color-text-primary);
+}
+
+/* ═══════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+═══════════════════════════════════════ */
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.tracking-wider-custom {
+  letter-spacing: 0.18em;
+}
+
+/* ═══════════════════════════════════════
+   CANVAS CONTAINER
+   The canvas is fixed — content below
+   creates the virtual scroll height
+═══════════════════════════════════════ */
+
+.canvas-fixed {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.scroll-driver {
+  /* Tall container to create scroll distance */
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════
+   PROJECT CASE STUDY PAGE STYLES
+═══════════════════════════════════════ */
+
+.prose-studio {
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+  line-height: 1.7;
+}
+
+.prose-studio h1,
+.prose-studio h2,
+.prose-studio h3 {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.prose-studio code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: #f0ebe0;
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  color: var(--color-text-mono);
 }
