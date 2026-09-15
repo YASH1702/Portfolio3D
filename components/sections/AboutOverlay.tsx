@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { useStudio } from "@/context/StudioContext";
 
 const SKILLS = [
   {
@@ -26,8 +27,11 @@ interface AboutOverlayProps {
  * while the camera frames the developer desk on the right.
  *
  * Appears during scroll 28% – 52%.
+ * Dynamically adapts to Day and Night studio lighting.
  */
 export default function AboutOverlay({ visible }: AboutOverlayProps) {
+  const { isNightMode } = useStudio();
+
   return (
     <AnimatePresence>
       {visible && (
@@ -51,11 +55,18 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
           {/* Editorial Card */}
           <div
             style={{
-              background: "rgba(242, 237, 228, 0.94)",
+              background: isNightMode
+                ? "rgba(15, 19, 28, 0.92)"
+                : "rgba(242, 237, 228, 0.94)",
               backdropFilter: "blur(14px)",
-              border: "1px solid rgba(196, 168, 130, 0.38)",
+              border: isNightMode
+                ? "1px solid rgba(224, 184, 116, 0.28)"
+                : "1px solid rgba(196, 168, 130, 0.38)",
               padding: "28px 32px",
-              boxShadow: "0 20px 40px -15px rgba(24, 20, 16, 0.08)",
+              boxShadow: isNightMode
+                ? "0 24px 48px -15px rgba(0, 0, 0, 0.6)"
+                : "0 20px 40px -15px rgba(24, 20, 16, 0.08)",
+              transition: "background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease",
             }}
           >
             {/* Section Tag */}
@@ -64,7 +75,7 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                 fontFamily: "var(--font-geist-mono, monospace)",
                 fontSize: "10px",
                 letterSpacing: "0.22em",
-                color: "#8b7355",
+                color: isNightMode ? "#dfba74" : "#8b7355",
                 textTransform: "uppercase",
                 marginBottom: "14px",
                 display: "flex",
@@ -84,9 +95,10 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                 fontSize: "22px",
                 fontWeight: 700,
                 letterSpacing: "-0.02em",
-                color: "#18180f",
+                color: isNightMode ? "#f8f6f0" : "#18180f",
                 marginBottom: "10px",
                 lineHeight: 1.15,
+                transition: "color 0.3s ease",
               }}
             >
               Engineering Scalable Web &amp; AI Products
@@ -98,8 +110,9 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                 fontFamily: "var(--font-geist-sans, sans-serif)",
                 fontSize: "13px",
                 lineHeight: 1.7,
-                color: "#4a473e",
+                color: isNightMode ? "#d8d2c6" : "#4a473e",
                 marginBottom: "22px",
+                transition: "color 0.3s ease",
               }}
             >
               I&apos;m Yashwant Kariha — a Full-Stack Developer with 1+ years of experience
@@ -114,7 +127,9 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                 flexDirection: "column",
                 gap: "12px",
                 paddingTop: "16px",
-                borderTop: "1px solid rgba(196, 168, 130, 0.3)",
+                borderTop: isNightMode
+                  ? "1px solid rgba(224, 184, 116, 0.2)"
+                  : "1px solid rgba(196, 168, 130, 0.3)",
                 marginBottom: "16px",
               }}
             >
@@ -125,7 +140,7 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                       fontFamily: "var(--font-geist-mono, monospace)",
                       fontSize: "9px",
                       letterSpacing: "0.16em",
-                      color: "#8b7355",
+                      color: isNightMode ? "#dfba74" : "#8b7355",
                       textTransform: "uppercase",
                       marginBottom: "4px",
                     }}
@@ -136,7 +151,7 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                     style={{
                       fontFamily: "var(--font-geist-sans, sans-serif)",
                       fontSize: "11px",
-                      color: "#2a2822",
+                      color: isNightMode ? "#eae4d8" : "#2a2822",
                       lineHeight: 1.6,
                     }}
                   >
@@ -152,7 +167,7 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                 fontFamily: "var(--font-geist-mono, monospace)",
                 fontSize: "9px",
                 letterSpacing: "0.18em",
-                color: "#9c8d78",
+                color: isNightMode ? "#b0a490" : "#9c8d78",
                 textTransform: "uppercase",
               }}
             >

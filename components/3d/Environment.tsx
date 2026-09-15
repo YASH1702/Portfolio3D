@@ -75,8 +75,8 @@ export default function Environment() {
         />
       </group>
 
-      {/* ── STANDING FLOOR LAMP (Visible in left midground) ── */}
-      <group position={[-3.2, 0, 0.4]} name="standing-floor-lamp">
+      {/* ── STANDING FLOOR LAMP (Positioned on right side — completely clear of project wall) ── */}
+      <group position={[3.5, 0, 0.9]} name="standing-floor-lamp">
         {/* Solid dark bronze disc base */}
         <mesh castShadow position={[0, 0.02, 0]}>
           <cylinderGeometry args={[0.18, 0.18, 0.035, 20]} />

@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
+import { useStudio } from "@/context/StudioContext";
 
 /**
  * HeroWall — Front wall architectural identity.
@@ -11,15 +12,11 @@ import * as THREE from "three";
  * Designed to look like physical architectural lettering mounted onto
  * the gallery/studio plaster wall.
  *
- * Typography:
- *  1. YASHWANT KARIHA     — Dominant, bold architectural lettering with subtle drop shadow
- *  2. Brass divider bar   — Minimal architectural metalwork
- *  3. FULL-STACK DEVELOPER — High tracking, refined editorial weight
- *  4. Tagline             — Dual-line positioning statement
- *  5. Tech metadata       — Monospace specification
- *  6. Scroll indicator    — Subtle floating arrow indicator
+ * Typography dynamically adapts to Day and Night studio lighting
+ * to ensure crisp, elegant readability at all times.
  */
 export default function HeroWall() {
+  const { isNightMode } = useStudio();
   const arrowRef = useRef<THREE.Group>(null!);
   const timeRef = useRef(0);
 
@@ -34,6 +31,15 @@ export default function HeroWall() {
 
   const WALL_Z = -5.86;
 
+  // Adaptive palette for flawless contrast across both Day & Night modes
+  const nameBackingColor = isNightMode ? "#161822" : "#c8beaf";
+  const nameColor        = isNightMode ? "#fcfaf4" : "#151410";
+  const dividerColor     = isNightMode ? "#dfba74" : "#b09060";
+  const roleColor        = isNightMode ? "#eae2d5" : "#28261e";
+  const taglineColor     = isNightMode ? "#d8cebe" : "#4d4a42";
+  const techColor        = isNightMode ? "#cca878" : "#826848";
+  const indicatorColor   = isNightMode ? "#b8a892" : "#988a76";
+
   return (
     <group name="hero-wall">
       {/* ── ARCHITECTURAL WALL EMBOSSING / SHADOW LAYER ── */}
@@ -41,7 +47,7 @@ export default function HeroWall() {
       <Text
         position={[0.005, 2.615, WALL_Z - 0.003]}
         fontSize={0.46}
-        color="#c8beaf"
+        color={nameBackingColor}
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.14}
@@ -56,7 +62,7 @@ export default function HeroWall() {
       <Text
         position={[0, 2.62, WALL_Z]}
         fontSize={0.46}
-        color="#151410"
+        color={nameColor}
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.14}
@@ -71,7 +77,7 @@ export default function HeroWall() {
       <mesh position={[0, 2.26, WALL_Z]}>
         <planeGeometry args={[3.4, 0.008]} />
         <meshStandardMaterial
-          color="#b09060"
+          color={dividerColor}
           roughness={0.4}
           metalness={0.65}
         />
@@ -81,7 +87,7 @@ export default function HeroWall() {
       <Text
         position={[0, 2.02, WALL_Z]}
         fontSize={0.135}
-        color="#28261e"
+        color={roleColor}
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.24}
@@ -96,7 +102,7 @@ export default function HeroWall() {
       <Text
         position={[0, 1.66, WALL_Z]}
         fontSize={0.092}
-        color="#4d4a42"
+        color={taglineColor}
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.07}
@@ -111,7 +117,7 @@ export default function HeroWall() {
       <Text
         position={[0, 1.30, WALL_Z]}
         fontSize={0.062}
-        color="#826848"
+        color={techColor}
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.18}
@@ -126,7 +132,7 @@ export default function HeroWall() {
         <Text
           position={[0, 0.92, WALL_Z]}
           fontSize={0.046}
-          color="#988a76"
+          color={indicatorColor}
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.24}

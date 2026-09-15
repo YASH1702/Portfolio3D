@@ -166,6 +166,15 @@ export default function Lighting() {
         distance={6}
         decay={2}
       />
+
+      {/* Hero wall architectural accent light (enhances text legibility in Night Mode) */}
+      <pointLight
+        position={[0, 3.2, -3.8]}
+        intensity={isNightMode ? 0.65 : 0.15}
+        color={isNightMode ? "#fff4e2" : "#f8efe0"}
+        distance={6.5}
+        decay={2}
+      />
     </>
   );
 }

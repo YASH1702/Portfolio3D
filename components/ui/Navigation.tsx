@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useStudio } from "@/context/StudioContext";
 
 interface NavigationProps {
   scrollProgress: number;
@@ -23,6 +24,7 @@ function scrollToProgress(progress: number) {
 }
 
 export default function Navigation({ scrollProgress, currentSection }: NavigationProps) {
+  const { isNightMode } = useStudio();
   // Fade navigation in after initial load
   const isAtTop = scrollProgress < 0.03;
 
@@ -45,7 +47,9 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
         pointerEvents: "none",
         // Very subtle backdrop on scroll
         background: scrollProgress > 0.05
-          ? "linear-gradient(to bottom, rgba(232,224,212,0.7) 0%, transparent 100%)"
+          ? isNightMode
+            ? "linear-gradient(to bottom, rgba(14,18,26,0.88) 0%, transparent 100%)"
+            : "linear-gradient(to bottom, rgba(232,224,212,0.75) 0%, transparent 100%)"
           : "transparent",
         transition: "background 0.4s ease",
       }}
@@ -59,13 +63,14 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
           fontSize: "12px",
           fontWeight: 700,
           letterSpacing: "0.2em",
-          color: "#18180f",
+          color: isNightMode ? "#f8f5ee" : "#18180f",
           textTransform: "uppercase",
           background: "none",
           border: "none",
           padding: 0,
           pointerEvents: "all",
-          opacity: 0.85,
+          opacity: 0.9,
+          transition: "color 0.3s ease",
         }}
       >
         Yashwant
@@ -94,7 +99,9 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
                   fontFamily: "var(--font-geist-mono, monospace)",
                   fontSize: "10px",
                   letterSpacing: "0.18em",
-                  color: isActive ? "#18180f" : "#8b7355",
+                  color: isActive
+                    ? (isNightMode ? "#ffffff" : "#18180f")
+                    : (isNightMode ? "#c4a882" : "#8b7355"),
                   textTransform: "uppercase",
                   background: "none",
                   border: "none",
@@ -104,9 +111,10 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
                   gap: "7px",
                   position: "relative",
                   transition: "color 0.3s ease",
+                  cursor: "pointer",
                 }}
               >
-                <span style={{ fontSize: "8px", opacity: 0.55 }}>0{i + 1}</span>
+                <span style={{ fontSize: "8px", opacity: isNightMode ? 0.75 : 0.55 }}>0{i + 1}</span>
                 {item.label}
                 {/* Active underline */}
                 {isActive && (
@@ -118,7 +126,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
                       left: 0,
                       right: 0,
                       height: "1px",
-                      background: "#8b7355",
+                      background: isNightMode ? "#dfba74" : "#8b7355",
                     }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />

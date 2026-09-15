@@ -197,7 +197,7 @@ function ProjectFrame({ project, position }: FrameProps) {
         <Text
           position={[-(innerW / 2 - 0.03), -0.032, 0.002]}
           fontSize={0.036}
-          color="#8c8272"
+          color="#b8ae9e"
           anchorX="left"
           anchorY="middle"
           letterSpacing={0.12}
@@ -210,7 +210,7 @@ function ProjectFrame({ project, position }: FrameProps) {
         <Text
           position={[-(innerW / 2 - 0.03), -0.075, 0.002]}
           fontSize={0.028}
-          color="#645d52"
+          color="#9c9284"
           anchorX="left"
           anchorY="middle"
           letterSpacing={0.14}

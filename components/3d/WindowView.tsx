@@ -68,8 +68,9 @@ export default function WindowView() {
         <planeGeometry args={[4.8, 2.8]} />
         <meshBasicMaterial
           map={texture ?? undefined}
-          color={texture ? "#ffffff" : isNightMode ? "#0d1322" : "#8ca0b0"}
+          color={texture ? "#ffffff" : isNightMode ? "#0d1322" : "#3d546b"}
           side={THREE.DoubleSide}
+          fog={false}
         />
       </mesh>
 
@@ -90,6 +91,7 @@ export default function WindowView() {
               transparent
               opacity={isNightMode ? 0.45 : 0.32}
               side={THREE.DoubleSide}
+              fog={false}
             />
           </mesh>
         ))}
