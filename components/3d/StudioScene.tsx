@@ -15,6 +15,7 @@ import HeroWall from "./HeroWall";
 import ProjectWall from "./ProjectWall";
 import ScrollCamera from "./ScrollCamera";
 import Environment from "./Environment";
+import WindowView from "./WindowView";
 
 interface StudioSceneProps {
   scrollProgress: number;
@@ -105,6 +106,7 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
       <Suspense fallback={null}>
         <Environment />
         <Room />
+        <WindowView />
         <Desk />
         <Couch />
         <HeroWall />

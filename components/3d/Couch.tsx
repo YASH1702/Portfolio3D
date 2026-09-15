@@ -1,18 +1,23 @@
 "use client";
 
+import SleepingCat from "./SleepingCat";
+
 /**
- * Couch — a simple modern sofa.
+ * Couch — a modern living room sofa with a sleeping cat.
  *
  * Geometry:
  * - Seat cushion base
+ * - Two seat cushions
  * - Back cushion
- * - Two arm rests
- * - Legs (4 dark wood)
+ * - Arm rests
+ * - 4 wooden legs
+ * - Throw pillow
+ * - Curled sleeping cat on the cushion
  *
  * Position: center-left of room, facing slightly inward
  */
 
-const FABRIC = "#8b8070";   // warm grey fabric
+const FABRIC = "#8b8070";   // warm grey/taupe fabric
 const FABRIC_DARK = "#6b6058";
 const LEG_COLOR = "#2a1f14";
 
@@ -25,7 +30,7 @@ export default function Couch() {
         <meshStandardMaterial color={FABRIC} roughness={0.95} metalness={0} />
       </mesh>
 
-      {/* ── SEAT CUSHIONS (2 visual dividers) ── */}
+      {/* ── SEAT CUSHIONS ── */}
       <mesh castShadow position={[-0.44, 0.5, 0]}>
         <boxGeometry args={[0.82, 0.08, 0.74]} />
         <meshStandardMaterial color={FABRIC_DARK} roughness={0.98} metalness={0} />
@@ -34,6 +39,9 @@ export default function Couch() {
         <boxGeometry args={[0.82, 0.08, 0.74]} />
         <meshStandardMaterial color={FABRIC_DARK} roughness={0.98} metalness={0} />
       </mesh>
+
+      {/* ── SLEEPING CAT ON LEFT CUSHION ── */}
+      <SleepingCat position={[-0.38, 0.54, 0.04]} rotation={[0, 0.35, 0]} />
 
       {/* ── BACK CUSHION ── */}
       <mesh castShadow receiveShadow position={[0, 0.72, -0.3]}>
@@ -66,7 +74,7 @@ export default function Couch() {
         </mesh>
       ))}
 
-      {/* ── THROW PILLOW (decorative) ── */}
+      {/* ── THROW PILLOW ── */}
       <mesh castShadow position={[0.55, 0.62, -0.1]} rotation={[0, 0.2, 0.1]}>
         <boxGeometry args={[0.26, 0.22, 0.1]} />
         <meshStandardMaterial color="#c4a882" roughness={0.95} metalness={0} />

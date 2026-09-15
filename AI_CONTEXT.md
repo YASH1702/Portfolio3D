@@ -34,11 +34,13 @@ components/
 ├── 3d/
 │   ├── StudioScene.tsx — Root R3F <Canvas> (dynamic import, ssr: false, PCF shadows)
 │   ├── Room.tsx        — Room geometry: walls, floor, ceiling, window panels, floor sunlight
+│   ├── WindowView.tsx  — Rainy exterior scenery backdrop and animated falling rain streaks
 │   ├── Desk.tsx        — Developer workstation: desk, accessories, interactive lamp, notebook
 │   ├── Monitor.tsx     — Interactive monitor screen (Code, Terminal, Architecture modes)
-│   ├── Couch.tsx       — Modern fabric couch with pillows & wooden legs
+│   ├── Couch.tsx       — Modern fabric couch with pillows & sleeping cat
+│   ├── SleepingCat.tsx — Curled sleeping cat on couch with rhythmic breathing animation
 │   ├── Lighting.tsx    — Studio lighting: hemisphere + sun + desk lamp + fill lights
-│   ├── Environment.tsx — Area rug, side table, floor plant, bookshelf, ceiling fixture
+│   ├── Environment.tsx — Woven rug, floor lamp, beanbag, tree, wall slats, bookshelf
 │   ├── HeroWall.tsx    — Front wall architectural typography (drei Text)
 │   ├── ProjectWall.tsx — Left wall: 3 interactive ProjectFrame components + floor spotlights
 │   └── ScrollCamera.tsx — Mounts useScrollCamera hook inside Canvas
@@ -65,7 +67,8 @@ data/
 lib/
 ├── cameraKeyframes.ts   — Calibrated camera positions and targets
 ├── easings.ts           — Smoothstep, dampedLerp, lerp, mapRange
-└── projectTextures.ts   — Procedural 1024x720 canvas textures for framed project artwork
+├── projectTextures.ts   — Procedural 1024x720 canvas textures for framed project artwork
+└── rainTexture.ts       — Procedural rainy/misty outdoor window scenery generator
 ```
 
 ---

@@ -121,6 +121,13 @@
 - [x] **Architectural Sunlight & Gallery Spots**: Floor sunlight patch with window mullion shadows (Day mode) + 3 circular floor pools beneath project frames.
 - [x] **Curriculum Vitae at `/resume`**: Printable, clean web resume with technical competencies, project metrics, and education.
 - [x] **Keyboard Navigation & Hotkeys**: Keys `1-4` for instant section glide, `N` for Day/Night, `L` for Lamp.
+- [x] **Sleeping Cat on Sofa**: Curled-up sleeping cat on the couch cushion with procedural fur, ears, curled tail, and slow rhythmic breathing animation (~4.2s cycle).
+- [x] **Rainy Window Scenery**: Outside window backdrop with misty overcast sky, rain-washed trees/city, and animated falling raindrops outside the glass (`WindowView.tsx`).
+- [x] **Cozy Corner Beanbag & Backlight**: Slumped oatmeal boucle beanie chair in the corner with a warm ambient LED back-glow onto the wall.
+- [x] **Standing Corner Floor Lamp**: Slender modern floor lamp with brass detailing, linen cylindrical shade, and warm ambient light.
+- [x] **Lush Indoor Greenery & Trees**: Sculptural indoor olive tree in a fluted ceramic pot, trailing pothos vines cascading over the bookshelf, and a side-table succulent.
+- [x] **Wall Design & Acoustic Wood Slats**: Vertical acoustic oak slat paneling in the corner and minimal geometric framed wall art.
+- [x] **Layered Woven Rug**: Textured Scandinavian woven rug with subtle geometric striping and soft fringed ends.
 
 ---
 
