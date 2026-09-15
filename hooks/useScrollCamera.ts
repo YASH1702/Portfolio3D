@@ -59,8 +59,8 @@ export function useScrollCamera({
     const aspect = size.width / Math.max(1, size.height);
     const responsiveFov =
       aspect < 1.0
-        ? Math.min(72, Math.max(58, 58 / (aspect * 1.05)))
-        : 58;
+        ? Math.min(72, Math.max(60, 60 / (aspect * 1.05)))
+        : 60;
 
     if (Math.abs(camera.fov - responsiveFov) > 0.5) {
       camera.fov = responsiveFov;

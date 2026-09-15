@@ -21,7 +21,12 @@ const RAIN_COUNT = 85;
 
 export default function WindowView() {
   const { isNightMode } = useStudio();
-  const [texture, setTexture] = useState<THREE.CanvasTexture | null>(null);
+  const [texture, setTexture] = useState<THREE.CanvasTexture | null>(() => {
+    if (typeof window !== "undefined") {
+      return getWindowSceneryTexture(false);
+    }
+    return null;
+  });
 
   // Generate scenic texture based on day/night mode
   useEffect(() => {
@@ -32,8 +37,8 @@ export default function WindowView() {
   // Generate deterministic rain streak positions
   const rainDrops = useMemo(() => {
     return Array.from({ length: RAIN_COUNT }, () => ({
-      x: (Math.random() - 0.5) * 3.6,
-      y: (Math.random() - 0.5) * 2.6,
+      x: (Math.random() - 0.5) * 4.0,
+      y: (Math.random() - 0.5) * 2.8,
       z: (Math.random() - 0.5) * 0.3,
       speed: 3.6 + Math.random() * 2.2,
       length: 0.18 + Math.random() * 0.14,
@@ -60,15 +65,15 @@ export default function WindowView() {
   return (
     <group
       name="window-view"
-      position={[6.05, 2.0, -1.0]}
+      position={[6.05, 2.0, -1.4]}
       rotation={[0, -Math.PI / 2, 0]}
     >
       {/* ── OUTDOOR SCENIC BACKDROP ── */}
       <mesh position={[0, 0, -0.38]}>
-        <planeGeometry args={[4.8, 2.8]} />
+        <planeGeometry args={[5.2, 3.0]} />
         <meshBasicMaterial
           map={texture ?? undefined}
-          color={texture ? "#ffffff" : isNightMode ? "#0d1322" : "#3d546b"}
+          color="#ffffff"
           side={THREE.DoubleSide}
           fog={false}
         />

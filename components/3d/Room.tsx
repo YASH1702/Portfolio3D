@@ -123,52 +123,66 @@ export default function Room() {
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
       {/* Front wall panel (negative Z) */}
-      <mesh receiveShadow position={[W / 2, 2.0, -4.3]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[3.4, 2.2]} />
+      <mesh receiveShadow position={[W / 2, 2.0, -4.5]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[3.0, 2.2]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
       {/* Back wall panel (positive Z) */}
-      <mesh receiveShadow position={[W / 2, 2.0, 3.3]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[5.4, 2.2]} />
+      <mesh receiveShadow position={[W / 2, 2.0, 3.1]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[5.8, 2.2]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
 
-      {/* ── 4-PANE ARCHITECTURAL WINDOW ── */}
-      <group position={[W / 2 - 0.02, 2.0, -1.0]}>
-        {/* Frame Outer */}
-        <mesh>
-          <boxGeometry args={[0.06, 2.2, 3.2]} />
-          <meshStandardMaterial color="#d8d0c4" roughness={0.5} metalness={0.1} />
+      {/* ── 4-PANE ARCHITECTURAL WINDOW (Hollow perimeter frame — completely open to outside view) ── */}
+      <group position={[W / 2 - 0.02, 2.0, -1.4]}>
+        {/* Top frame border */}
+        <mesh position={[0, 1.075, 0]}>
+          <boxGeometry args={[0.07, 0.05, 3.2]} />
+          <meshStandardMaterial color="#d4ccbe" roughness={0.5} metalness={0.1} />
         </mesh>
+        {/* Bottom windowsill border */}
+        <mesh position={[0, -1.075, 0]}>
+          <boxGeometry args={[0.12, 0.05, 3.26]} />
+          <meshStandardMaterial color="#c8bfae" roughness={0.45} metalness={0.1} />
+        </mesh>
+        {/* Left vertical border (negative Z) */}
+        <mesh position={[0, 0, -1.575]}>
+          <boxGeometry args={[0.07, 2.2, 0.05]} />
+          <meshStandardMaterial color="#d4ccbe" roughness={0.5} metalness={0.1} />
+        </mesh>
+        {/* Right vertical border (positive Z) */}
+        <mesh position={[0, 0, 1.575]}>
+          <boxGeometry args={[0.07, 2.2, 0.05]} />
+          <meshStandardMaterial color="#d4ccbe" roughness={0.5} metalness={0.1} />
+        </mesh>
+
         {/* Horizontal mullion bar */}
         <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[0.07, 0.05, 3.2]} />
-          <meshStandardMaterial color="#d0c8bc" roughness={0.5} metalness={0.1} />
+          <boxGeometry args={[0.06, 0.04, 3.2]} />
+          <meshStandardMaterial color="#c0b8aa" roughness={0.5} metalness={0.1} />
         </mesh>
         {/* Vertical mullion bar */}
         <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[0.07, 2.2, 0.05]} />
-          <meshStandardMaterial color="#d0c8bc" roughness={0.5} metalness={0.1} />
+          <boxGeometry args={[0.06, 2.2, 0.04]} />
+          <meshStandardMaterial color="#c0b8aa" roughness={0.5} metalness={0.1} />
         </mesh>
 
-        {/* 4 Clear Glass Panes (Transparent to reveal outside rain & scenery) */}
+        {/* 4 Ultra-Clear Architectural Glass Panes (Transparent to reveal vibrant outside rain landscape) */}
         {[
           { y: 0.53, z: -0.79 },
           { y: 0.53, z: 0.79 },
           { y: -0.53, z: -0.79 },
           { y: -0.53, z: 0.79 },
         ].map((pane, i) => (
-          <mesh key={i} position={[-0.03, pane.y, pane.z]} rotation={[0, -Math.PI / 2, 0]}>
-            <planeGeometry args={[1.54, 1.04]} />
+          <mesh key={i} position={[-0.01, pane.y, pane.z]} rotation={[0, -Math.PI / 2, 0]}>
+            <planeGeometry args={[1.52, 1.02]} />
             <meshStandardMaterial
               ref={i === 0 ? glassMatRef : undefined}
-              color="#e2f0fc"
-              emissive="#7aaad8"
-              emissiveIntensity={0.08}
-              roughness={0.04}
-              metalness={0.1}
+              color="#eaf4fc"
+              roughness={0.02}
+              metalness={0.08}
               transparent
-              opacity={0.12}
+              opacity={0.05}
               side={THREE.DoubleSide}
             />
           </mesh>

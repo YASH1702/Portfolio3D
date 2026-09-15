@@ -71,7 +71,7 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
       dpr={[1, 1.5]}
       camera={{
         position: [0.0, 1.65, 5.2],
-        fov: 58,
+        fov: 60,
         near: 0.1,
         far: 50,
       }}
