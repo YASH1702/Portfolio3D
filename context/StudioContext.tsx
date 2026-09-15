@@ -66,8 +66,8 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
       } else if (e.key === "4") {
         e.preventDefault();
         scrollToFraction(0.95);
-      } else if (e.key.toLowerCase() === "m" || e.key.toLowerCase() === "n") {
-        // Toggle Day / Night mode with 'N' or 'M'
+      } else if (e.key.toLowerCase() === "n") {
+        // Toggle Day / Night mode with 'N'
         e.preventDefault();
         toggleNightMode();
       } else if (e.key.toLowerCase() === "l") {
