@@ -121,7 +121,7 @@ export default function ResumePage() {
             </a>
             <span>·</span>
             <a
-              href="https://linkedin.com/in/yashwant-kariha"
+              href="https://linkedin.com/in/yashwant-kariha-740630207/"
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#18180f", textDecoration: "none" }}
@@ -130,7 +130,7 @@ export default function ResumePage() {
             </a>
             <span>·</span>
             <a
-              href="https://github.com/yashwantkariha"
+              href="https://github.com/YASH1702"
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#18180f", textDecoration: "none" }}

@@ -126,14 +126,14 @@ export default function ContactSection({ visible }: ContactSectionProps) {
                 isNightMode={isNightMode}
               />
               <ContactLink
-                href="https://github.com/yashwantkariha"
+                href="https://github.com/YASH1702"
                 label="GitHub"
                 mono="View Repos"
                 external
                 isNightMode={isNightMode}
               />
               <ContactLink
-                href="https://linkedin.com/in/yashwant-kariha"
+                href="https://linkedin.com/in/yashwant-kariha-740630207/"
                 label="LinkedIn"
                 mono="Connect"
                 external
