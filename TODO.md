@@ -128,23 +128,31 @@
 - [x] **Lush Indoor Greenery & Trees**: Sculptural indoor olive tree in a fluted ceramic pot, trailing pothos vines cascading over the bookshelf, and a side-table succulent.
 - [x] **Wall Design & Acoustic Wood Slats**: Vertical acoustic oak slat paneling in the corner and minimal geometric framed wall art.
 - [x] **Layered Woven Rug**: Textured Scandinavian woven rug with subtle geometric striping and soft fringed ends.
+- [x] **Scroll-Triggered Frame Reveal Animation**: Smooth staggered entry (`X = -6.65` to `-5.92`) as camera reaches gallery section (`ProjectWall.tsx`).
+- [x] **Active Project Frame Spotlight**: Active frame shines at full 1.0 brightness while others subtly dim to 0.65; dynamic spotlight point light brightening.
+- [x] **Desk Coffee Cup Steam Particles**: Procedural wispy steam rising directly from the mug using `instancedMesh` with organic sine-wave wobble and opacity dissipation (`SteamParticles.tsx`).
+- [x] **Monitor Real-Time IST Clock & Code Editor Cursor**: Live updating Indian Standard Time clock (`HH:MM IST`) and blinking code cursor on workstation display (`Monitor.tsx`).
+- [x] **Editorial Experience Timeline**: Compact 3-step career timeline (2023 → 2024 → 2025) integrated into the editorial About overlay card (`AboutOverlay.tsx`).
+- [x] **Drei `useProgress` Driven Loading Screen**: Real asset loading progress percentage bar with graceful fallbacks (`LoadingScreen.tsx`).
+- [x] **Procedural Web Audio Ambient Rain Sound**: Web Audio API filtered noise simulation with dual day/night intensity levels and opt-in button + keyboard shortcut ('A') (`studioAudio.ts` & `AudioToggle.tsx`).
+- [x] **Branded OpenGraph Image (`/opengraph-image`)**: Dynamic Node.js ImageResponse social preview card for LinkedIn/Twitter previews (`opengraph-image.tsx`).
+- [x] **Comprehensive SEO Metadata**: Full OpenGraph tags, Twitter summary card, robots directives, and canonical URLs (`app/layout.tsx`).
 
 ---
 
 ## ⚠️ KNOWN ISSUES
 
-- None. All 14 phases built, verified, and passing cleanly.
+- None. All 14 phases + comprehensive enhancements built, verified, and passing cleanly with 0 errors.
 
 ---
 
 ## 📦 ASSETS REQUIRED
 
-- All textures and visuals are currently procedurally generated with high visual fidelity.
-- Optional: User can replace `/textures/` or `/public/models/` with custom photography or 3D models if desired in the future.
+- All textures and visuals are procedurally generated with high visual fidelity.
+- Optional: Real project GitHub/demo URLs (Feature #1) can be added whenever repositories are public.
 
 ---
 
 ## 🚀 FUTURE IMPROVEMENTS
 
-- Optional ambient audio (subtle room tone with explicit opt-in button)
-- Optional light/dark ambient lighting toggle (daylight vs late-night studio mode)
+- Optional custom 3D model replacements (.glb) if desired in the future.
