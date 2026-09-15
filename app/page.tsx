@@ -1,6 +1,4 @@
 "use client";
-
-import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 import { useScrollProgress } from "@/hooks/useScrollProgress";
@@ -11,6 +9,7 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import Cursor from "@/components/ui/Cursor";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import StudioControls from "@/components/ui/StudioControls";
+import AudioToggle from "@/components/ui/AudioToggle";
 import AboutOverlay from "@/components/sections/AboutOverlay";
 import ContactSection from "@/components/sections/ContactSection";
 
@@ -29,7 +28,6 @@ const StudioScene = dynamic(() => import("@/components/3d/StudioScene"), {
 const SCROLL_HEIGHT = "500vh";
 
 function PortfolioExperience() {
-  const [isLoading, setIsLoading] = useState(true);
   const { progress } = useScrollProgress();
 
   const { section } = interpolateCameraKeyframes(progress);
@@ -38,15 +36,10 @@ function PortfolioExperience() {
   const showAbout   = progress >= 0.28 && progress <= 0.52;
   const showContact = progress >= 0.88;
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 900);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <>
-      {/* ── LOADING SCREEN ── */}
-      <LoadingScreen isLoading={isLoading} />
+      {/* ── LOADING SCREEN (self-driving via useProgress) ── */}
+      <LoadingScreen />
 
       {/* ── CURSOR (desktop only) ── */}
       <Cursor />
@@ -57,15 +50,14 @@ function PortfolioExperience() {
       {/* ── SCROLL PROGRESS + SECTION LABEL ── */}
       <ScrollIndicator progress={progress} section={section} />
 
-      {/* ── STUDIO CONTROLS (Day/Night mode & Lamp toggle) ── */}
+      {/* ── STUDIO CONTROLS (Day/Night + Lamp) — bottom right ── */}
       <StudioControls />
 
+      {/* ── AMBIENT AUDIO TOGGLE — bottom left ── */}
+      <AudioToggle />
+
       {/* ── FIXED 3D CANVAS ── */}
-      <div
-        className="canvas-fixed"
-        aria-hidden="true"
-        role="presentation"
-      >
+      <div className="canvas-fixed" aria-hidden="true" role="presentation">
         <StudioScene scrollProgress={progress} />
       </div>
 

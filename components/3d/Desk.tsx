@@ -1,6 +1,7 @@
 "use client";
 
 import Monitor from "./Monitor";
+import SteamParticles from "./SteamParticles";
 import { useStudio } from "@/context/StudioContext";
 
 /**
@@ -167,6 +168,8 @@ export default function Desk() {
           <circleGeometry args={[0.026, 12]} />
           <meshStandardMaterial color="#3a2010" roughness={0.95} metalness={0} />
         </mesh>
+        {/* Steam rising from the coffee */}
+        <SteamParticles />
       </group>
 
       {/* ── SMALL DESK PLANT ── */}

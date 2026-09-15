@@ -1,37 +1,56 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useProgress } from "@react-three/drei";
 
 /**
  * LoadingScreen — premium loading experience.
  *
- * Shows while the 3D scene is initializing.
- * Fades out smoothly once ready.
- *
- * Design: minimal, typographic, no heavy animation.
+ * Driven by @react-three/drei's useProgress hook, which accurately reflects
+ * how many 3D assets (fonts, textures loaded via drei) have finished loading.
+ * Falls back to hiding automatically after 2.5s in case assets are instant.
  */
+export default function LoadingScreen() {
+  const { progress, active } = useProgress();
+  const [visible,  setVisible]  = useState(true);
+  const [fadeOut,  setFadeOut]  = useState(false);
+  const [displayProgress, setDisplayProgress] = useState(0);
 
-interface LoadingScreenProps {
-  isLoading: boolean;
-}
-
-export default function LoadingScreen({ isLoading }: LoadingScreenProps) {
-  const [visible, setVisible] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
-
+  // Smoothly animate the displayed progress value
   useEffect(() => {
-    if (!isLoading) {
-      // Delay fade-out slightly for the scene to settle
+    const target = active ? Math.max(progress, displayProgress) : 100;
+    const diff = target - displayProgress;
+    if (Math.abs(diff) < 0.5) {
+      setDisplayProgress(target);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setDisplayProgress((p) => p + diff * 0.2);
+    }, 16);
+    return () => clearTimeout(timer);
+  }, [progress, active, displayProgress]);
+
+  // Hide once fully loaded (or after 2.5s fallback)
+  useEffect(() => {
+    if (!active && progress >= 99) {
       const fadeTimer = setTimeout(() => setFadeOut(true), 300);
       const hideTimer = setTimeout(() => setVisible(false), 900);
-      return () => {
-        clearTimeout(fadeTimer);
-        clearTimeout(hideTimer);
-      };
+      return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer); };
     }
-  }, [isLoading]);
+  }, [active, progress]);
+
+  // Safety fallback: hide after 2.5s regardless
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFadeOut(true);
+      setTimeout(() => setVisible(false), 600);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!visible) return null;
+
+  const pct = Math.min(100, Math.round(displayProgress));
 
   return (
     <div
@@ -80,7 +99,7 @@ export default function LoadingScreen({ isLoading }: LoadingScreenProps) {
         Entering Studio
       </div>
 
-      {/* Progress bar */}
+      {/* Accurate progress bar */}
       <div
         style={{
           width: "120px",
@@ -94,22 +113,27 @@ export default function LoadingScreen({ isLoading }: LoadingScreenProps) {
           style={{
             position: "absolute",
             top: 0,
-            left: "-100%",
-            width: "100%",
+            left: 0,
+            width: `${pct}%`,
             height: "100%",
             background: "#8b7355",
-            animation: "loadingBar 1.2s ease forwards",
+            transition: "width 0.15s ease",
           }}
         />
       </div>
 
-      <style>{`
-        @keyframes loadingBar {
-          0%   { left: -100%; }
-          60%  { left: 0%; }
-          100% { left: 100%; }
-        }
-      `}</style>
+      {/* Percentage */}
+      <div
+        style={{
+          fontFamily: "var(--font-geist-mono, monospace)",
+          fontSize: "10px",
+          letterSpacing: "0.15em",
+          color: "#b0a080",
+          marginTop: "10px",
+        }}
+      >
+        {pct}%
+      </div>
     </div>
   );
 }

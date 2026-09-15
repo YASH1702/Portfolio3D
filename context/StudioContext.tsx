@@ -1,6 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import {
+  initRainAudio,
+  muteRainAudio,
+  unmuteRainAudio,
+  setRainIntensity,
+  stopRainAudio,
+  isAudioInitialized,
+} from "@/lib/studioAudio";
 
 export type MonitorDisplayMode = "code" | "terminal" | "architecture";
 
@@ -9,6 +17,8 @@ interface StudioContextType {
   toggleNightMode: () => void;
   isLampOn: boolean;
   toggleLamp: () => void;
+  isAudioOn: boolean;
+  toggleAudio: () => void;
   monitorMode: MonitorDisplayMode;
   cycleMonitorMode: () => void;
   setMonitorMode: (mode: MonitorDisplayMode) => void;
@@ -19,6 +29,7 @@ const StudioContext = createContext<StudioContextType | null>(null);
 export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [isNightMode, setIsNightMode] = useState(false);
   const [isLampOn, setIsLampOn] = useState(true);
+  const [isAudioOn, setIsAudioOn] = useState(false);
   const [monitorMode, setMonitorMode] = useState<MonitorDisplayMode>("code");
 
   const toggleNightMode = useCallback(() => {
@@ -29,6 +40,36 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     setIsLampOn((prev) => !prev);
   }, []);
 
+  const toggleAudio = useCallback(() => {
+    setIsAudioOn((prev) => {
+      const next = !prev;
+      if (next) {
+        if (!isAudioInitialized()) {
+          initRainAudio();
+        } else {
+          unmuteRainAudio(isNightMode ? "night" : "day");
+        }
+        setRainIntensity(isNightMode ? "night" : "day");
+      } else {
+        muteRainAudio();
+      }
+      return next;
+    });
+  }, [isNightMode]);
+
+  // Synchronise rain intensity when day/night switches
+  useEffect(() => {
+    if (isAudioOn && isAudioInitialized()) {
+      setRainIntensity(isNightMode ? "night" : "day");
+    }
+  }, [isNightMode, isAudioOn]);
+
+  useEffect(() => {
+    return () => {
+      stopRainAudio();
+    };
+  }, []);
+
   const cycleMonitorMode = useCallback(() => {
     setMonitorMode((prev) => {
       if (prev === "code") return "terminal";
@@ -37,7 +78,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // Keyboard navigation listener (keys 1-4 and Arrow navigation)
+  // Keyboard navigation listener (keys 1-4, N, L, A)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore if user is typing in an input or textarea
@@ -74,12 +115,16 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         // Toggle Desk Lamp with 'L'
         e.preventDefault();
         toggleLamp();
+      } else if (e.key.toLowerCase() === "a") {
+        // Toggle Ambient Rain Audio with 'A'
+        e.preventDefault();
+        toggleAudio();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggleNightMode, toggleLamp]);
+  }, [toggleNightMode, toggleLamp, toggleAudio]);
 
   return (
     <StudioContext.Provider
@@ -88,6 +133,8 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         toggleNightMode,
         isLampOn,
         toggleLamp,
+        isAudioOn,
+        toggleAudio,
         monitorMode,
         cycleMonitorMode,
         setMonitorMode,

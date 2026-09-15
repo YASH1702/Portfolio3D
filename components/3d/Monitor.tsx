@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
@@ -58,6 +58,31 @@ export default function Monitor({
 }: MonitorProps) {
   const { monitorMode, cycleMonitorMode, isNightMode } = useStudio();
   const [hovered, setHovered] = useState(false);
+
+  // Real-time IST clock — updates every second
+  const [clockTime, setClockTime] = useState(() =>
+    new Date().toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+  );
+
+  useEffect(() => {
+    const tick = () => {
+      setClockTime(
+        new Date().toLocaleTimeString("en-IN", {
+          timeZone: "Asia/Kolkata",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })
+      );
+    };
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   const cursorRef = useRef<THREE.Mesh>(null!);
   const cursorBlinkRef = useRef(0);
@@ -127,7 +152,7 @@ export default function Monitor({
         />
       </mesh>
 
-      {/* ── SCREEN BEZEL MODE BADGE (top right of screen) ── */}
+      {/* ── SCREEN BEZEL MODE BADGE (top right) ── */}
       <Text
         position={[0.22, 0.33, 0.018]}
         fontSize={0.016}
@@ -136,7 +161,19 @@ export default function Monitor({
         anchorY="top"
         letterSpacing={0.12}
       >
-        {`[MODE: ${monitorMode.toUpperCase()}]`}
+        {`[${monitorMode.toUpperCase()}]`}
+      </Text>
+
+      {/* ── REAL-TIME IST CLOCK (top left of screen) ── */}
+      <Text
+        position={[-0.27, 0.33, 0.018]}
+        fontSize={0.016}
+        color="#4a6080"
+        anchorX="left"
+        anchorY="top"
+        letterSpacing={0.08}
+      >
+        {`${clockTime} IST`}
       </Text>
 
       {/* ── MODE 1: CODE EDITOR ── */}

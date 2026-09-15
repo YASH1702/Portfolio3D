@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://yashwantkariha.dev"),
   title: "Yashwant Kariha — Full-Stack Developer",
   description:
     "Full-Stack Developer building digital products, AI systems & modern web experiences. React · Next.js · TypeScript · Node.js · PostgreSQL · AI.",
@@ -31,12 +32,30 @@ export const metadata: Metadata = {
     "Portfolio",
     "Yashwant Kariha",
   ],
-  authors: [{ name: "Yashwant Kariha" }],
+  authors: [{ name: "Yashwant Kariha", url: "https://github.com/YASH1702" }],
+  robots: { index: true, follow: true },
   openGraph: {
     title: "Yashwant Kariha — Full-Stack Developer",
     description:
       "Building digital products, AI systems & modern web experiences.",
     type: "website",
+    url: "https://yashwantkariha.dev",
+    siteName: "Yashwant Kariha Portfolio",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Yashwant Kariha — Full-Stack Developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Yashwant Kariha — Full-Stack Developer",
+    description:
+      "Building digital products, AI systems & modern web experiences.",
+    images: ["/opengraph-image"],
   },
 };
 

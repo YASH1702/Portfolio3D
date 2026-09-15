@@ -114,7 +114,7 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         <Desk />
         <Couch />
         <HeroWall />
-        <ProjectWall />
+        <ProjectWall scrollProgress={scrollProgress} />
       </Suspense>
 
       {/* Scroll-driven camera with micro-parallax */}

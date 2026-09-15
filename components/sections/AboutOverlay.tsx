@@ -120,6 +120,74 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
               and autonomous AI agent workflows.
             </p>
 
+            {/* Experience Timeline */}
+            <div
+              style={{
+                marginBottom: "20px",
+                paddingBottom: "20px",
+                borderBottom: isNightMode
+                  ? "1px solid rgba(224, 184, 116, 0.2)"
+                  : "1px solid rgba(196, 168, 130, 0.3)",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--font-geist-mono, monospace)",
+                  fontSize: "9px",
+                  letterSpacing: "0.16em",
+                  color: isNightMode ? "#dfba74" : "#8b7355",
+                  textTransform: "uppercase",
+                  marginBottom: "12px",
+                }}
+              >
+                Timeline
+              </div>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "0" }}>
+                {[
+                  { year: "2023", label: "Started\nFull-Stack Dev" },
+                  { year: "2024", label: "3 Production\nProjects Shipped" },
+                  { year: "2025", label: "AI & Automation\nSpecialisation" },
+                ].map((item, i, arr) => (
+                  <div key={item.year} style={{ display: "flex", alignItems: "flex-start", flex: 1 }}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      {/* Dot */}
+                      <div style={{
+                        width: "7px", height: "7px", borderRadius: "50%",
+                        background: isNightMode ? "#dfba74" : "#c4a882",
+                        flexShrink: 0,
+                        marginTop: "3px",
+                      }} />
+                    </div>
+                    <div style={{ marginLeft: "8px", flex: 1 }}>
+                      <div style={{
+                        fontFamily: "var(--font-geist-mono, monospace)",
+                        fontSize: "10px", fontWeight: 700,
+                        color: isNightMode ? "#f0e8d8" : "#18180f",
+                        letterSpacing: "0.04em",
+                      }}>{item.year}</div>
+                      <div style={{
+                        fontFamily: "var(--font-geist-sans, sans-serif)",
+                        fontSize: "10px",
+                        color: isNightMode ? "#b0a490" : "#6a6858",
+                        lineHeight: 1.45,
+                        whiteSpace: "pre-line",
+                        marginTop: "2px",
+                      }}>{item.label}</div>
+                    </div>
+                    {/* Connector line between items */}
+                    {i < arr.length - 1 && (
+                      <div style={{
+                        height: "1px", flex: 0.4, marginTop: "6px",
+                        background: isNightMode
+                          ? "rgba(224, 184, 116, 0.3)"
+                          : "rgba(196, 168, 130, 0.4)",
+                      }} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Categorized Skills */}
             <div
               style={{
