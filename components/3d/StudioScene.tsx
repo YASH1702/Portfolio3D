@@ -70,8 +70,8 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
       shadows
       dpr={[1, 1.5]}
       camera={{
-        position: [0.0, 1.65, 5.0],
-        fov: 55,
+        position: [0.0, 1.65, 5.2],
+        fov: 58,
         near: 0.1,
         far: 50,
       }}

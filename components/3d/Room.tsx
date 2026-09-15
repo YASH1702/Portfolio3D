@@ -31,13 +31,13 @@ export default function Room() {
   const glassMatRef = useRef<THREE.MeshStandardMaterial>(null!);
   const sunPatchRef = useRef<THREE.MeshBasicMaterial>(null!);
 
-  const glassEmissive = useRef(0.4);
+  const glassEmissive = useRef(0.08);
   const sunPatchOpacity = useRef(0.18);
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
 
-    const targetGlass = isNightMode ? 0.03 : 0.4;
+    const targetGlass = isNightMode ? 0.02 : 0.08;
     const targetSunPatch = isNightMode ? 0.0 : 0.16;
 
     glassEmissive.current = dampedLerp(glassEmissive.current, targetGlass, 4, dt);
@@ -111,60 +111,65 @@ export default function Room() {
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
 
-      {/* ── RIGHT WALL (Window Wall) ── */}
-      <mesh receiveShadow position={[W / 2, 0.85, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[D, 1.7]} />
+      {/* ── RIGHT WALL (Window Wall with clean opening) ── */}
+      {/* Bottom wall panel under window */}
+      <mesh receiveShadow position={[W / 2, 0.45, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[D, 0.9]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
-      <mesh receiveShadow position={[W / 2, 3.45, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[D, 1.1]} />
+      {/* Top wall panel above window */}
+      <mesh receiveShadow position={[W / 2, 3.55, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[D, 0.9]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
-      <mesh receiveShadow position={[W / 2, H / 2, 4]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[4, H]} />
+      {/* Front wall panel (negative Z) */}
+      <mesh receiveShadow position={[W / 2, 2.0, -4.3]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[3.4, 2.2]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
-      <mesh receiveShadow position={[W / 2, H / 2, -4]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[4, H]} />
+      {/* Back wall panel (positive Z) */}
+      <mesh receiveShadow position={[W / 2, 2.0, 3.3]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[5.4, 2.2]} />
         <meshStandardMaterial color={WALL_SIDE} roughness={0.88} metalness={0} />
       </mesh>
 
       {/* ── 4-PANE ARCHITECTURAL WINDOW ── */}
-      <group position={[W / 2 - 0.02, 2.0, -1.2]}>
+      <group position={[W / 2 - 0.02, 2.0, -1.0]}>
         {/* Frame Outer */}
         <mesh>
-          <boxGeometry args={[0.06, 2.1, 2.6]} />
+          <boxGeometry args={[0.06, 2.2, 3.2]} />
           <meshStandardMaterial color="#d8d0c4" roughness={0.5} metalness={0.1} />
         </mesh>
-        {/* Horizontal bar */}
+        {/* Horizontal mullion bar */}
         <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[0.07, 0.06, 2.6]} />
+          <boxGeometry args={[0.07, 0.05, 3.2]} />
           <meshStandardMaterial color="#d0c8bc" roughness={0.5} metalness={0.1} />
         </mesh>
-        {/* Vertical bar */}
+        {/* Vertical mullion bar */}
         <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[0.07, 2.1, 0.06]} />
+          <boxGeometry args={[0.07, 2.2, 0.05]} />
           <meshStandardMaterial color="#d0c8bc" roughness={0.5} metalness={0.1} />
         </mesh>
 
-        {/* 4 Glass Panes */}
+        {/* 4 Clear Glass Panes (Transparent to reveal outside rain & scenery) */}
         {[
-          { y: 0.52, z: -0.65 },
-          { y: 0.52, z: 0.65 },
-          { y: -0.52, z: -0.65 },
-          { y: -0.52, z: 0.65 },
+          { y: 0.53, z: -0.79 },
+          { y: 0.53, z: 0.79 },
+          { y: -0.53, z: -0.79 },
+          { y: -0.53, z: 0.79 },
         ].map((pane, i) => (
-          <mesh key={i} position={[-0.04, pane.y, pane.z]} rotation={[0, -Math.PI / 2, 0]}>
-            <planeGeometry args={[1.2, 0.96]} />
+          <mesh key={i} position={[-0.03, pane.y, pane.z]} rotation={[0, -Math.PI / 2, 0]}>
+            <planeGeometry args={[1.54, 1.04]} />
             <meshStandardMaterial
               ref={i === 0 ? glassMatRef : undefined}
-              color="#d4e8ff"
-              emissive="#88b8f0"
-              emissiveIntensity={0.4}
-              roughness={0.08}
-              metalness={0.05}
+              color="#e2f0fc"
+              emissive="#7aaad8"
+              emissiveIntensity={0.08}
+              roughness={0.04}
+              metalness={0.1}
               transparent
-              opacity={0.55}
+              opacity={0.12}
+              side={THREE.DoubleSide}
             />
           </mesh>
         ))}

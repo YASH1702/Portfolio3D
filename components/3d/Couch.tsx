@@ -23,7 +23,7 @@ const LEG_COLOR = "#2a1f14";
 
 export default function Couch() {
   return (
-    <group name="couch" position={[-1.5, 0, 1.5]} rotation={[0, -0.2, 0]}>
+    <group name="couch" position={[-1.4, 0, 1.4]} rotation={[0, -0.15, 0]}>
       {/* ── SEAT BASE ── */}
       <mesh castShadow receiveShadow position={[0, 0.38, 0]}>
         <boxGeometry args={[1.8, 0.22, 0.78]} />
@@ -41,7 +41,7 @@ export default function Couch() {
       </mesh>
 
       {/* ── SLEEPING CAT ON LEFT CUSHION ── */}
-      <SleepingCat position={[-0.38, 0.54, 0.04]} rotation={[0, 0.35, 0]} />
+      <SleepingCat position={[-0.34, 0.54, 0.05]} rotation={[0, 0.45, 0]} />
 
       {/* ── BACK CUSHION ── */}
       <mesh castShadow receiveShadow position={[0, 0.72, -0.3]}>

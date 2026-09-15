@@ -17,7 +17,7 @@ import { getWindowSceneryTexture } from "@/lib/rainTexture";
  * Positioned just outside the right window opening at X = 6.6.
  */
 
-const RAIN_COUNT = 65;
+const RAIN_COUNT = 85;
 
 export default function WindowView() {
   const { isNightMode } = useStudio();
@@ -32,11 +32,11 @@ export default function WindowView() {
   // Generate deterministic rain streak positions
   const rainDrops = useMemo(() => {
     return Array.from({ length: RAIN_COUNT }, () => ({
-      x: (Math.random() - 0.5) * 3.2,
-      y: (Math.random() - 0.5) * 2.8,
-      z: (Math.random() - 0.5) * 0.4,
-      speed: 3.5 + Math.random() * 2.0,
-      length: 0.16 + Math.random() * 0.12,
+      x: (Math.random() - 0.5) * 3.6,
+      y: (Math.random() - 0.5) * 2.6,
+      z: (Math.random() - 0.5) * 0.3,
+      speed: 3.6 + Math.random() * 2.2,
+      length: 0.18 + Math.random() * 0.14,
     }));
   }, []);
 
@@ -60,20 +60,21 @@ export default function WindowView() {
   return (
     <group
       name="window-view"
-      position={[6.5, 2.0, -1.2]}
+      position={[6.05, 2.0, -1.0]}
       rotation={[0, -Math.PI / 2, 0]}
     >
       {/* ── OUTDOOR SCENIC BACKDROP ── */}
-      <mesh position={[0, 0, -0.4]}>
-        <planeGeometry args={[4.4, 3.2]} />
+      <mesh position={[0, 0, -0.38]}>
+        <planeGeometry args={[4.8, 2.8]} />
         <meshBasicMaterial
           map={texture ?? undefined}
           color={texture ? "#ffffff" : isNightMode ? "#0d1322" : "#8ca0b0"}
+          side={THREE.DoubleSide}
         />
       </mesh>
 
       {/* ── FALLING RAIN STREAKS OUTSIDE WINDOW ── */}
-      <group ref={groupRef} position={[0, 0, -0.05]}>
+      <group ref={groupRef} position={[0, 0, -0.06]}>
         {rainDrops.map((drop, i) => (
           <mesh
             key={i}
@@ -83,11 +84,12 @@ export default function WindowView() {
             position={[drop.x, drop.y, drop.z]}
             rotation={[0, 0, 0.08]} // slight wind slant
           >
-            <planeGeometry args={[0.004, drop.length]} />
+            <planeGeometry args={[0.005, drop.length]} />
             <meshBasicMaterial
-              color={isNightMode ? "#7ca6d8" : "#ffffff"}
+              color={isNightMode ? "#8cbcf8" : "#eef6ff"}
               transparent
-              opacity={isNightMode ? 0.35 : 0.22}
+              opacity={isNightMode ? 0.45 : 0.32}
+              side={THREE.DoubleSide}
             />
           </mesh>
         ))}

@@ -28,9 +28,9 @@ export function useScrollCamera({
   const prefersReduced = useReducedMotion();
 
   // Base keyframe animated camera state
-  const currentPos = useRef(new THREE.Vector3(0.0, 1.65, 5.0));
+  const currentPos = useRef(new THREE.Vector3(0.0, 1.65, 5.2));
   const currentTarget = useRef(new THREE.Vector3(0.0, 1.80, -5.86));
-  const targetPos = useRef(new THREE.Vector3(0.0, 1.65, 5.0));
+  const targetPos = useRef(new THREE.Vector3(0.0, 1.65, 5.2));
   const targetLook = useRef(new THREE.Vector3(0.0, 1.80, -5.86));
 
   // Mouse normalized coordinates [-1, 1] for micro-parallax
@@ -59,8 +59,8 @@ export function useScrollCamera({
     const aspect = size.width / Math.max(1, size.height);
     const responsiveFov =
       aspect < 1.0
-        ? Math.min(72, Math.max(55, 55 / (aspect * 1.05)))
-        : 55;
+        ? Math.min(72, Math.max(58, 58 / (aspect * 1.05)))
+        : 58;
 
     if (Math.abs(camera.fov - responsiveFov) > 0.5) {
       camera.fov = responsiveFov;

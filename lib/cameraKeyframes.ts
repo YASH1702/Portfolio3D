@@ -19,7 +19,7 @@ export const CAMERA_KEYFRAMES: CameraKeyframe[] = [
   {
     // 0%: Initial establishing shot — whole studio visible, facing front wall
     progress: 0.0,
-    position: [0.0, 1.65, 5.0],
+    position: [0.0, 1.65, 5.2],
     target: [0.0, 1.80, -5.86],
     section: "home",
   },

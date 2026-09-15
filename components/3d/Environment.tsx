@@ -20,36 +20,36 @@ export default function Environment() {
 
   return (
     <group name="environment">
-      {/* ── LAYERED WOVEN RUG WITH FRINGES (under couch & coffee area) ── */}
-      <group position={[-1.5, 0.005, 1.5]}>
+      {/* ── LAYERED WOVEN RUG WITH FRINGES (Central living area under & in front of couch) ── */}
+      <group position={[-0.7, 0.005, 1.0]}>
         {/* Underlay border */}
         <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.002, 0]}>
-          <planeGeometry args={[2.8, 2.2]} />
-          <meshStandardMaterial color="#887860" roughness={0.99} metalness={0} />
+          <planeGeometry args={[3.8, 2.8]} />
+          <meshStandardMaterial color="#84745c" roughness={0.99} metalness={0} />
         </mesh>
         {/* Main woven textured rug */}
         <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-          <planeGeometry args={[2.6, 2.0]} />
-          <meshStandardMaterial color="#c2b49c" roughness={0.95} metalness={0} />
+          <planeGeometry args={[3.6, 2.6]} />
+          <meshStandardMaterial color="#c6b8a0" roughness={0.95} metalness={0} />
         </mesh>
-        {/* Woven subtle stripes */}
-        {[-0.6, -0.2, 0.2, 0.6].map((x, i) => (
+        {/* Woven subtle pattern stripes */}
+        {[-1.2, -0.6, 0.0, 0.6, 1.2].map((x, i) => (
           <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} position={[x, 0.001, 0]}>
-            <planeGeometry args={[0.06, 1.9]} />
-            <meshBasicMaterial color="#a0907a" transparent opacity={0.35} />
+            <planeGeometry args={[0.08, 2.5]} />
+            <meshBasicMaterial color="#a4937c" transparent opacity={0.35} />
           </mesh>
         ))}
         {/* Fringes — left and right */}
-        {[-1.31, 1.31].map((x, i) => (
+        {[-1.81, 1.81].map((x, i) => (
           <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} position={[x, 0.001, 0]}>
-            <planeGeometry args={[0.06, 1.98]} />
-            <meshBasicMaterial color="#eae4d6" />
+            <planeGeometry args={[0.08, 2.58]} />
+            <meshBasicMaterial color="#ebe5d8" />
           </mesh>
         ))}
       </group>
 
-      {/* ── COZY BEANIE / BEAN BAG CHAIR IN CORNER WITH BACKLIGHT ── */}
-      <group position={[-3.8, 0, 3.8]} rotation={[0, 0.65, 0]} name="beanbag">
+      {/* ── COZY BEANIE / BEAN BAG CHAIR WITH WARM BACKLIGHT ── */}
+      <group position={[-2.6, 0, 1.2]} rotation={[0, 0.55, 0]} name="beanbag">
         {/* Slumped beanbag base */}
         <mesh castShadow receiveShadow position={[0, 0.24, 0]} scale={[1.15, 0.72, 1.05]}>
           <sphereGeometry args={[0.42, 18, 14]} />
@@ -65,36 +65,36 @@ export default function Environment() {
           <sphereGeometry args={[0.26, 12, 10]} />
           <meshStandardMaterial color="#beb29e" roughness={0.98} />
         </mesh>
-        {/* Subtle warm LED back-glow behind beanie onto wall */}
+        {/* Subtle warm LED back-glow behind beanie */}
         <pointLight
-          position={[-0.35, 0.45, -0.3]}
-          intensity={isNightMode ? 0.75 : 0.4}
+          position={[-0.35, 0.45, -0.25]}
+          intensity={isNightMode ? 0.85 : 0.45}
           color="#ffb055"
           distance={3.2}
           decay={2}
         />
       </group>
 
-      {/* ── STANDING FLOOR LAMP IN CORNER ── */}
-      <group position={[-5.1, 0, 4.3]} name="standing-floor-lamp">
-        {/* Solid marble / dark bronze disc base */}
+      {/* ── STANDING FLOOR LAMP (Visible in left midground) ── */}
+      <group position={[-3.2, 0, 0.4]} name="standing-floor-lamp">
+        {/* Solid dark bronze disc base */}
         <mesh castShadow position={[0, 0.02, 0]}>
-          <cylinderGeometry args={[0.16, 0.16, 0.03, 20]} />
+          <cylinderGeometry args={[0.18, 0.18, 0.035, 20]} />
           <meshStandardMaterial color="#1c1916" roughness={0.4} metalness={0.5} />
         </mesh>
         {/* Slender vertical stem */}
-        <mesh castShadow position={[0, 1.05, 0]}>
-          <cylinderGeometry args={[0.012, 0.012, 2.1, 10]} />
+        <mesh castShadow position={[0, 1.08, 0]}>
+          <cylinderGeometry args={[0.014, 0.014, 2.15, 10]} />
           <meshStandardMaterial color="#1a1816" roughness={0.35} metalness={0.7} />
         </mesh>
         {/* Brass collar detail */}
-        <mesh position={[0, 1.85, 0]}>
-          <cylinderGeometry args={[0.018, 0.018, 0.04, 12]} />
+        <mesh position={[0, 1.9, 0]}>
+          <cylinderGeometry args={[0.02, 0.02, 0.045, 12]} />
           <meshStandardMaterial color="#c8a45e" roughness={0.3} metalness={0.8} />
         </mesh>
         {/* Warm linen cylindrical lamp shade */}
-        <mesh castShadow position={[0, 2.0, 0]}>
-          <cylinderGeometry args={[0.2, 0.24, 0.34, 18, 1, true]} />
+        <mesh castShadow position={[0, 2.06, 0]}>
+          <cylinderGeometry args={[0.22, 0.26, 0.36, 18, 1, true]} />
           <meshStandardMaterial
             color="#f4eee2"
             roughness={0.7}
@@ -103,48 +103,48 @@ export default function Environment() {
           />
         </mesh>
         {/* Inner warm light bulb */}
-        <mesh position={[0, 1.98, 0]}>
-          <sphereGeometry args={[0.04, 10, 8]} />
+        <mesh position={[0, 2.04, 0]}>
+          <sphereGeometry args={[0.045, 10, 8]} />
           <meshStandardMaterial
             color="#fff0cc"
             emissive="#ffaa33"
-            emissiveIntensity={isNightMode ? 1.4 : 0.8}
+            emissiveIntensity={isNightMode ? 1.5 : 0.85}
           />
         </mesh>
         {/* Standing lamp warm ambient light */}
         <pointLight
-          position={[0, 1.98, 0]}
-          intensity={isNightMode ? 1.4 : 0.65}
+          position={[0, 2.04, 0]}
+          intensity={isNightMode ? 1.5 : 0.75}
           color="#ffa844"
-          distance={5.0}
+          distance={5.5}
           decay={2}
         />
       </group>
 
-      {/* ── GREENERY 1: INDOOR OLIVE / FIDDLE LEAF TREE (near window) ── */}
-      <group position={[4.6, 0, 1.2]} name="indoor-tree">
+      {/* ── GREENERY 1: INDOOR OLIVE / FIDDLE LEAF TREE (Near desk & window) ── */}
+      <group position={[3.4, 0, -0.6]} name="indoor-tree">
         {/* Fluted ceramic pot */}
-        <mesh castShadow receiveShadow position={[0, 0.22, 0]}>
-          <cylinderGeometry args={[0.24, 0.19, 0.44, 18]} />
+        <mesh castShadow receiveShadow position={[0, 0.24, 0]}>
+          <cylinderGeometry args={[0.26, 0.2, 0.48, 18]} />
           <meshStandardMaterial color="#ece5d8" roughness={0.85} metalness={0} />
         </mesh>
         {/* Soil */}
-        <mesh position={[0, 0.43, 0]}>
-          <circleGeometry args={[0.22, 16]} />
+        <mesh position={[0, 0.47, 0]}>
+          <circleGeometry args={[0.24, 16]} />
           <meshStandardMaterial color="#2c1e12" roughness={1} />
         </mesh>
         {/* Slender twisting trunk */}
-        <mesh castShadow position={[0, 0.85, 0]} rotation={[0.04, 0, -0.06]}>
-          <cylinderGeometry args={[0.024, 0.035, 0.9, 8]} />
+        <mesh castShadow position={[0, 0.92, 0]} rotation={[0.04, 0, -0.06]}>
+          <cylinderGeometry args={[0.026, 0.038, 1.0, 8]} />
           <meshStandardMaterial color="#544332" roughness={0.88} />
         </mesh>
         {/* Branches & broad sculptural leaves */}
         {[
-          { pos: [0.08, 1.25, 0.06], scale: [0.28, 0.24, 0.28], color: "#2d5428" },
-          { pos: [-0.08, 1.45, -0.05], scale: [0.32, 0.26, 0.3], color: "#366030" },
-          { pos: [0.06, 1.62, -0.04], scale: [0.26, 0.22, 0.25], color: "#264822" },
-          { pos: [-0.04, 1.78, 0.05], scale: [0.22, 0.2, 0.22], color: "#3a6834" },
-          { pos: [0.02, 1.92, 0], scale: [0.18, 0.16, 0.18], color: "#42783c" },
+          { pos: [0.08, 1.35, 0.06], scale: [0.3, 0.26, 0.3], color: "#2d5428" },
+          { pos: [-0.09, 1.55, -0.05], scale: [0.34, 0.28, 0.32], color: "#366030" },
+          { pos: [0.07, 1.74, -0.04], scale: [0.28, 0.24, 0.27], color: "#264822" },
+          { pos: [-0.05, 1.92, 0.05], scale: [0.24, 0.22, 0.24], color: "#3a6834" },
+          { pos: [0.02, 2.08, 0], scale: [0.2, 0.18, 0.2], color: "#42783c" },
         ].map((leaf, i) => (
           <mesh key={i} castShadow position={leaf.pos as [number, number, number]} scale={leaf.scale as [number, number, number]}>
             <sphereGeometry args={[1, 10, 8]} />
@@ -153,8 +153,8 @@ export default function Environment() {
         ))}
       </group>
 
-      {/* ── GREENERY 2: LARGE FLOOR PLANT (back-left corner) ── */}
-      <group position={[-5.4, 0, -4.2]} name="floor-plant">
+      {/* ── GREENERY 2: LARGE FLOOR PLANT (Back-left corner) ── */}
+      <group position={[-5.0, 0, -3.8]} name="floor-plant">
         {/* Pot */}
         <mesh castShadow receiveShadow position={[0, 0.18, 0]}>
           <cylinderGeometry args={[0.2, 0.15, 0.36, 16]} />
@@ -206,7 +206,7 @@ export default function Environment() {
       </group>
 
       {/* ── SMALL SIDE TABLE NEXT TO COUCH (with succulent) ── */}
-      <group position={[-3.1, 0, 1.5]} name="side-table">
+      <group position={[-2.2, 0, 0.3]} name="side-table">
         <mesh castShadow receiveShadow position={[0, 0.52, 0]}>
           <cylinderGeometry args={[0.24, 0.24, 0.025, 22]} />
           <meshStandardMaterial color="#c4a870" roughness={0.4} metalness={0.05} />
@@ -232,7 +232,7 @@ export default function Environment() {
         </group>
       </group>
 
-      {/* ── BOOKSHELF (back-right area) ── */}
+      {/* ── BOOKSHELF (Back-right area) ── */}
       <group position={[5.2, 0, -3.5]} rotation={[0, -Math.PI / 2, 0]} name="bookshelf">
         <mesh castShadow receiveShadow position={[0, 1.0, 0]}>
           <boxGeometry args={[0.9, 2.0, 0.28]} />
@@ -273,24 +273,24 @@ export default function Environment() {
         ))}
       </group>
 
-      {/* ── WALL DESIGN 1: ACOUSTIC VERTICAL OAK SLATS (Corner accent) ── */}
-      <group position={[-5.96, 2.0, 3.8]} rotation={[0, Math.PI / 2, 0]} name="acoustic-wood-slats">
+      {/* ── WALL DESIGN 1: ACOUSTIC VERTICAL OAK SLATS (Front wall flanking hero typography) ── */}
+      <group position={[-4.1, 2.0, -5.84]} name="acoustic-wood-slats">
         {/* Dark felt backing */}
         <mesh position={[0, 0, -0.005]}>
-          <planeGeometry args={[1.4, 3.8]} />
-          <meshStandardMaterial color="#1a1816" roughness={0.98} />
+          <planeGeometry args={[1.9, 3.8]} />
+          <meshStandardMaterial color="#181614" roughness={0.98} />
         </mesh>
-        {/* 14 vertical oak wood slats */}
-        {Array.from({ length: 14 }).map((_, i) => (
-          <mesh key={i} castShadow position={[-0.6 + i * 0.092, 0, 0.008]}>
-            <boxGeometry args={[0.045, 3.8, 0.016]} />
-            <meshStandardMaterial color="#ad8652" roughness={0.42} metalness={0.02} />
+        {/* 19 vertical oak wood slats */}
+        {Array.from({ length: 19 }).map((_, i) => (
+          <mesh key={i} castShadow position={[-0.85 + i * 0.095, 0, 0.01]}>
+            <boxGeometry args={[0.045, 3.8, 0.02]} />
+            <meshStandardMaterial color="#b88d58" roughness={0.45} metalness={0.02} />
           </mesh>
         ))}
       </group>
 
-      {/* ── WALL DESIGN 2: MINIMAL ARCHITECTURAL FRAMED ART (Front wall) ── */}
-      <group position={[-3.8, 2.45, -5.92]} name="wall-art-poster">
+      {/* ── WALL DESIGN 2: MINIMAL ARCHITECTURAL FRAMED ART (Front wall beside slats) ── */}
+      <group position={[-3.3, 2.45, -5.80]} name="wall-art-poster">
         {/* Slim black wooden frame */}
         <mesh castShadow>
           <boxGeometry args={[0.82, 1.05, 0.03]} />
