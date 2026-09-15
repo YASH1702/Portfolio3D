@@ -132,9 +132,11 @@ function PortfolioExperience() {
             <h2>Contact</h2>
             <address>
               <p>
-                <a href="mailto:yashwant.kariha@gmail.com">Email</a> ·{" "}
+                <a href="mailto:yashwantkariha1@gmail.com">yashwantkariha1@gmail.com</a> ·{" "}
+                <a href="tel:+916375278279">+91 6375278279</a> ·{" "}
                 <a href="https://github.com" rel="noopener noreferrer">GitHub</a> ·{" "}
-                <a href="https://linkedin.com" rel="noopener noreferrer">LinkedIn</a>
+                <a href="https://linkedin.com" rel="noopener noreferrer">LinkedIn</a> ·{" "}
+                <a href="/resume">Curriculum Vitae</a>
               </p>
             </address>
           </section>

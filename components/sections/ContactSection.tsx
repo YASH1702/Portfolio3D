@@ -91,36 +91,41 @@ export default function ContactSection({ visible }: ContactSectionProps) {
               and selective high-impact digital product builds.
             </p>
 
-            {/* 4 Contact / Social Links */}
+            {/* Real Contact / Social Links */}
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
                 gap: "10px",
                 justifyContent: "center",
               }}
             >
               <ContactLink
-                href="mailto:yashwant.kariha@gmail.com"
+                href="mailto:yashwantkariha1@gmail.com"
                 label="Email"
-                mono="yashwant.kariha"
+                mono="yashwantkariha1"
+              />
+              <ContactLink
+                href="tel:+916375278279"
+                label="Phone"
+                mono="+91 6375278279"
               />
               <ContactLink
                 href="https://github.com"
                 label="GitHub"
-                mono="@yashwantkariha"
+                mono="View Repos"
                 external
               />
               <ContactLink
                 href="https://linkedin.com"
                 label="LinkedIn"
-                mono="in/yashwantkariha"
+                mono="Connect"
                 external
               />
               <ContactLink
                 href="/resume"
                 label="Resume"
-                mono="View Full CV"
+                mono="Full CV &amp; Print"
               />
             </div>
 

@@ -5,15 +5,15 @@ import { motion, AnimatePresence } from "framer-motion";
 const SKILLS = [
   {
     category: "Frontend Architecture",
-    items: ["Next.js 15 (App Router)", "React & Server Components", "TypeScript", "Tailwind CSS"],
+    items: ["Next.js", "React.js", "TypeScript", "Tailwind CSS", "Redux", "Zustand"],
   },
   {
     category: "Backend & Systems",
-    items: ["Node.js & Express", "PostgreSQL & Prisma", "Redis Distributed Systems", "REST & WebSockets"],
+    items: ["Node.js", "Express.js", "PostgreSQL", "RESTful APIs", "JWT Auth", "Python / Django"],
   },
   {
-    category: "AI & Modern Tooling",
-    items: ["OpenAI & Anthropic APIs", "Chrome Extensions", "WebAssembly (Wasm)", "Inngest Workflow Jobs"],
+    category: "Databases, Cloud & AI",
+    items: ["MongoDB & Mongoose", "Prisma ORM", "Docker & CI/CD", "AWS", "OpenAI API", "Socket.io"],
   },
 ];
 
@@ -102,9 +102,9 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                 marginBottom: "22px",
               }}
             >
-              I&apos;m Yashwant Kariha — a Full-Stack Developer bridging modern frontend
-              architecture with reliable backend systems and autonomous AI copilot
-              workflows.
+              I&apos;m Yashwant Kariha — a Full-Stack Developer with 1+ years of experience
+              building high-throughput backend APIs, responsive Next.js interfaces,
+              and autonomous AI agent workflows.
             </p>
 
             {/* Categorized Skills */}
