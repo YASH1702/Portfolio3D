@@ -1,22 +1,69 @@
 "use client";
 
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 import { useStudio } from "@/context/StudioContext";
 
 /**
  * Environment — Rich architectural & cozy living/work atmospheric elements:
  * - Woven Scandinavian layered rug with fringes under couch
- * - Sleeping cat on couch (in Couch.tsx)
- * - Standing floor lamp in corner with warm ambient illumination
- * - Cozy beanbag / beanie in corner with subtle warm backlight
- * - Indoor olive / fiddle-leaf fig tree in fluted ceramic pot
- * - Trailing pothos ivy cascading down the bookshelf
- * - Small succulent plant on side table
+ * - Standing floor lamp with warm ambient illumination
+ * - Cozy beanbag in corner with warm backlight
+ * - Living indoor olive / fiddle-leaf fig tree with procedural wind sway
+ * - Cascading pothos ivy vines with gentle breeze flutter
+ * - Bookshelf with architectural cove backlighting, modern monographs, and brass hourglass
  * - Acoustic vertical oak slat wall accents and minimal framed wall art
- * - Bookshelf with books, ceiling light fixture, and skirting boards
+ * - Exposed architectural oak ceiling rafters and track lighting system
+ * - Hanging living area brass pendant light with subtle microscopic sway
  */
 
 export default function Environment() {
   const { isNightMode } = useStudio();
+
+  // Animation references
+  const treeFoliageRef = useRef<THREE.Group>(null!);
+  const vinesRef = useRef<THREE.Group>(null!);
+  const floorPlantRef = useRef<THREE.Group>(null!);
+  const pendantRef = useRef<THREE.Group>(null!);
+
+  const timeRef = useRef(0);
+
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.05);
+    timeRef.current += dt;
+    const t = timeRef.current;
+
+    // Gentle wind sway on tree foliage
+    if (treeFoliageRef.current) {
+      treeFoliageRef.current.children.forEach((child, i) => {
+        const swayZ = Math.sin(t * 1.2 + i * 0.7) * 0.035;
+        const swayX = Math.cos(t * 0.9 + i * 0.5) * 0.025;
+        child.rotation.z = swayZ;
+        child.rotation.x = swayX;
+      });
+    }
+
+    // Cascading pothos vines breeze flutter
+    if (vinesRef.current) {
+      vinesRef.current.children.forEach((child, i) => {
+        child.rotation.z = Math.sin(t * 1.6 + i * 0.8) * 0.06;
+        child.rotation.x = Math.cos(t * 1.3 + i * 0.6) * 0.04;
+      });
+    }
+
+    // Corner floor plant leaf sway
+    if (floorPlantRef.current) {
+      floorPlantRef.current.rotation.y = Math.sin(t * 0.8) * 0.03;
+      floorPlantRef.current.rotation.z = Math.cos(t * 0.7) * 0.02;
+    }
+
+    // Microscopic pendulum sway on hanging pendant light
+    if (pendantRef.current) {
+      pendantRef.current.rotation.z = Math.sin(t * 0.65) * 0.012;
+      pendantRef.current.rotation.x = Math.cos(t * 0.55) * 0.008;
+    }
+  });
 
   return (
     <group name="environment">
@@ -65,7 +112,7 @@ export default function Environment() {
           <sphereGeometry args={[0.26, 12, 10]} />
           <meshStandardMaterial color="#beb29e" roughness={0.98} />
         </mesh>
-        {/* Subtle warm LED back-glow behind beanie */}
+        {/* Warm LED back-glow behind beanie */}
         <pointLight
           position={[-0.35, 0.45, -0.25]}
           intensity={isNightMode ? 0.85 : 0.45}
@@ -75,7 +122,7 @@ export default function Environment() {
         />
       </group>
 
-      {/* ── STANDING FLOOR LAMP (Positioned on right side — completely clear of project wall) ── */}
+      {/* ── STANDING FLOOR LAMP (Positioned on right side) ── */}
       <group position={[3.5, 0, 0.9]} name="standing-floor-lamp">
         {/* Solid dark bronze disc base */}
         <mesh castShadow position={[0, 0.02, 0]}>
@@ -121,7 +168,7 @@ export default function Environment() {
         />
       </group>
 
-      {/* ── GREENERY 1: INDOOR OLIVE / FIDDLE LEAF TREE (Near desk & window) ── */}
+      {/* ── GREENERY 1: INDOOR OLIVE / FIDDLE LEAF TREE (WITH PROCEDURAL WIND SWAY) ── */}
       <group position={[3.4, 0, -0.6]} name="indoor-tree">
         {/* Fluted ceramic pot */}
         <mesh castShadow receiveShadow position={[0, 0.24, 0]}>
@@ -138,23 +185,26 @@ export default function Environment() {
           <cylinderGeometry args={[0.026, 0.038, 1.0, 8]} />
           <meshStandardMaterial color="#544332" roughness={0.88} />
         </mesh>
-        {/* Branches & broad sculptural leaves */}
-        {[
-          { pos: [0.08, 1.35, 0.06], scale: [0.3, 0.26, 0.3], color: "#2d5428" },
-          { pos: [-0.09, 1.55, -0.05], scale: [0.34, 0.28, 0.32], color: "#366030" },
-          { pos: [0.07, 1.74, -0.04], scale: [0.28, 0.24, 0.27], color: "#264822" },
-          { pos: [-0.05, 1.92, 0.05], scale: [0.24, 0.22, 0.24], color: "#3a6834" },
-          { pos: [0.02, 2.08, 0], scale: [0.2, 0.18, 0.2], color: "#42783c" },
-        ].map((leaf, i) => (
-          <mesh key={i} castShadow position={leaf.pos as [number, number, number]} scale={leaf.scale as [number, number, number]}>
-            <sphereGeometry args={[1, 10, 8]} />
-            <meshStandardMaterial color={leaf.color} roughness={0.92} metalness={0} />
-          </mesh>
-        ))}
+
+        {/* Animated swaying foliage group */}
+        <group ref={treeFoliageRef}>
+          {[
+            { pos: [0.08, 1.35, 0.06], scale: [0.3, 0.26, 0.3], color: "#2d5428" },
+            { pos: [-0.09, 1.55, -0.05], scale: [0.34, 0.28, 0.32], color: "#366030" },
+            { pos: [0.07, 1.74, -0.04], scale: [0.28, 0.24, 0.27], color: "#264822" },
+            { pos: [-0.05, 1.92, 0.05], scale: [0.24, 0.22, 0.24], color: "#3a6834" },
+            { pos: [0.02, 2.08, 0], scale: [0.2, 0.18, 0.2], color: "#42783c" },
+          ].map((leaf, i) => (
+            <mesh key={i} castShadow position={leaf.pos as [number, number, number]} scale={leaf.scale as [number, number, number]}>
+              <sphereGeometry args={[1, 10, 8]} />
+              <meshStandardMaterial color={leaf.color} roughness={0.92} metalness={0} />
+            </mesh>
+          ))}
+        </group>
       </group>
 
       {/* ── GREENERY 2: LARGE FLOOR PLANT (Back-left corner) ── */}
-      <group position={[-5.0, 0, -3.8]} name="floor-plant">
+      <group ref={floorPlantRef} position={[-5.0, 0, -3.8]} name="floor-plant">
         {/* Pot */}
         <mesh castShadow receiveShadow position={[0, 0.18, 0]}>
           <cylinderGeometry args={[0.2, 0.15, 0.36, 16]} />
@@ -179,7 +229,7 @@ export default function Environment() {
         </mesh>
       </group>
 
-      {/* ── GREENERY 3: TRAILING POTHOS VINES ON BOOKSHELF ── */}
+      {/* ── GREENERY 3: TRAILING POTHOS VINES ON BOOKSHELF (WITH BREEZE FLUTTER) ── */}
       <group position={[5.2, 1.95, -3.2]} rotation={[0, -Math.PI / 2, 0]}>
         {/* Small pot on top shelf */}
         <mesh castShadow position={[0, 0.06, 0]}>
@@ -191,18 +241,20 @@ export default function Environment() {
           <sphereGeometry args={[0.075, 8, 6]} />
           <meshStandardMaterial color="#325e2c" roughness={0.9} />
         </mesh>
-        {/* Cascading trailing vines over shelf edge */}
-        {[
-          { x: 0.04, y: -0.15, z: 0.08, len: 0.28 },
-          { x: -0.02, y: -0.28, z: 0.09, len: 0.42 },
-          { x: 0.06, y: -0.42, z: 0.08, len: 0.35 },
-          { x: -0.05, y: -0.52, z: 0.07, len: 0.22 },
-        ].map((vine, i) => (
-          <mesh key={i} position={[vine.x, vine.y, vine.z]}>
-            <sphereGeometry args={[0.038, 6, 6]} />
-            <meshStandardMaterial color="#3e6f36" roughness={0.9} />
-          </mesh>
-        ))}
+        {/* Cascading trailing vines over shelf edge with breeze flutter */}
+        <group ref={vinesRef}>
+          {[
+            { x: 0.04, y: -0.15, z: 0.08, len: 0.28 },
+            { x: -0.02, y: -0.28, z: 0.09, len: 0.42 },
+            { x: 0.06, y: -0.42, z: 0.08, len: 0.35 },
+            { x: -0.05, y: -0.52, z: 0.07, len: 0.22 },
+          ].map((vine, i) => (
+            <mesh key={i} position={[vine.x, vine.y, vine.z]}>
+              <sphereGeometry args={[0.038, 6, 6]} />
+              <meshStandardMaterial color="#3e6f36" roughness={0.9} />
+            </mesh>
+          ))}
+        </group>
       </group>
 
       {/* ── SMALL SIDE TABLE NEXT TO COUCH (with succulent) ── */}
@@ -219,6 +271,11 @@ export default function Environment() {
           <boxGeometry args={[0.16, 0.02, 0.12]} />
           <meshStandardMaterial color="#c0a878" roughness={0.9} metalness={0} />
         </mesh>
+        {/* Ceramic coffee mug on side table */}
+        <mesh castShadow position={[0.08, 0.565, 0.08]}>
+          <cylinderGeometry args={[0.025, 0.022, 0.06, 12]} />
+          <meshStandardMaterial color="#f0ece2" roughness={0.8} />
+        </mesh>
         {/* Small potted succulent on side table */}
         <group position={[-0.08, 0.545, 0.06]}>
           <mesh castShadow>
@@ -232,43 +289,90 @@ export default function Environment() {
         </group>
       </group>
 
-      {/* ── BOOKSHELF (Back-right area) ── */}
+      {/* ── BOOKSHELF (Back-right area with architectural cove backlighting) ── */}
       <group position={[5.2, 0, -3.5]} rotation={[0, -Math.PI / 2, 0]} name="bookshelf">
+        {/* Main bookshelf case */}
         <mesh castShadow receiveShadow position={[0, 1.0, 0]}>
-          <boxGeometry args={[0.9, 2.0, 0.28]} />
+          <boxGeometry args={[0.92, 2.02, 0.28]} />
           <meshStandardMaterial color="#c4a870" roughness={0.5} metalness={0.05} />
         </mesh>
+        {/* Middle shelf slab */}
         <mesh receiveShadow position={[0, 0.6, 0]}>
-          <boxGeometry args={[0.86, 0.02, 0.25]} />
+          <boxGeometry args={[0.88, 0.024, 0.26]} />
           <meshStandardMaterial color="#b89558" roughness={0.4} metalness={0} />
         </mesh>
+        {/* Upper shelf slab */}
         <mesh receiveShadow position={[0, 1.1, 0]}>
-          <boxGeometry args={[0.86, 0.02, 0.25]} />
+          <boxGeometry args={[0.88, 0.024, 0.26]} />
           <meshStandardMaterial color="#b89558" roughness={0.4} metalness={0} />
         </mesh>
-        {/* Books — row 1 */}
+
+        {/* Hidden warm LED cove strip light under shelves */}
+        <pointLight
+          position={[0, 0.65, 0.05]}
+          intensity={isNightMode ? 0.75 : 0.25}
+          color="#ffc878"
+          distance={2.4}
+          decay={2}
+        />
+        <pointLight
+          position={[0, 1.15, 0.05]}
+          intensity={isNightMode ? 0.75 : 0.25}
+          color="#ffc878"
+          distance={2.4}
+          decay={2}
+        />
+
+        {/* Sculptural Brass Hourglass on middle shelf */}
+        <group position={[0.32, 0.72, 0]}>
+          <mesh castShadow position={[0, 0.07, 0]}>
+            <cylinderGeometry args={[0.022, 0.022, 0.005, 12]} />
+            <meshStandardMaterial color="#d4a855" metalness={0.8} roughness={0.25} />
+          </mesh>
+          <mesh castShadow position={[0, -0.07, 0]}>
+            <cylinderGeometry args={[0.022, 0.022, 0.005, 12]} />
+            <meshStandardMaterial color="#d4a855" metalness={0.8} roughness={0.25} />
+          </mesh>
+          <mesh position={[0, 0.032, 0]}>
+            <coneGeometry args={[0.018, 0.065, 10]} />
+            <meshStandardMaterial color="#f0f6ff" transparent opacity={0.4} roughness={0.1} />
+          </mesh>
+          <mesh position={[0, -0.032, 0]} rotation={[Math.PI, 0, 0]}>
+            <coneGeometry args={[0.018, 0.065, 10]} />
+            <meshStandardMaterial color="#f0f6ff" transparent opacity={0.4} roughness={0.1} />
+          </mesh>
+        </group>
+
+        {/* Minimal ceramic vase on upper shelf */}
+        <mesh castShadow position={[-0.28, 1.22, 0]}>
+          <cylinderGeometry args={[0.028, 0.042, 0.14, 14]} />
+          <meshStandardMaterial color="#ede8dd" roughness={0.9} />
+        </mesh>
+
+        {/* Curated Monographs — Row 1 */}
         {[
-          { x: -0.3, h: 0.22, color: "#8b4040" },
-          { x: -0.16, h: 0.19, color: "#405080" },
-          { x: -0.02, h: 0.21, color: "#4a7040" },
-          { x: 0.12, h: 0.18, color: "#806040" },
-          { x: 0.26, h: 0.23, color: "#604080" },
+          { x: -0.32, h: 0.23, color: "#8b3838" }, // Clean Architecture
+          { x: -0.20, h: 0.20, color: "#284474" }, // Designing Data-Intensive Apps
+          { x: -0.08, h: 0.22, color: "#2d603a" }, // AI Systems & Neural Logic
+          { x: 0.06,  h: 0.19, color: "#7a5832" }, // TypeScript Patterns
+          { x: 0.18,  h: 0.24, color: "#543874" }, // Modern Distributed Systems
         ].map((b, i) => (
           <mesh key={i} castShadow position={[b.x, 0.72, -0.02]}>
-            <boxGeometry args={[0.1, b.h, 0.2]} />
-            <meshStandardMaterial color={b.color} roughness={0.8} metalness={0} />
+            <boxGeometry args={[0.095, b.h, 0.2]} />
+            <meshStandardMaterial color={b.color} roughness={0.75} metalness={0.05} />
           </mesh>
         ))}
-        {/* Books — row 2 */}
+
+        {/* Curated Monographs — Row 2 */}
         {[
-          { x: -0.28, h: 0.20, color: "#705030" },
-          { x: -0.14, h: 0.24, color: "#307050" },
-          { x: 0.0, h: 0.18, color: "#503070" },
-          { x: 0.24, h: 0.22, color: "#704030" },
+          { x: -0.12, h: 0.21, color: "#704828" },
+          { x: 0.02,  h: 0.25, color: "#245a44" },
+          { x: 0.16,  h: 0.19, color: "#482860" },
+          { x: 0.28,  h: 0.22, color: "#643224" },
         ].map((b, i) => (
-          <mesh key={i} castShadow position={[b.x, 1.21, -0.02]}>
-            <boxGeometry args={[0.1, b.h, 0.2]} />
-            <meshStandardMaterial color={b.color} roughness={0.8} metalness={0} />
+          <mesh key={i} castShadow position={[b.x, 1.22, -0.02]}>
+            <boxGeometry args={[0.095, b.h, 0.2]} />
+            <meshStandardMaterial color={b.color} roughness={0.75} metalness={0.05} />
           </mesh>
         ))}
       </group>
@@ -392,8 +496,8 @@ export default function Environment() {
         ))}
       </group>
 
-      {/* ── SCANDINAVIAN MINIMALIST LIVING AREA PENDANT LIGHT ── */}
-      <group position={[-0.7, 2.92, 1.0]} name="living-pendant-light">
+      {/* ── SCANDINAVIAN MINIMALIST LIVING AREA PENDANT LIGHT (WITH MICROSCOPIC SWAY) ── */}
+      <group ref={pendantRef} position={[-0.7, 2.92, 1.0]} name="living-pendant-light">
         {/* Ultra-thin black suspension wire dropping from central beam */}
         <mesh position={[0, 0.50, 0]}>
           <cylinderGeometry args={[0.002, 0.002, 1.0, 4]} />

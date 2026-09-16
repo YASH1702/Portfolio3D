@@ -1,14 +1,18 @@
 "use client";
 
+import { useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 import Monitor from "./Monitor";
 import SteamParticles from "./SteamParticles";
 import { useStudio } from "@/context/StudioContext";
 
 /**
- * Desk — a modern developer workstation.
+ * Desk — a modern, high-fidelity developer workstation.
  *
- * Uses the Monitor component for the interactive screen.
- * Interactive Desk Lamp toggles warm illumination on/off on click.
+ * Upgraded with realistic studio audio monitors, leather desk mat,
+ * coiled mechanical keyboard aviator cable, aluminum headphone stand
+ * with over-ear studio headphones, smartphone, and interactive lamp.
  *
  * Position: [2.2, 0, -1.2] — right side of room, slightly angled.
  */
@@ -20,22 +24,39 @@ const NOTEBOOK  = "#f0ede5";
 const CUP       = "#d4c5a0";
 
 export default function Desk() {
-  const { isLampOn, toggleLamp } = useStudio();
+  const { isLampOn, toggleLamp, isNightMode } = useStudio();
+  const lampHeadRef = useRef<THREE.Group>(null!);
+  const [lampHovered, setLampHovered] = useState(false);
+  const lampBounce = useRef(0);
 
   const handleLampEnter = (e: any) => {
     e.stopPropagation();
+    setLampHovered(true);
     document.body.style.cursor = "pointer";
   };
 
   const handleLampLeave = (e: any) => {
     e.stopPropagation();
+    setLampHovered(false);
     document.body.style.cursor = "default";
   };
 
   const handleLampClick = (e: any) => {
     e.stopPropagation();
+    lampBounce.current = 1.0;
     toggleLamp();
   };
+
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.05);
+    if (lampBounce.current > 0) {
+      lampBounce.current = Math.max(0, lampBounce.current - dt * 4.0);
+    }
+    if (lampHeadRef.current) {
+      const clickSpring = Math.sin(lampBounce.current * Math.PI) * 0.06;
+      lampHeadRef.current.rotation.x = 0.8 + clickSpring;
+    }
+  });
 
   return (
     <group name="desk" position={[2.2, 0, -1.2]} rotation={[0, -0.08, 0]}>
@@ -65,27 +86,190 @@ export default function Desk() {
         </mesh>
       ))}
 
+      {/* ── LEATHER DESK MAT / BLOTTER WITH STITCHED PERIMETER ── */}
+      <group position={[0.1, 0.762, 0.08]}>
+        {/* Main dark charcoal leather mat */}
+        <mesh receiveShadow position={[0, 0, 0]}>
+          <boxGeometry args={[0.82, 0.003, 0.38]} />
+          <meshStandardMaterial color="#1c1b18" roughness={0.85} metalness={0.05} />
+        </mesh>
+        {/* Subtle stitched perimeter edge */}
+        <mesh position={[0, 0.002, 0]}>
+          <boxGeometry args={[0.80, 0.001, 0.36]} />
+          <meshBasicMaterial color="#332e28" />
+        </mesh>
+      </group>
+
       {/* ── MONITOR (CLICKABLE DISPLAY) ── */}
       <Monitor position={[-0.08, 0.76, -0.16]} />
 
+      {/* ── STUDIO AUDIO MONITORS (DESK SPEAKERS FLANKING DISPLAY) ── */}
+      {/* Left Speaker */}
+      <group position={[-0.52, 0.762, -0.16]} rotation={[0, 0.28, 0]} name="speaker-left">
+        {/* Angled foam isolation wedge base */}
+        <mesh castShadow position={[0, 0.008, 0]}>
+          <boxGeometry args={[0.11, 0.016, 0.13]} />
+          <meshStandardMaterial color="#1a1a1a" roughness={0.9} />
+        </mesh>
+        {/* Speaker cabinet */}
+        <mesh castShadow position={[0, 0.10, 0]}>
+          <boxGeometry args={[0.10, 0.18, 0.12]} />
+          <meshStandardMaterial color="#151413" roughness={0.35} metalness={0.2} />
+        </mesh>
+        {/* Front baffle */}
+        <mesh position={[0, 0.10, 0.061]}>
+          <planeGeometry args={[0.092, 0.17]} />
+          <meshStandardMaterial color="#1e1d1b" roughness={0.5} />
+        </mesh>
+        {/* Tweeter dome */}
+        <mesh position={[0, 0.145, 0.063]}>
+          <circleGeometry args={[0.014, 16]} />
+          <meshStandardMaterial color="#d4a855" metalness={0.85} roughness={0.25} />
+        </mesh>
+        {/* Main woofer cone */}
+        <mesh position={[0, 0.065, 0.063]}>
+          <circleGeometry args={[0.028, 18]} />
+          <meshStandardMaterial color="#222222" roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0.065, 0.064]}>
+          <circleGeometry args={[0.01, 14]} />
+          <meshStandardMaterial color="#c49845" metalness={0.8} roughness={0.3} />
+        </mesh>
+      </group>
+
+      {/* Right Speaker */}
+      <group position={[0.36, 0.762, -0.16]} rotation={[0, -0.28, 0]} name="speaker-right">
+        {/* Angled foam isolation wedge base */}
+        <mesh castShadow position={[0, 0.008, 0]}>
+          <boxGeometry args={[0.11, 0.016, 0.13]} />
+          <meshStandardMaterial color="#1a1a1a" roughness={0.9} />
+        </mesh>
+        {/* Speaker cabinet */}
+        <mesh castShadow position={[0, 0.10, 0]}>
+          <boxGeometry args={[0.10, 0.18, 0.12]} />
+          <meshStandardMaterial color="#151413" roughness={0.35} metalness={0.2} />
+        </mesh>
+        {/* Front baffle */}
+        <mesh position={[0, 0.10, 0.061]}>
+          <planeGeometry args={[0.092, 0.17]} />
+          <meshStandardMaterial color="#1e1d1b" roughness={0.5} />
+        </mesh>
+        {/* Tweeter dome */}
+        <mesh position={[0, 0.145, 0.063]}>
+          <circleGeometry args={[0.014, 16]} />
+          <meshStandardMaterial color="#d4a855" metalness={0.85} roughness={0.25} />
+        </mesh>
+        {/* Main woofer cone */}
+        <mesh position={[0, 0.065, 0.063]}>
+          <circleGeometry args={[0.028, 18]} />
+          <meshStandardMaterial color="#222222" roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0.065, 0.064]}>
+          <circleGeometry args={[0.01, 14]} />
+          <meshStandardMaterial color="#c49845" metalness={0.8} roughness={0.3} />
+        </mesh>
+      </group>
+
+      {/* ── ALUMINUM HEADPHONE STAND WITH STUDIO HEADPHONES (Left side of desk) ── */}
+      <group position={[-0.72, 0.762, 0.08]} rotation={[0, 0.35, 0]} name="headphones-stand">
+        {/* Solid weighted aluminum base */}
+        <mesh castShadow position={[0, 0.006, 0]}>
+          <cylinderGeometry args={[0.045, 0.048, 0.012, 16]} />
+          <meshStandardMaterial color="#222222" roughness={0.3} metalness={0.8} />
+        </mesh>
+        {/* Slender aluminum curved upright stem */}
+        <mesh castShadow position={[0, 0.12, 0]}>
+          <cylinderGeometry args={[0.005, 0.005, 0.23, 8]} />
+          <meshStandardMaterial color="#333333" roughness={0.3} metalness={0.85} />
+        </mesh>
+        {/* Top curved headphone rest cradle */}
+        <mesh position={[0, 0.235, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.018, 0.018, 0.05, 12, 1, false, 0, Math.PI]} />
+          <meshStandardMaterial color="#1a1a1a" roughness={0.5} />
+        </mesh>
+        {/* Over-ear studio headphones resting on stand */}
+        <group position={[0, 0.18, 0]}>
+          {/* Headband curve */}
+          <mesh castShadow position={[0, 0.05, 0]} rotation={[0, 0, 0]}>
+            <torusGeometry args={[0.042, 0.007, 8, 16, Math.PI]} />
+            <meshStandardMaterial color="#111111" roughness={0.6} />
+          </mesh>
+          {/* Left ear cup */}
+          <mesh castShadow position={[-0.044, 0.0, 0]}>
+            <cylinderGeometry args={[0.024, 0.024, 0.018, 14]} />
+            <meshStandardMaterial color="#1e1d1b" roughness={0.4} metalness={0.4} />
+          </mesh>
+          {/* Right ear cup */}
+          <mesh castShadow position={[0.044, 0.0, 0]}>
+            <cylinderGeometry args={[0.024, 0.024, 0.018, 14]} />
+            <meshStandardMaterial color="#1e1d1b" roughness={0.4} metalness={0.4} />
+          </mesh>
+        </group>
+      </group>
+
       {/* ── KEYBOARD ── */}
-      <mesh castShadow position={[-0.02, 0.764, 0.1]}>
+      <mesh castShadow position={[-0.02, 0.768, 0.1]}>
         <boxGeometry args={[0.38, 0.011, 0.14]} />
         <meshStandardMaterial color="#1a1a1a" roughness={0.65} metalness={0.12} />
       </mesh>
       {/* Keyboard key rows */}
       {[0.06, 0.0, -0.06].map((z, i) => (
-        <mesh key={i} position={[-0.02, 0.77, 0.1 + z]}>
+        <mesh key={i} position={[-0.02, 0.774, 0.1 + z]}>
           <boxGeometry args={[0.34, 0.003, 0.02]} />
           <meshStandardMaterial color="#252525" roughness={0.7} metalness={0} />
         </mesh>
       ))}
 
+      {/* ── COILED MECHANICAL KEYBOARD AVIATOR CABLE ── */}
+      <group position={[-0.02, 0.766, 0.0]}>
+        {/* Straight cable connector to keyboard */}
+        <mesh position={[0, 0, 0.02]}>
+          <cylinderGeometry args={[0.0025, 0.0025, 0.03, 6]} />
+          <meshStandardMaterial color="#111111" roughness={0.7} />
+        </mesh>
+        {/* Silver metal aviator quick-disconnect collar */}
+        <mesh position={[0, 0, -0.01]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.006, 0.006, 0.018, 10]} />
+          <meshStandardMaterial color="#cccccc" roughness={0.25} metalness={0.9} />
+        </mesh>
+        {/* Coiled cable helix loops */}
+        {Array.from({ length: 8 }).map((_, cIdx) => (
+          <mesh key={cIdx} position={[-0.06 + cIdx * 0.015, 0.006, -0.04]} rotation={[0, 0, Math.PI / 2]}>
+            <torusGeometry args={[0.007, 0.0025, 6, 12]} />
+            <meshStandardMaterial color="#2a2824" roughness={0.6} />
+          </mesh>
+        ))}
+      </group>
+
       {/* ── MOUSE ── */}
-      <mesh castShadow position={[0.26, 0.764, 0.06]}>
+      <mesh castShadow position={[0.28, 0.768, 0.08]}>
         <boxGeometry args={[0.068, 0.016, 0.115]} />
         <meshStandardMaterial color="#1a1a1a" roughness={0.5} metalness={0.18} />
       </mesh>
+
+      {/* ── SMARTPHONE (Lying on desk with subtle screen glance) ── */}
+      <group position={[0.42, 0.764, 0.22]} rotation={[0, -0.15, 0]} name="smartphone">
+        {/* Dark body / aluminum frame */}
+        <mesh castShadow>
+          <boxGeometry args={[0.075, 0.008, 0.15]} />
+          <meshStandardMaterial color="#111111" roughness={0.25} metalness={0.75} />
+        </mesh>
+        {/* OLED screen face */}
+        <mesh position={[0, 0.0045, 0]}>
+          <planeGeometry args={[0.07, 0.144]} />
+          <meshStandardMaterial
+            color="#080b12"
+            emissive={isNightMode ? "#1a2542" : "#0f1628"}
+            emissiveIntensity={isNightMode ? 0.35 : 0.18}
+            roughness={0.1}
+          />
+        </mesh>
+        {/* Lockscreen clock bar */}
+        <mesh position={[0, 0.0048, -0.04]}>
+          <planeGeometry args={[0.038, 0.008]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.65} />
+        </mesh>
+      </group>
 
       {/* ── INTERACTIVE DESK LAMP (CLICKABLE TOGGLE) ── */}
       <group
@@ -97,7 +281,11 @@ export default function Desk() {
         {/* Base disc */}
         <mesh castShadow>
           <cylinderGeometry args={[0.065, 0.072, 0.018, 14]} />
-          <meshStandardMaterial color={LAMP_BODY} roughness={0.3} metalness={0.8} />
+          <meshStandardMaterial
+            color={lampHovered ? "#3c3830" : LAMP_BODY}
+            roughness={0.3}
+            metalness={0.8}
+          />
         </mesh>
         {/* Lower arm */}
         <mesh castShadow position={[0, 0.18, 0]} rotation={[0.15, 0, 0]}>
@@ -109,32 +297,36 @@ export default function Desk() {
           <cylinderGeometry args={[0.008, 0.008, 0.28, 6]} />
           <meshStandardMaterial color={LAMP_BODY} roughness={0.3} metalness={0.8} />
         </mesh>
-        {/* Shade */}
-        <mesh castShadow position={[0.04, 0.56, -0.06]} rotation={[0.8, 0, 0]}>
-          <coneGeometry args={[0.072, 0.11, 14, 1, true]} />
-          <meshStandardMaterial
-            color="#e8e0cc"
-            roughness={0.55}
-            metalness={0.08}
-            side={2}
-          />
-        </mesh>
-        {/* Inner cone — illuminates when lamp is on */}
-        <mesh position={[0.04, 0.56, -0.06]} rotation={[0.8, 0, 0]}>
-          <coneGeometry args={[0.065, 0.1, 14, 1, true]} />
-          <meshStandardMaterial
-            color="#ffd080"
-            emissive={isLampOn ? "#ffaa30" : "#221808"}
-            emissiveIntensity={isLampOn ? 0.7 : 0.0}
-            roughness={0.6}
-            metalness={0}
-            side={2}
-          />
-        </mesh>
+
+        {/* Lamp Head Group (Animated on click) */}
+        <group ref={lampHeadRef} position={[0.04, 0.56, -0.06]}>
+          {/* Shade */}
+          <mesh castShadow>
+            <coneGeometry args={[0.072, 0.11, 14, 1, true]} />
+            <meshStandardMaterial
+              color="#e8e0cc"
+              roughness={0.55}
+              metalness={0.08}
+              side={2}
+            />
+          </mesh>
+          {/* Inner cone — illuminates when lamp is on */}
+          <mesh>
+            <coneGeometry args={[0.065, 0.1, 14, 1, true]} />
+            <meshStandardMaterial
+              color="#ffd080"
+              emissive={isLampOn ? "#ffaa30" : "#221808"}
+              emissiveIntensity={isLampOn ? 0.75 : 0.0}
+              roughness={0.6}
+              metalness={0}
+              side={2}
+            />
+          </mesh>
+        </group>
       </group>
 
       {/* ── NOTEBOOK ── */}
-      <group position={[0.48, 0.762, 0.12]} rotation={[0, 0.18, 0]}>
+      <group position={[0.54, 0.762, 0.06]} rotation={[0, 0.18, 0]}>
         {/* Book body */}
         <mesh castShadow>
           <boxGeometry args={[0.21, 0.011, 0.155]} />
@@ -172,7 +364,7 @@ export default function Desk() {
         <SteamParticles />
       </group>
 
-      {/* ── SMALL DESK PLANT ── */}
+      {/* ── SMALL DESK SUCCULENT PLANT ── */}
       <group position={[-0.68, 0.762, -0.24]}>
         <mesh castShadow>
           <cylinderGeometry args={[0.038, 0.028, 0.058, 12]} />
@@ -188,10 +380,10 @@ export default function Desk() {
         </mesh>
       </group>
 
-      {/* ── CABLE DETAIL ── */}
-      <mesh position={[-0.08, 0.765, -0.3]} rotation={[0, 0, 0.3]}>
-        <cylinderGeometry args={[0.003, 0.003, 0.18, 4]} />
-        <meshStandardMaterial color="#1a1a1a" roughness={0.8} metalness={0} />
+      {/* ── CABLE PASS-THROUGH GROMMET ── */}
+      <mesh position={[-0.08, 0.762, -0.32]}>
+        <cylinderGeometry args={[0.022, 0.022, 0.004, 14]} />
+        <meshStandardMaterial color="#111111" roughness={0.5} metalness={0.7} />
       </mesh>
     </group>
   );

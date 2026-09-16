@@ -5,14 +5,11 @@ import SleepingCat from "./SleepingCat";
 /**
  * Couch — a modern living room sofa with a sleeping cat.
  *
- * Geometry:
- * - Seat cushion base
- * - Two seat cushions
- * - Back cushion
- * - Arm rests
- * - 4 wooden legs
- * - Throw pillow
- * - Curled sleeping cat on the cushion
+ * Upgraded with:
+ * - Seat cushion base and plump split cushions
+ * - Draped wool throw blanket cascading over the right arm
+ * - Layered Scandinavian accent throw pillows (terracotta & oatmeal)
+ * - Curled sleeping cat on the left cushion
  *
  * Position: center-left of room, facing slightly inward
  */
@@ -32,11 +29,11 @@ export default function Couch() {
 
       {/* ── SEAT CUSHIONS ── */}
       <mesh castShadow position={[-0.44, 0.5, 0]}>
-        <boxGeometry args={[0.82, 0.08, 0.74]} />
+        <boxGeometry args={[0.82, 0.09, 0.74]} />
         <meshStandardMaterial color={FABRIC_DARK} roughness={0.98} metalness={0} />
       </mesh>
       <mesh castShadow position={[0.44, 0.5, 0]}>
-        <boxGeometry args={[0.82, 0.08, 0.74]} />
+        <boxGeometry args={[0.82, 0.09, 0.74]} />
         <meshStandardMaterial color={FABRIC_DARK} roughness={0.98} metalness={0} />
       </mesh>
 
@@ -61,6 +58,30 @@ export default function Couch() {
         <meshStandardMaterial color={FABRIC_DARK} roughness={0.95} metalness={0} />
       </mesh>
 
+      {/* ── DRAPED WOOL THROW BLANKET (Draped over right arm and seat cushion) ── */}
+      <group position={[0.72, 0.56, 0.05]} rotation={[0, 0.08, -0.05]}>
+        {/* Arm fold top */}
+        <mesh castShadow position={[0.12, 0.12, 0]}>
+          <boxGeometry args={[0.22, 0.04, 0.46]} />
+          <meshStandardMaterial color="#b29e84" roughness={0.98} />
+        </mesh>
+        {/* Outer drop down the sofa arm side */}
+        <mesh castShadow position={[0.24, -0.04, 0]}>
+          <boxGeometry args={[0.03, 0.32, 0.46]} />
+          <meshStandardMaterial color="#a69278" roughness={0.98} />
+        </mesh>
+        {/* Inner cascade onto the right cushion */}
+        <mesh castShadow position={[0.0, -0.04, 0]} rotation={[0, 0, 0.18]}>
+          <boxGeometry args={[0.26, 0.03, 0.44]} />
+          <meshStandardMaterial color="#b8a48a" roughness={0.98} />
+        </mesh>
+        {/* Fringed blanket hem */}
+        <mesh position={[-0.14, -0.06, 0]}>
+          <boxGeometry args={[0.03, 0.015, 0.42]} />
+          <meshBasicMaterial color="#dfd4c4" />
+        </mesh>
+      </group>
+
       {/* ── LEGS ── 4 corners ── */}
       {[
         [-0.82, 0.08, 0.32],
@@ -74,10 +95,16 @@ export default function Couch() {
         </mesh>
       ))}
 
-      {/* ── THROW PILLOW ── */}
-      <mesh castShadow position={[0.55, 0.62, -0.1]} rotation={[0, 0.2, 0.1]}>
-        <boxGeometry args={[0.26, 0.22, 0.1]} />
-        <meshStandardMaterial color="#c4a882" roughness={0.95} metalness={0} />
+      {/* ── THROW PILLOW 1 (Terracotta accent) ── */}
+      <mesh castShadow position={[0.48, 0.64, -0.12]} rotation={[0, 0.18, 0.12]}>
+        <boxGeometry args={[0.28, 0.24, 0.11]} />
+        <meshStandardMaterial color="#b8684a" roughness={0.94} metalness={0} />
+      </mesh>
+
+      {/* ── THROW PILLOW 2 (Oatmeal neutral) ── */}
+      <mesh castShadow position={[0.62, 0.62, -0.08]} rotation={[0, -0.22, -0.08]}>
+        <boxGeometry args={[0.26, 0.22, 0.09]} />
+        <meshStandardMaterial color="#dcd4c6" roughness={0.96} metalness={0} />
       </mesh>
     </group>
   );

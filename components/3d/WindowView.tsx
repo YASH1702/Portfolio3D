@@ -9,15 +9,16 @@ import { getWindowSceneryTexture } from "@/lib/rainTexture";
 /**
  * WindowView — exterior outdoor scenery visible through the architectural window.
  *
- * Features:
- * - Scenic backdrop plane with misty trees and rainy skyline
+ * Enhanced with:
+ * - Multi-depth rain simulation (foreground streaks + midground mist)
+ * - Dynamic gusting wind slant that sways with atmospheric currents
+ * - Rolling horizon mist plane that softly shifts across the backdrop
  * - Adaptive day (overcast rain) / night (rainy city lights) textures
- * - Gentle falling rain streaks outside the window
  *
- * Positioned just outside the right window opening at X = 6.6.
+ * Positioned just outside the right window opening at X = 6.05.
  */
 
-const RAIN_COUNT = 85;
+const RAIN_COUNT = 110;
 
 export default function WindowView() {
   const { isNightMode } = useStudio();
@@ -34,32 +35,51 @@ export default function WindowView() {
     if (tex) setTexture(tex);
   }, [isNightMode]);
 
-  // Generate deterministic rain streak positions
+  // Multi-depth rain particles
   const rainDrops = useMemo(() => {
-    return Array.from({ length: RAIN_COUNT }, () => ({
-      x: (Math.random() - 0.5) * 4.0,
-      y: (Math.random() - 0.5) * 2.8,
-      z: (Math.random() - 0.5) * 0.3,
-      speed: 3.6 + Math.random() * 2.2,
-      length: 0.18 + Math.random() * 0.14,
-    }));
+    return Array.from({ length: RAIN_COUNT }, (_, i) => {
+      const isFore = i < 35;
+      return {
+        x: (Math.random() - 0.5) * 4.2,
+        y: (Math.random() - 0.5) * 2.8,
+        z: isFore ? (Math.random() * 0.08 - 0.04) : (Math.random() * 0.15 - 0.15),
+        speed: isFore ? (4.2 + Math.random() * 2.4) : (2.8 + Math.random() * 1.6),
+        length: isFore ? (0.22 + Math.random() * 0.16) : (0.12 + Math.random() * 0.10),
+        width: isFore ? 0.0055 : 0.0035,
+        opacity: isFore ? 0.48 : 0.28,
+      };
+    });
   }, []);
 
   const groupRef = useRef<THREE.Group>(null!);
   const rainRefs = useRef<THREE.Mesh[]>([]);
+  const mistRef = useRef<THREE.Mesh>(null!);
+  const timeRef = useRef(0);
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
+    timeRef.current += dt;
+    const t = timeRef.current;
+
+    // Atmospheric wind gust modulation
+    const windSlant = 0.08 + Math.sin(t * 0.45) * 0.035;
 
     rainRefs.current.forEach((mesh, i) => {
       if (!mesh) return;
       const drop = rainDrops[i];
       mesh.position.y -= dt * drop.speed;
+      mesh.rotation.z = windSlant;
+
       // Wrap around when falling past bottom of window
-      if (mesh.position.y < -1.4) {
-        mesh.position.y = 1.4;
+      if (mesh.position.y < -1.45) {
+        mesh.position.y = 1.45;
       }
     });
+
+    // Rolling horizon mist panning
+    if (mistRef.current) {
+      mistRef.current.position.x = Math.sin(t * 0.12) * 0.25;
+    }
   });
 
   return (
@@ -70,7 +90,7 @@ export default function WindowView() {
     >
       {/* ── OUTDOOR SCENIC BACKDROP ── */}
       <mesh position={[0, 0, -0.38]}>
-        <planeGeometry args={[6.0, 3.4]} />
+        <planeGeometry args={[6.2, 3.5]} />
         <meshBasicMaterial
           map={texture ?? undefined}
           color="#ffffff"
@@ -79,9 +99,21 @@ export default function WindowView() {
         />
       </mesh>
 
+      {/* ── ROLLING HORIZON MIST LAYER ── */}
+      <mesh ref={mistRef} position={[0, -0.4, -0.32]}>
+        <planeGeometry args={[6.8, 1.8]} />
+        <meshBasicMaterial
+          color={isNightMode ? "#1a243a" : "#d8e4ee"}
+          transparent
+          opacity={isNightMode ? 0.28 : 0.22}
+          side={THREE.DoubleSide}
+          fog={false}
+        />
+      </mesh>
+
       {/* Atmospheric volumetric daylight radiance plane (Day mode) */}
       {!isNightMode && (
-        <mesh position={[0, 0.4, -0.36]}>
+        <mesh position={[0, 0.4, -0.35]}>
           <planeGeometry args={[5.8, 2.4]} />
           <meshBasicMaterial
             color="#e8f4fc"
@@ -93,7 +125,7 @@ export default function WindowView() {
         </mesh>
       )}
 
-      {/* ── FALLING RAIN STREAKS OUTSIDE WINDOW ── */}
+      {/* ── FALLING MULTI-DEPTH RAIN STREAKS ── */}
       <group ref={groupRef} position={[0, 0, -0.06]}>
         {rainDrops.map((drop, i) => (
           <mesh
@@ -102,13 +134,13 @@ export default function WindowView() {
               if (el) rainRefs.current[i] = el;
             }}
             position={[drop.x, drop.y, drop.z]}
-            rotation={[0, 0, 0.08]} // slight wind slant
+            rotation={[0, 0, 0.08]}
           >
-            <planeGeometry args={[0.005, drop.length]} />
+            <planeGeometry args={[drop.width, drop.length]} />
             <meshBasicMaterial
-              color={isNightMode ? "#8cbcf8" : "#eef6ff"}
+              color={isNightMode ? "#93c5fd" : "#eaf2fb"}
               transparent
-              opacity={isNightMode ? 0.45 : 0.32}
+              opacity={isNightMode ? drop.opacity * 1.1 : drop.opacity}
               side={THREE.DoubleSide}
               fog={false}
             />
