@@ -428,7 +428,7 @@ export default function Environment() {
         {[-4.2, -2.1, 0.0, 2.1, 4.2].map((zPos, idx) => (
           <group key={`beam-${idx}`} position={[0, 3.91, zPos]}>
             {/* Solid oak beam spanning across room width */}
-            <mesh castShadow receiveShadow>
+            <mesh receiveShadow>
               <boxGeometry args={[12.0, 0.18, 0.16]} />
               <meshStandardMaterial color="#b48c56" roughness={0.48} metalness={0.03} />
             </mesh>
@@ -474,7 +474,7 @@ export default function Environment() {
               <meshStandardMaterial color="#d4a855" roughness={0.3} metalness={0.85} />
             </mesh>
             {/* Cylindrical spotlight canister body */}
-            <mesh castShadow position={[0, -0.07, 0]}>
+            <mesh position={[0, -0.07, 0]}>
               <cylinderGeometry args={[0.036, 0.044, 0.12, 14]} />
               <meshStandardMaterial color="#181818" roughness={0.35} metalness={0.7} />
             </mesh>

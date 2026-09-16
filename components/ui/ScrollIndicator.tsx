@@ -90,17 +90,18 @@ export default function ScrollIndicator({ progress, section }: ScrollIndicatorPr
           textTransform: "uppercase",
           pointerEvents: "none",
           background: isNightMode
-            ? "rgba(14, 18, 26, 0.82)"
-            : "rgba(255, 255, 255, 0.88)",
-          backdropFilter: "blur(14px)",
+            ? "rgba(10, 14, 24, 0.40)"
+            : "rgba(255, 255, 255, 0.25)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
-            ? "1px solid rgba(224, 184, 116, 0.32)"
-            : "1px solid rgba(180, 150, 110, 0.42)",
+            ? "1px solid rgba(224, 184, 116, 0.30)"
+            : "1px solid rgba(255, 255, 255, 0.45)",
           padding: "5px 12px",
           borderRadius: "16px",
           boxShadow: isNightMode
-            ? "0 4px 16px rgba(0,0,0,0.4)"
-            : "0 2px 12px rgba(24,20,16,0.06)",
+            ? "0 4px 16px rgba(0,0,0,0.35)"
+            : "0 2px 12px rgba(24,20,16,0.05)",
           transition: "all 0.3s ease",
         }}
       >

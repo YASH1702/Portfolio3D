@@ -37,27 +37,28 @@ export default function AudioToggle() {
             : isNightMode ? "#c4b8a4" : "#1e1b16",
           background: isAudioOn
             ? isNightMode
-              ? "rgba(30, 58, 138, 0.35)"
-              : "rgba(220, 238, 255, 0.92)"
+              ? "rgba(30, 58, 138, 0.40)"
+              : "rgba(200, 230, 255, 0.35)"
             : isNightMode
-              ? "rgba(14, 18, 26, 0.85)"
-              : "rgba(255, 255, 255, 0.90)",
-          backdropFilter: "blur(14px)",
+              ? "rgba(10, 14, 24, 0.40)"
+              : "rgba(255, 255, 255, 0.25)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           border: `1px solid ${
             isAudioOn
               ? isNightMode
-                ? "rgba(147, 197, 253, 0.50)"
+                ? "rgba(147, 197, 253, 0.45)"
                 : "rgba(70, 140, 220, 0.45)"
               : isNightMode
-                ? "rgba(224, 184, 116, 0.35)"
-                : "rgba(180, 150, 110, 0.45)"
+                ? "rgba(224, 184, 116, 0.30)"
+                : "rgba(255, 255, 255, 0.45)"
           }`,
           padding: "7px 13px",
           borderRadius: "18px",
           cursor: "pointer",
           boxShadow: isNightMode
-            ? "0 4px 16px rgba(0, 0, 0, 0.45)"
-            : "0 2px 12px rgba(24, 20, 16, 0.08)",
+            ? "0 4px 16px rgba(0, 0, 0, 0.35)"
+            : "0 2px 12px rgba(24, 20, 16, 0.06)",
           transition: "all 0.25s ease",
           display: "flex",
           alignItems: "center",

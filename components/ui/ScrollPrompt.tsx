@@ -46,12 +46,13 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
             aria-label="Scroll to explore portfolio"
             style={{
               background: isNightMode
-                ? "rgba(14, 18, 26, 0.88)"
-                : "rgba(255, 255, 255, 0.92)",
-              backdropFilter: "blur(16px)",
+                ? "rgba(10, 14, 24, 0.40)"
+                : "rgba(255, 255, 255, 0.25)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
               border: isNightMode
-                ? "1px solid rgba(224, 184, 116, 0.40)"
-                : "1px solid rgba(180, 150, 110, 0.50)",
+                ? "1px solid rgba(224, 184, 116, 0.35)"
+                : "1px solid rgba(255, 255, 255, 0.50)",
               borderRadius: "26px",
               padding: "9px 20px",
               display: "flex",
@@ -59,8 +60,8 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
               gap: "13px",
               cursor: "pointer",
               boxShadow: isNightMode
-                ? "0 10px 28px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(224, 184, 116, 0.15)"
-                : "0 8px 22px -4px rgba(24, 20, 16, 0.12)",
+                ? "0 10px 28px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(224, 184, 116, 0.12)"
+                : "0 8px 22px -4px rgba(24, 20, 16, 0.08)",
               transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
             onMouseEnter={(e) => {

@@ -39,18 +39,19 @@ export default function StudioControls() {
             ? isNightMode ? "#dfba74" : "#946820"
             : isNightMode ? "#c4b8a4" : "#1e1b16",
           background: isNightMode
-            ? "rgba(14, 18, 26, 0.85)"
-            : "rgba(255, 255, 255, 0.90)",
-          backdropFilter: "blur(14px)",
+            ? "rgba(10, 14, 24, 0.40)"
+            : "rgba(255, 255, 255, 0.25)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
-            ? "1px solid rgba(224, 184, 116, 0.35)"
-            : "1px solid rgba(180, 150, 110, 0.45)",
+            ? "1px solid rgba(224, 184, 116, 0.30)"
+            : "1px solid rgba(255, 255, 255, 0.45)",
           padding: "7px 13px",
           borderRadius: "18px",
           cursor: "pointer",
           boxShadow: isNightMode
-            ? "0 4px 16px rgba(0, 0, 0, 0.45)"
-            : "0 2px 12px rgba(24, 20, 16, 0.08)",
+            ? "0 4px 16px rgba(0, 0, 0, 0.35)"
+            : "0 2px 12px rgba(24, 20, 16, 0.06)",
           transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
@@ -74,18 +75,19 @@ export default function StudioControls() {
           textTransform: "uppercase",
           color: isNightMode ? "#93c5fd" : "#1e1b16",
           background: isNightMode
-            ? "rgba(14, 18, 26, 0.85)"
-            : "rgba(255, 255, 255, 0.90)",
-          backdropFilter: "blur(14px)",
+            ? "rgba(10, 14, 24, 0.40)"
+            : "rgba(255, 255, 255, 0.25)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
-            ? "1px solid rgba(147, 197, 253, 0.45)"
-            : "1px solid rgba(180, 150, 110, 0.45)",
+            ? "1px solid rgba(147, 197, 253, 0.35)"
+            : "1px solid rgba(255, 255, 255, 0.45)",
           padding: "7px 13px",
           borderRadius: "18px",
           cursor: "pointer",
           boxShadow: isNightMode
-            ? "0 4px 16px rgba(0, 0, 0, 0.45)"
-            : "0 2px 12px rgba(24, 20, 16, 0.08)",
+            ? "0 4px 16px rgba(0, 0, 0, 0.35)"
+            : "0 2px 12px rgba(24, 20, 16, 0.06)",
           transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",

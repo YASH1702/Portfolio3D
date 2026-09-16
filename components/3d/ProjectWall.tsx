@@ -40,20 +40,30 @@ function ProjectFrame({ project, position, isInspecting, isActive }: FrameProps)
   const router = useRouter();
   const groupRef      = useRef<THREE.Group>(null!);
   const lightRef      = useRef<THREE.PointLight>(null!);
-  const artworkMatRef = useRef<THREE.MeshStandardMaterial>(null!);
+  const artworkMatRef = useRef<THREE.MeshBasicMaterial>(null!);
 
   const [hovered, setHovered] = useState(false);
-  const [texture, setTexture] = useState<THREE.CanvasTexture | null>(null);
+  const [texture, setTexture] = useState<THREE.CanvasTexture | null>(() => {
+    if (typeof window !== "undefined") {
+      return getProjectTexture(project);
+    }
+    return null;
+  });
 
   const scaleRef         = useRef(1.0);
-  const emissiveRef      = useRef(0.0);
-  const lightRef2        = useRef(0.15);
+  const lightRef2        = useRef(0.35);
   const currentXRef      = useRef(FRAME_X_WALL);
   const dimRef           = useRef(1.0);
 
   useEffect(() => {
     const tex = getProjectTexture(project);
-    if (tex) setTexture(tex);
+    if (tex) {
+      tex.needsUpdate = true;
+      setTexture(tex);
+    }
+    if (artworkMatRef.current) {
+      artworkMatRef.current.needsUpdate = true;
+    }
   }, [project]);
 
   useFrame((_, delta) => {
@@ -63,25 +73,21 @@ function ProjectFrame({ project, position, isInspecting, isActive }: FrameProps)
     const targetX = (isInspecting && isActive) ? FRAME_X_INSPECT : FRAME_X_WALL;
     currentXRef.current = dampedLerp(currentXRef.current, targetX, 6, dt);
 
-    // Active spotlight: 1.0 when active or hovered, gently dimmed to 0.72 otherwise
-    const targetDim = (isActive || hovered || !isInspecting) ? 1.0 : 0.72;
+    const targetDim = (isActive || hovered || !isInspecting) ? 1.0 : 0.82;
     dimRef.current  = dampedLerp(dimRef.current, targetDim, 5, dt);
 
-    const targetScale    = hovered ? 1.02 : 1.0;
-    const targetEmissive = hovered ? 0.12  : isActive ? 0.05 : 0.01;
-    const targetLight    = hovered ? 0.75  : (isInspecting && isActive) ? 0.35 : 0.15;
+    const targetScale = hovered ? 1.02 : 1.0;
+    const targetLight = hovered ? 0.85 : (isInspecting && isActive) ? 0.5 : 0.3;
 
-    scaleRef.current    = dampedLerp(scaleRef.current, targetScale, 7, dt);
-    emissiveRef.current = dampedLerp(emissiveRef.current, targetEmissive, 7, dt);
-    lightRef2.current   = dampedLerp(lightRef2.current, targetLight, 7, dt);
+    scaleRef.current  = dampedLerp(scaleRef.current, targetScale, 7, dt);
+    lightRef2.current = dampedLerp(lightRef2.current, targetLight, 7, dt);
 
     if (groupRef.current) {
       groupRef.current.position.x = currentXRef.current;
       groupRef.current.scale.setScalar(scaleRef.current * dimRef.current);
     }
     if (artworkMatRef.current) {
-      artworkMatRef.current.emissiveIntensity = emissiveRef.current;
-      artworkMatRef.current.opacity = 0.5 + dimRef.current * 0.5;
+      artworkMatRef.current.opacity = 0.75 + dimRef.current * 0.25;
     }
     if (lightRef.current) {
       lightRef.current.intensity = lightRef2.current;
@@ -131,10 +137,17 @@ function ProjectFrame({ project, position, isInspecting, isActive }: FrameProps)
         <planeGeometry args={[innerW, innerH]} />
         <meshStandardMaterial color="#181714" roughness={0.9} metalness={0} />
       </mesh>
-      {/* ── ARTWORK SCREENSHOT ── */}
+      {/* ── ARTWORK SCREENSHOT (VIBRANT ILLUMINATED PREVIEW) ── */}
       <mesh position={[0, artY, FD / 2 + 0.003]} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave} onClick={handleClick}>
         <planeGeometry args={[innerW - 0.04, artH - 0.04]} />
-        <meshStandardMaterial ref={artworkMatRef} map={texture ?? undefined} color={texture ? "#ffffff" : "#1e293b"} emissive={texture ? "#ffffff" : "#38bdf8"} emissiveIntensity={0.01} roughness={0.4} metalness={0.05} transparent opacity={1} />
+        <meshBasicMaterial
+          ref={artworkMatRef}
+          map={texture ?? undefined}
+          color="#ffffff"
+          toneMapped={false}
+          transparent
+          opacity={1}
+        />
       </mesh>
       {/* ── INFORMATION LOWER PANEL ── */}
       <group position={[0, infoY, FD / 2 + 0.004]}>
@@ -150,10 +163,10 @@ function ProjectFrame({ project, position, isInspecting, isActive }: FrameProps)
       {/* ── MUSEUM GLAZING GLASS ── */}
       <mesh position={[0, 0, FD / 2 + 0.008]} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave} onClick={handleClick}>
         <planeGeometry args={[innerW, innerH]} />
-        <meshStandardMaterial color="#dbeafe" roughness={0.08} metalness={0.15} transparent opacity={0.06} />
+        <meshStandardMaterial color="#dbeafe" roughness={0.04} metalness={0.10} transparent opacity={0.02} />
       </mesh>
       {/* ── DEDICATED HOVER / ACTIVE LIGHT ── */}
-      <pointLight ref={lightRef} position={[0.4, 0.1, 0.35]} intensity={0.15} color="#fff5e4" distance={2.8} decay={2} />
+      <pointLight ref={lightRef} position={[0.4, 0.1, 0.35]} intensity={0.35} color="#fff5e4" distance={2.8} decay={2} />
 
       {/* ── DEDICATED BRASS ART PICTURE SCONCE (Above each frame) ── */}
       <group position={[0, FH / 2 + 0.16, FD / 2 + 0.14]}>

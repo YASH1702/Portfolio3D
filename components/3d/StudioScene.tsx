@@ -16,7 +16,6 @@ import ProjectWall from "./ProjectWall";
 import ScrollCamera from "./ScrollCamera";
 import Environment from "./Environment";
 import WindowView from "./WindowView";
-import DustMotes from "./DustMotes";
 
 interface StudioSceneProps {
   scrollProgress: number;
@@ -112,7 +111,6 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         <Environment />
         <Room />
         <WindowView />
-        <DustMotes />
         <Desk />
         <Couch />
         <HeroWall />

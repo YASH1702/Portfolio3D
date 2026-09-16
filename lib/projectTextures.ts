@@ -39,6 +39,7 @@ export function getProjectTexture(project: Project): THREE.CanvasTexture | null 
   texture.minFilter = THREE.LinearMipmapLinearFilter;
   texture.magFilter = THREE.LinearFilter;
   texture.generateMipmaps = true;
+  texture.needsUpdate = true;
 
   textureCache[project.id] = texture;
   return texture;

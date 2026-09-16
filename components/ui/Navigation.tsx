@@ -60,19 +60,20 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
           color: isNightMode ? "#ffffff" : "#11110e",
           textTransform: "uppercase",
           background: isNightMode
-            ? "rgba(14, 18, 26, 0.82)"
-            : "rgba(255, 255, 255, 0.88)",
-          backdropFilter: "blur(16px)",
+            ? "rgba(10, 14, 24, 0.35)"
+            : "rgba(255, 255, 255, 0.22)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
-            ? "1px solid rgba(224, 184, 116, 0.35)"
-            : "1px solid rgba(180, 150, 110, 0.45)",
+            ? "1px solid rgba(224, 184, 116, 0.30)"
+            : "1px solid rgba(255, 255, 255, 0.45)",
           padding: "7px 18px",
           borderRadius: "24px",
           pointerEvents: "all",
           cursor: "pointer",
           boxShadow: isNightMode
-            ? "0 8px 24px -4px rgba(0, 0, 0, 0.5)"
-            : "0 4px 18px -2px rgba(24, 20, 16, 0.08)",
+            ? "0 8px 24px -4px rgba(0, 0, 0, 0.4)"
+            : "0 4px 18px -2px rgba(24, 20, 16, 0.05)",
           transition: "all 0.25s ease",
         }}
         onMouseEnter={(e) => {
@@ -82,8 +83,8 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = "translateY(0)";
           e.currentTarget.style.borderColor = isNightMode
-            ? "rgba(224, 184, 116, 0.35)"
-            : "rgba(180, 150, 110, 0.45)";
+            ? "rgba(224, 184, 116, 0.30)"
+            : "rgba(255, 255, 255, 0.45)";
         }}
       >
         Yashwant
@@ -93,17 +94,18 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
       <div
         style={{
           background: isNightMode
-            ? "rgba(14, 18, 26, 0.85)"
-            : "rgba(255, 255, 255, 0.90)",
-          backdropFilter: "blur(16px)",
+            ? "rgba(10, 14, 24, 0.38)"
+            : "rgba(255, 255, 255, 0.25)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
-            ? "1px solid rgba(224, 184, 116, 0.35)"
-            : "1px solid rgba(180, 150, 110, 0.45)",
+            ? "1px solid rgba(224, 184, 116, 0.30)"
+            : "1px solid rgba(255, 255, 255, 0.45)",
           borderRadius: "30px",
           padding: "6px 18px",
           boxShadow: isNightMode
-            ? "0 10px 30px -5px rgba(0, 0, 0, 0.55)"
-            : "0 6px 22px -3px rgba(24, 20, 16, 0.10)",
+            ? "0 10px 30px -5px rgba(0, 0, 0, 0.45)"
+            : "0 6px 22px -3px rgba(24, 20, 16, 0.06)",
           pointerEvents: "all",
         }}
       >

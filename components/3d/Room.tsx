@@ -94,7 +94,7 @@ export default function Room() {
       </mesh>
 
       {/* ── FRONT WALL (Hero Identity) ── */}
-      <mesh receiveShadow position={[0, H / 2, -D / 2]}>
+      <mesh position={[0, H / 2, -D / 2]}>
         <planeGeometry args={[W, H]} />
         <meshStandardMaterial color={WALL} roughness={0.88} metalness={0} />
       </mesh>
