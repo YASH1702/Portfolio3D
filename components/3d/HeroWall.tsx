@@ -20,12 +20,12 @@ export default function HeroWall() {
   const arrowRef = useRef<THREE.Group>(null!);
   const timeRef = useRef(0);
 
-  // Very slow, subtle breathing float for scroll indicator
+  // Breathing float for scroll indicator
   useFrame((_, delta) => {
     timeRef.current += delta * 0.9;
     if (arrowRef.current) {
       arrowRef.current.position.y =
-        0.92 + Math.sin(timeRef.current * Math.PI * 2) * 0.006;
+        0.88 + Math.sin(timeRef.current * Math.PI * 2) * 0.012;
     }
   });
 
@@ -128,18 +128,29 @@ export default function HeroWall() {
       </Text>
 
       {/* ── SCROLL TO EXPLORE INDICATOR ── */}
-      <group ref={arrowRef}>
+      <group ref={arrowRef} position={[0, 0.90, WALL_Z]}>
         <Text
-          position={[0, 0.92, WALL_Z]}
-          fontSize={0.046}
+          position={[0, 0.04, 0]}
+          fontSize={0.076}
           color={indicatorColor}
           anchorX="center"
           anchorY="middle"
-          letterSpacing={0.24}
-          maxWidth={5}
+          letterSpacing={0.28}
+          maxWidth={6}
           textAlign="center"
+          fontWeight={600}
         >
-          SCROLL TO EXPLORE  ↓
+          SCROLL TO EXPLORE
+        </Text>
+        {/* Downward indicator chevron */}
+        <Text
+          position={[0, -0.05, 0]}
+          fontSize={0.072}
+          color={dividerColor}
+          anchorX="center"
+          anchorY="middle"
+        >
+          ↓
         </Text>
       </group>
     </group>

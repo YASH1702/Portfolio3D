@@ -10,6 +10,7 @@ import Cursor from "@/components/ui/Cursor";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import StudioControls from "@/components/ui/StudioControls";
 import AudioToggle from "@/components/ui/AudioToggle";
+import ScrollPrompt from "@/components/ui/ScrollPrompt";
 import AboutOverlay from "@/components/sections/AboutOverlay";
 import ContactSection from "@/components/sections/ContactSection";
 
@@ -49,6 +50,9 @@ function PortfolioExperience() {
 
       {/* ── SCROLL PROGRESS + SECTION LABEL ── */}
       <ScrollIndicator progress={progress} section={section} />
+
+      {/* ── INTERACTIVE SCROLL PROMPT — bottom center (auto-hides on scroll) ── */}
+      <ScrollPrompt progress={progress} />
 
       {/* ── STUDIO CONTROLS (Day/Night + Lamp) — bottom right ── */}
       <StudioControls />

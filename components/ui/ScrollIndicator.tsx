@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useStudio } from "@/context/StudioContext";
 
 interface ScrollIndicatorProps {
   progress: number;
@@ -19,9 +20,11 @@ const SECTION_LABELS: Record<string, string> = {
  * and current section label.
  *
  * Left side: thin vertical progress bar.
- * Right side (bottom): current section label in monospace.
+ * Left side (above audio button): current section label in monospace.
  */
 export default function ScrollIndicator({ progress, section }: ScrollIndicatorProps) {
+  const { isNightMode } = useStudio();
+
   return (
     <>
       {/* ── VERTICAL PROGRESS BAR — left side ── */}
@@ -43,11 +46,14 @@ export default function ScrollIndicator({ progress, section }: ScrollIndicatorPr
         {/* Track */}
         <div
           style={{
-            width: "1px",
-            height: "80px",
-            background: "rgba(139, 115, 85, 0.2)",
+            width: "1.5px",
+            height: "90px",
+            background: isNightMode
+              ? "rgba(224, 184, 116, 0.18)"
+              : "rgba(139, 115, 85, 0.2)",
             position: "relative",
             overflow: "hidden",
+            borderRadius: "1px",
           }}
         >
           {/* Fill */}
@@ -57,8 +63,9 @@ export default function ScrollIndicator({ progress, section }: ScrollIndicatorPr
               top: 0,
               left: 0,
               right: 0,
-              background: "#8b7355",
+              background: isNightMode ? "#dfba74" : "#8b7355",
               height: `${Math.round(progress * 100)}%`,
+              borderRadius: "1px",
             }}
             animate={{ height: `${Math.round(progress * 100)}%` }}
             transition={{ duration: 0.1 }}
@@ -66,21 +73,22 @@ export default function ScrollIndicator({ progress, section }: ScrollIndicatorPr
         </div>
       </div>
 
-      {/* ── SECTION LABEL — bottom left ── */}
+      {/* ── SECTION LABEL — bottom left, cleanly above AudioToggle ── */}
       <div
         aria-live="polite"
         aria-label={`Current section: ${SECTION_LABELS[section] ?? section}`}
         style={{
           position: "fixed",
           left: "clamp(20px, 3vw, 40px)",
-          bottom: "clamp(16px, 3vh, 28px)",
+          bottom: "clamp(54px, 7.5vh, 68px)",
           zIndex: 60,
           fontFamily: "var(--font-geist-mono, monospace)",
           fontSize: "9px",
           letterSpacing: "0.22em",
-          color: "#8b7355",
+          color: isNightMode ? "#dfba74" : "#8b7355",
           textTransform: "uppercase",
           pointerEvents: "none",
+          transition: "color 0.3s ease",
         }}
       >
         <motion.span
