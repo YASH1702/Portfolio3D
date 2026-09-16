@@ -83,20 +83,33 @@ export default function ScrollIndicator({ progress, section }: ScrollIndicatorPr
           bottom: "clamp(54px, 7.5vh, 68px)",
           zIndex: 60,
           fontFamily: "var(--font-geist-mono, monospace)",
-          fontSize: "9px",
-          letterSpacing: "0.22em",
-          color: isNightMode ? "#dfba74" : "#8b7355",
+          fontSize: "10.5px",
+          fontWeight: 700,
+          letterSpacing: "0.20em",
+          color: isNightMode ? "#f8f5ee" : "#14120e",
           textTransform: "uppercase",
           pointerEvents: "none",
-          transition: "color 0.3s ease",
+          background: isNightMode
+            ? "rgba(14, 18, 26, 0.82)"
+            : "rgba(255, 255, 255, 0.88)",
+          backdropFilter: "blur(14px)",
+          border: isNightMode
+            ? "1px solid rgba(224, 184, 116, 0.32)"
+            : "1px solid rgba(180, 150, 110, 0.42)",
+          padding: "5px 12px",
+          borderRadius: "16px",
+          boxShadow: isNightMode
+            ? "0 4px 16px rgba(0,0,0,0.4)"
+            : "0 2px 12px rgba(24,20,16,0.06)",
+          transition: "all 0.3s ease",
         }}
       >
         <motion.span
           key={section}
-          initial={{ opacity: 0, y: 4 }}
+          initial={{ opacity: 0, y: 3 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
-          transition={{ duration: 0.3 }}
+          exit={{ opacity: 0, y: -3 }}
+          transition={{ duration: 0.25 }}
         >
           {SECTION_LABELS[section] ?? section.toUpperCase()}
         </motion.span>

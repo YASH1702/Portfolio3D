@@ -56,16 +56,16 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
           <div
             style={{
               background: isNightMode
-                ? "rgba(15, 19, 28, 0.92)"
-                : "rgba(242, 237, 228, 0.94)",
-              backdropFilter: "blur(14px)",
+                ? "rgba(14, 18, 26, 0.94)"
+                : "rgba(255, 255, 255, 0.94)",
+              backdropFilter: "blur(16px)",
               border: isNightMode
-                ? "1px solid rgba(224, 184, 116, 0.28)"
-                : "1px solid rgba(196, 168, 130, 0.38)",
+                ? "1px solid rgba(224, 184, 116, 0.35)"
+                : "1px solid rgba(180, 150, 110, 0.45)",
               padding: "28px 32px",
               boxShadow: isNightMode
-                ? "0 24px 48px -15px rgba(0, 0, 0, 0.6)"
-                : "0 20px 40px -15px rgba(24, 20, 16, 0.08)",
+                ? "0 24px 48px -15px rgba(0, 0, 0, 0.65)"
+                : "0 20px 40px -15px rgba(24, 20, 16, 0.12)",
               transition: "background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease",
             }}
           >
@@ -73,9 +73,10 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
             <div
               style={{
                 fontFamily: "var(--font-geist-mono, monospace)",
-                fontSize: "10px",
+                fontSize: "10.5px",
+                fontWeight: 700,
                 letterSpacing: "0.22em",
-                color: isNightMode ? "#dfba74" : "#8b7355",
+                color: isNightMode ? "#dfba74" : "#84551e",
                 textTransform: "uppercase",
                 marginBottom: "14px",
                 display: "flex",
@@ -93,9 +94,9 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
               style={{
                 fontFamily: "var(--font-geist-sans, sans-serif)",
                 fontSize: "22px",
-                fontWeight: 700,
+                fontWeight: 800,
                 letterSpacing: "-0.02em",
-                color: isNightMode ? "#f8f6f0" : "#18180f",
+                color: isNightMode ? "#ffffff" : "#0d0c09",
                 marginBottom: "10px",
                 lineHeight: 1.15,
                 transition: "color 0.3s ease",
@@ -108,9 +109,9 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
             <p
               style={{
                 fontFamily: "var(--font-geist-sans, sans-serif)",
-                fontSize: "13px",
+                fontSize: "13.5px",
                 lineHeight: 1.7,
-                color: isNightMode ? "#d8d2c6" : "#4a473e",
+                color: isNightMode ? "#f0eade" : "#1a1916",
                 marginBottom: "22px",
                 transition: "color 0.3s ease",
               }}
@@ -126,16 +127,17 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                 marginBottom: "20px",
                 paddingBottom: "20px",
                 borderBottom: isNightMode
-                  ? "1px solid rgba(224, 184, 116, 0.2)"
-                  : "1px solid rgba(196, 168, 130, 0.3)",
+                  ? "1px solid rgba(224, 184, 116, 0.25)"
+                  : "1px solid rgba(196, 168, 130, 0.35)",
               }}
             >
               <div
                 style={{
                   fontFamily: "var(--font-geist-mono, monospace)",
-                  fontSize: "9px",
-                  letterSpacing: "0.16em",
-                  color: isNightMode ? "#dfba74" : "#8b7355",
+                  fontSize: "9.5px",
+                  fontWeight: 700,
+                  letterSpacing: "0.18em",
+                  color: isNightMode ? "#dfba74" : "#8a5e28",
                   textTransform: "uppercase",
                   marginBottom: "12px",
                 }}
@@ -153,7 +155,7 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                       {/* Dot */}
                       <div style={{
                         width: "7px", height: "7px", borderRadius: "50%",
-                        background: isNightMode ? "#dfba74" : "#c4a882",
+                        background: isNightMode ? "#dfba74" : "#8a5e28",
                         flexShrink: 0,
                         marginTop: "3px",
                       }} />
@@ -161,14 +163,15 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                     <div style={{ marginLeft: "8px", flex: 1 }}>
                       <div style={{
                         fontFamily: "var(--font-geist-mono, monospace)",
-                        fontSize: "10px", fontWeight: 700,
-                        color: isNightMode ? "#f0e8d8" : "#18180f",
+                        fontSize: "11px", fontWeight: 800,
+                        color: isNightMode ? "#ffffff" : "#11110e",
                         letterSpacing: "0.04em",
                       }}>{item.year}</div>
                       <div style={{
                         fontFamily: "var(--font-geist-sans, sans-serif)",
-                        fontSize: "10px",
-                        color: isNightMode ? "#b0a490" : "#6a6858",
+                        fontSize: "10.5px",
+                        fontWeight: 500,
+                        color: isNightMode ? "#d4c8b6" : "#24221c",
                         lineHeight: 1.45,
                         whiteSpace: "pre-line",
                         marginTop: "2px",
@@ -178,9 +181,7 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                     {i < arr.length - 1 && (
                       <div style={{
                         height: "1px", flex: 0.4, marginTop: "6px",
-                        background: isNightMode
-                          ? "rgba(224, 184, 116, 0.3)"
-                          : "rgba(196, 168, 130, 0.4)",
+                        background: isNightMode ? "rgba(224, 184, 116, 0.35)" : "rgba(180, 150, 110, 0.45)",
                       }} />
                     )}
                   </div>
@@ -196,8 +197,8 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                 gap: "12px",
                 paddingTop: "16px",
                 borderTop: isNightMode
-                  ? "1px solid rgba(224, 184, 116, 0.2)"
-                  : "1px solid rgba(196, 168, 130, 0.3)",
+                  ? "1px solid rgba(224, 184, 116, 0.25)"
+                  : "1px solid rgba(196, 168, 130, 0.35)",
                 marginBottom: "16px",
               }}
             >
@@ -206,9 +207,10 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                   <div
                     style={{
                       fontFamily: "var(--font-geist-mono, monospace)",
-                      fontSize: "9px",
-                      letterSpacing: "0.16em",
-                      color: isNightMode ? "#dfba74" : "#8b7355",
+                      fontSize: "9.5px",
+                      fontWeight: 700,
+                      letterSpacing: "0.18em",
+                      color: isNightMode ? "#dfba74" : "#8a5e28",
                       textTransform: "uppercase",
                       marginBottom: "4px",
                     }}
@@ -218,8 +220,9 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                   <div
                     style={{
                       fontFamily: "var(--font-geist-sans, sans-serif)",
-                      fontSize: "11px",
-                      color: isNightMode ? "#eae4d8" : "#2a2822",
+                      fontSize: "11.5px",
+                      fontWeight: 500,
+                      color: isNightMode ? "#ffffff" : "#141310",
                       lineHeight: 1.6,
                     }}
                   >
@@ -233,9 +236,10 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
             <div
               style={{
                 fontFamily: "var(--font-geist-mono, monospace)",
-                fontSize: "9px",
+                fontSize: "10px",
+                fontWeight: 700,
                 letterSpacing: "0.18em",
-                color: isNightMode ? "#b0a490" : "#9c8d78",
+                color: isNightMode ? "#dfba74" : "#5a4225",
                 textTransform: "uppercase",
               }}
             >

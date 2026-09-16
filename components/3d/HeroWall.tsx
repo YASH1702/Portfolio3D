@@ -31,14 +31,14 @@ export default function HeroWall() {
 
   const WALL_Z = -5.86;
 
-  // Adaptive palette for flawless contrast across both Day & Night modes
-  const nameBackingColor = isNightMode ? "#161822" : "#c8beaf";
-  const nameColor        = isNightMode ? "#fcfaf4" : "#151410";
-  const dividerColor     = isNightMode ? "#dfba74" : "#b09060";
-  const roleColor        = isNightMode ? "#eae2d5" : "#28261e";
-  const taglineColor     = isNightMode ? "#d8cebe" : "#4d4a42";
-  const techColor        = isNightMode ? "#cca878" : "#826848";
-  const indicatorColor   = isNightMode ? "#b8a892" : "#988a76";
+  // High-contrast adaptive palette for crisp readability across Day & Night modes
+  const nameBackingColor = isNightMode ? "#0d101a" : "#b4a896";
+  const nameColor        = isNightMode ? "#ffffff" : "#0d0c09";
+  const dividerColor     = isNightMode ? "#dfba74" : "#a88040";
+  const roleColor        = isNightMode ? "#f8eee2" : "#12110d";
+  const taglineColor     = isNightMode ? "#eae2d5" : "#1c1a14";
+  const techColor        = isNightMode ? "#dfba74" : "#48361e";
+  const indicatorColor   = isNightMode ? "#ffffff" : "#11110e";
 
   return (
     <group name="hero-wall">
@@ -68,7 +68,7 @@ export default function HeroWall() {
         letterSpacing={0.14}
         maxWidth={10}
         textAlign="center"
-        fontWeight={700}
+        fontWeight={800}
       >
         YASHWANT KARIHA
       </Text>
@@ -78,22 +78,22 @@ export default function HeroWall() {
         <planeGeometry args={[3.4, 0.008]} />
         <meshStandardMaterial
           color={dividerColor}
-          roughness={0.4}
-          metalness={0.65}
+          roughness={0.35}
+          metalness={0.7}
         />
       </mesh>
 
       {/* ── ROLE ── */}
       <Text
         position={[0, 2.02, WALL_Z]}
-        fontSize={0.135}
+        fontSize={0.145}
         color={roleColor}
         anchorX="center"
         anchorY="middle"
         letterSpacing={0.24}
         maxWidth={9}
         textAlign="center"
-        fontWeight={600}
+        fontWeight={700}
       >
         FULL-STACK DEVELOPER
       </Text>
@@ -101,14 +101,15 @@ export default function HeroWall() {
       {/* ── EDITORIAL POSITIONING TAGLINE ── */}
       <Text
         position={[0, 1.66, WALL_Z]}
-        fontSize={0.092}
+        fontSize={0.102}
         color={taglineColor}
         anchorX="center"
         anchorY="middle"
-        letterSpacing={0.07}
+        letterSpacing={0.08}
         lineHeight={1.65}
-        maxWidth={7.5}
+        maxWidth={8.0}
         textAlign="center"
+        fontWeight={500}
       >
         {`BUILDING DIGITAL PRODUCTS,\nAI SYSTEMS & MODERN WEB EXPERIENCES.`}
       </Text>
@@ -116,13 +117,14 @@ export default function HeroWall() {
       {/* ── TECHNICAL METADATA SPECIFICATION ── */}
       <Text
         position={[0, 1.30, WALL_Z]}
-        fontSize={0.062}
+        fontSize={0.072}
         color={techColor}
         anchorX="center"
         anchorY="middle"
-        letterSpacing={0.18}
+        letterSpacing={0.20}
         maxWidth={9}
         textAlign="center"
+        fontWeight={600}
       >
         React  ·  Next.js  ·  TypeScript  ·  Node.js  ·  PostgreSQL  ·  AI
       </Text>
@@ -131,24 +133,25 @@ export default function HeroWall() {
       <group ref={arrowRef} position={[0, 0.90, WALL_Z]}>
         <Text
           position={[0, 0.04, 0]}
-          fontSize={0.076}
+          fontSize={0.082}
           color={indicatorColor}
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.28}
           maxWidth={6}
           textAlign="center"
-          fontWeight={600}
+          fontWeight={700}
         >
           SCROLL TO EXPLORE
         </Text>
         {/* Downward indicator chevron */}
         <Text
-          position={[0, -0.05, 0]}
-          fontSize={0.072}
+          position={[0, -0.055, 0]}
+          fontSize={0.076}
           color={dividerColor}
           anchorX="center"
           anchorY="middle"
+          fontWeight={800}
         >
           ↓
         </Text>

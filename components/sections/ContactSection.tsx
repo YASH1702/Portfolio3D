@@ -42,19 +42,19 @@ export default function ContactSection({ visible }: ContactSectionProps) {
           <div
             style={{
               background: isNightMode
-                ? "rgba(15, 19, 28, 0.94)"
-                : "rgba(242, 237, 228, 0.95)",
-              backdropFilter: "blur(14px)",
+                ? "rgba(14, 18, 26, 0.94)"
+                : "rgba(255, 255, 255, 0.94)",
+              backdropFilter: "blur(16px)",
               border: isNightMode
-                ? "1px solid rgba(224, 184, 116, 0.28)"
-                : "1px solid rgba(196, 168, 130, 0.38)",
+                ? "1px solid rgba(224, 184, 116, 0.35)"
+                : "1px solid rgba(180, 150, 110, 0.45)",
               padding: "36px clamp(24px, 5vw, 56px)",
               textAlign: "center",
               maxWidth: "680px",
               width: "calc(100vw - 32px)",
               boxShadow: isNightMode
                 ? "0 24px 48px -15px rgba(0, 0, 0, 0.7)"
-                : "0 24px 48px -15px rgba(24, 20, 16, 0.1)",
+                : "0 24px 48px -15px rgba(24, 20, 16, 0.12)",
               transition: "background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease",
             }}
           >
@@ -62,9 +62,10 @@ export default function ContactSection({ visible }: ContactSectionProps) {
             <div
               style={{
                 fontFamily: "var(--font-geist-mono, monospace)",
-                fontSize: "10px",
+                fontSize: "10.5px",
+                fontWeight: 700,
                 letterSpacing: "0.26em",
-                color: isNightMode ? "#dfba74" : "#8b7355",
+                color: isNightMode ? "#dfba74" : "#84551e",
                 textTransform: "uppercase",
                 marginBottom: "16px",
               }}
@@ -79,7 +80,7 @@ export default function ContactSection({ visible }: ContactSectionProps) {
                 fontSize: "clamp(24px, 4.5vw, 38px)",
                 fontWeight: 800,
                 letterSpacing: "-0.02em",
-                color: isNightMode ? "#f8f6f0" : "#18180f",
+                color: isNightMode ? "#ffffff" : "#0d0c09",
                 lineHeight: 1.1,
                 marginBottom: "10px",
                 transition: "color 0.3s ease",
@@ -92,7 +93,8 @@ export default function ContactSection({ visible }: ContactSectionProps) {
               style={{
                 fontFamily: "var(--font-geist-sans, sans-serif)",
                 fontSize: "13.5px",
-                color: isNightMode ? "#d8d2c6" : "#5c584d",
+                fontWeight: 500,
+                color: isNightMode ? "#eae4d8" : "#28251e",
                 lineHeight: 1.7,
                 marginBottom: "28px",
                 maxWidth: "480px",
@@ -153,12 +155,13 @@ export default function ContactSection({ visible }: ContactSectionProps) {
                 marginTop: "26px",
                 paddingTop: "20px",
                 borderTop: isNightMode
-                  ? "1px solid rgba(224, 184, 116, 0.2)"
-                  : "1px solid rgba(196, 168, 130, 0.25)",
+                  ? "1px solid rgba(224, 184, 116, 0.25)"
+                  : "1px solid rgba(180, 150, 110, 0.35)",
                 fontFamily: "var(--font-geist-mono, monospace)",
-                fontSize: "9px",
+                fontSize: "9.5px",
+                fontWeight: 600,
                 letterSpacing: "0.18em",
-                color: isNightMode ? "#b0a490" : "#9c8d78",
+                color: isNightMode ? "#dfba74" : "#503e28",
                 textTransform: "uppercase",
                 display: "flex",
                 justifyContent: "space-between",
@@ -202,24 +205,25 @@ function ContactLink({
         gap: "4px",
         padding: "12px 14px",
         border: isNightMode
-          ? "1px solid rgba(224, 184, 116, 0.25)"
-          : "1px solid rgba(139, 115, 85, 0.35)",
+          ? "1px solid rgba(224, 184, 116, 0.30)"
+          : "1px solid rgba(180, 150, 110, 0.45)",
+        borderRadius: "6px",
         textDecoration: "none",
-        background: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.4)",
+        background: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.7)",
         transition: "all 0.2s ease",
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLElement;
         el.style.borderColor = isNightMode ? "#dfba74" : "#8b7355";
-        el.style.background = isNightMode ? "rgba(224, 184, 116, 0.18)" : "rgba(196, 168, 130, 0.18)";
+        el.style.background = isNightMode ? "rgba(224, 184, 116, 0.18)" : "rgba(196, 168, 130, 0.22)";
         el.style.transform = "translateY(-1px)";
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLElement;
         el.style.borderColor = isNightMode
-          ? "rgba(224, 184, 116, 0.25)"
-          : "rgba(139, 115, 85, 0.35)";
-        el.style.background = isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.4)";
+          ? "rgba(224, 184, 116, 0.30)"
+          : "rgba(180, 150, 110, 0.45)";
+        el.style.background = isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.7)";
         el.style.transform = "translateY(0)";
       }}
     >
@@ -230,7 +234,7 @@ function ContactLink({
           fontWeight: 700,
           letterSpacing: "0.14em",
           textTransform: "uppercase",
-          color: isNightMode ? "#f8f6f0" : "#18180f",
+          color: isNightMode ? "#ffffff" : "#0d0c09",
           transition: "color 0.2s ease",
         }}
       >
@@ -239,8 +243,9 @@ function ContactLink({
       <span
         style={{
           fontFamily: "var(--font-geist-mono, monospace)",
-          fontSize: "9px",
-          color: isNightMode ? "#dfba74" : "#8b7355",
+          fontSize: "9.5px",
+          fontWeight: 600,
+          color: isNightMode ? "#dfba74" : "#7b4f1d",
           letterSpacing: "0.06em",
           transition: "color 0.2s ease",
         }}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudio } from "@/context/StudioContext";
@@ -46,45 +46,45 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
             aria-label="Scroll to explore portfolio"
             style={{
               background: isNightMode
-                ? "rgba(18, 22, 32, 0.75)"
-                : "rgba(240, 235, 224, 0.8)",
-              backdropFilter: "blur(12px)",
+                ? "rgba(14, 18, 26, 0.88)"
+                : "rgba(255, 255, 255, 0.92)",
+              backdropFilter: "blur(16px)",
               border: isNightMode
-                ? "1px solid rgba(224, 184, 116, 0.35)"
-                : "1px solid rgba(196, 168, 130, 0.45)",
-              borderRadius: "24px",
-              padding: "8px 18px",
+                ? "1px solid rgba(224, 184, 116, 0.40)"
+                : "1px solid rgba(180, 150, 110, 0.50)",
+              borderRadius: "26px",
+              padding: "9px 20px",
               display: "flex",
               alignItems: "center",
-              gap: "12px",
+              gap: "13px",
               cursor: "pointer",
               boxShadow: isNightMode
-                ? "0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(224, 184, 116, 0.1)"
-                : "0 8px 20px -5px rgba(24, 20, 16, 0.08)",
+                ? "0 10px 28px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(224, 184, 116, 0.15)"
+                : "0 8px 22px -4px rgba(24, 20, 16, 0.12)",
               transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-2px)";
               e.currentTarget.style.borderColor = isNightMode
-                ? "rgba(224, 184, 116, 0.7)"
-                : "rgba(139, 115, 85, 0.7)";
+                ? "rgba(224, 184, 116, 0.85)"
+                : "rgba(139, 115, 85, 0.85)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(0)";
               e.currentTarget.style.borderColor = isNightMode
-                ? "rgba(224, 184, 116, 0.35)"
-                : "rgba(196, 168, 130, 0.45)";
+                ? "rgba(224, 184, 116, 0.40)"
+                : "rgba(180, 150, 110, 0.50)";
             }}
           >
             {/* Animated mouse pill icon */}
             <div
               style={{
-                width: "16px",
-                height: "24px",
-                borderRadius: "8px",
+                width: "17px",
+                height: "25px",
+                borderRadius: "9px",
                 border: isNightMode
-                  ? "1.5px solid #dfba74"
-                  : "1.5px solid #8b7355",
+                  ? "1.8px solid #dfba74"
+                  : "1.8px solid #8b6028",
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
@@ -96,7 +96,7 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
                   width: "2.5px",
                   height: "5px",
                   borderRadius: "2px",
-                  background: isNightMode ? "#dfba74" : "#8b7355",
+                  background: isNightMode ? "#dfba74" : "#8b6028",
                   animation: "scrollDot 1.6s ease-in-out infinite",
                 }}
               />
@@ -108,20 +108,20 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
-                gap: "1px",
+                gap: "2px",
               }}
             >
               <div
                 style={{
                   fontFamily: "var(--font-geist-mono, monospace)",
-                  fontSize: "9px",
-                  fontWeight: 600,
-                  letterSpacing: "0.22em",
-                  color: isNightMode ? "#f8f6f0" : "#18180f",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  letterSpacing: "0.20em",
+                  color: isNightMode ? "#ffffff" : "#11110e",
                   textTransform: "uppercase",
                   display: "flex",
                   alignItems: "center",
-                  gap: "6px",
+                  gap: "7px",
                 }}
               >
                 <span>SCROLL TO EXPLORE</span>
@@ -129,7 +129,8 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
                   style={{
                     display: "inline-block",
                     animation: "bounceDown 1.6s ease-in-out infinite",
-                    color: isNightMode ? "#dfba74" : "#8b7355",
+                    color: isNightMode ? "#dfba74" : "#8b6028",
+                    fontWeight: 800,
                   }}
                 >
                   ↓
@@ -138,9 +139,10 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
               <div
                 style={{
                   fontFamily: "var(--font-geist-mono, monospace)",
-                  fontSize: "7.5px",
-                  letterSpacing: "0.14em",
-                  color: isNightMode ? "#a09684" : "#80786e",
+                  fontSize: "9px",
+                  fontWeight: 600,
+                  letterSpacing: "0.15em",
+                  color: isNightMode ? "#dfba74" : "#8b6028",
                   textTransform: "uppercase",
                 }}
               >
