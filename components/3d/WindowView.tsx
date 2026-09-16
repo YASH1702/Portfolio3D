@@ -70,7 +70,7 @@ export default function WindowView() {
     >
       {/* ── OUTDOOR SCENIC BACKDROP ── */}
       <mesh position={[0, 0, -0.38]}>
-        <planeGeometry args={[5.2, 3.0]} />
+        <planeGeometry args={[6.0, 3.4]} />
         <meshBasicMaterial
           map={texture ?? undefined}
           color="#ffffff"
@@ -78,6 +78,20 @@ export default function WindowView() {
           fog={false}
         />
       </mesh>
+
+      {/* Atmospheric volumetric daylight radiance plane (Day mode) */}
+      {!isNightMode && (
+        <mesh position={[0, 0.4, -0.36]}>
+          <planeGeometry args={[5.8, 2.4]} />
+          <meshBasicMaterial
+            color="#e8f4fc"
+            transparent
+            opacity={0.14}
+            side={THREE.DoubleSide}
+            fog={false}
+          />
+        </mesh>
+      )}
 
       {/* ── FALLING RAIN STREAKS OUTSIDE WINDOW ── */}
       <group ref={groupRef} position={[0, 0, -0.06]}>

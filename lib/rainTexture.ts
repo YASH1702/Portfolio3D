@@ -27,75 +27,104 @@ export function getWindowSceneryTexture(isNight: boolean): THREE.CanvasTexture |
   const h = canvas.height;
 
   if (!isNight) {
-    // ── VIBRANT DAY RAINY / STORMY NATURE SCENERY ──
-    // Dramatic atmospheric sky gradient (rich moody slate-teal to misty horizon)
-    const sky = ctx.createLinearGradient(0, 0, 0, h * 0.7);
-    sky.addColorStop(0, "#2b3d4f");    // deep storm slate
-    sky.addColorStop(0.35, "#3d546b"); // atmospheric blue
-    sky.addColorStop(0.65, "#5f7991"); // soft rainy azure
-    sky.addColorStop(1, "#8fa3b5");    // misty horizon glow
+    // ── VIBRANT DAY RAINY / OVERCAST NATURE SCENERY ──
+    // Clear luminous overcast daylight sky (soft silver-azure to luminous daylight horizon)
+    const sky = ctx.createLinearGradient(0, 0, 0, h * 0.72);
+    sky.addColorStop(0, "#8da8c2");    // rich atmospheric blue-grey
+    sky.addColorStop(0.3, "#a8c2d8");  // soft silvery daylight
+    sky.addColorStop(0.6, "#c6dcf0");  // bright luminous ambient sky
+    sky.addColorStop(0.85, "#e8f2fc"); // brilliant daylight horizon
+    sky.addColorStop(1, "#dce7f2");    // misty ridge transition
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, w, h);
 
-    // Dramatic rolling rain clouds with silver-lit edges
-    drawStormCloud(ctx, w * 0.15, h * 0.18, 220, "#364a5c", "#6c859c");
-    drawStormCloud(ctx, w * 0.52, h * 0.14, 260, "#2f4253", "#5d768d");
-    drawStormCloud(ctx, w * 0.82, h * 0.22, 240, "#3a4f62", "#718b9f");
-    drawStormCloud(ctx, w * 0.35, h * 0.32, 190, "#485f74", "#849caf");
+    // Soft daylight radiance / sunbeam glow breaking through upper clouds
+    const sunGlow = ctx.createRadialGradient(w * 0.55, h * 0.12, 20, w * 0.55, h * 0.12, 480);
+    sunGlow.addColorStop(0, "rgba(255, 250, 235, 0.45)");
+    sunGlow.addColorStop(0.4, "rgba(255, 245, 220, 0.22)");
+    sunGlow.addColorStop(1, "rgba(255, 255, 255, 0)");
+    ctx.fillStyle = sunGlow;
+    ctx.fillRect(0, 0, w, h * 0.6);
 
-    // Distant soft blue mountain ridges
-    ctx.fillStyle = "#4a6377";
+    // Soft silver-rimmed daylight clouds
+    drawStormCloud(ctx, w * 0.18, h * 0.16, 260, "rgba(165, 185, 205, 0.65)", "rgba(240, 248, 255, 0.85)");
+    drawStormCloud(ctx, w * 0.55, h * 0.12, 300, "rgba(150, 175, 198, 0.6)", "rgba(255, 255, 255, 0.9)");
+    drawStormCloud(ctx, w * 0.84, h * 0.20, 280, "rgba(160, 182, 202, 0.65)", "rgba(245, 250, 255, 0.85)");
+    drawStormCloud(ctx, w * 0.36, h * 0.28, 220, "rgba(175, 195, 215, 0.55)", "rgba(250, 252, 255, 0.8)");
+
+    // Distant layered alpine mountain ridges (aerial atmospheric perspective)
+    // Mountain Ridge 1 (Far - soft misty slate blue)
+    ctx.fillStyle = "#7393ac";
     ctx.beginPath();
-    ctx.moveTo(0, h * 0.52);
-    ctx.lineTo(w * 0.18, h * 0.44);
-    ctx.lineTo(w * 0.38, h * 0.49);
-    ctx.lineTo(w * 0.58, h * 0.42);
-    ctx.lineTo(w * 0.78, h * 0.47);
+    ctx.moveTo(0, h * 0.50);
+    ctx.lineTo(w * 0.16, h * 0.40);
+    ctx.lineTo(w * 0.35, h * 0.46);
+    ctx.lineTo(w * 0.54, h * 0.38);
+    ctx.lineTo(w * 0.72, h * 0.44);
+    ctx.lineTo(w * 0.88, h * 0.39);
     ctx.lineTo(w, h * 0.43);
     ctx.lineTo(w, h);
     ctx.lineTo(0, h);
     ctx.closePath();
     ctx.fill();
 
-    // Misty mountain fog layer
-    const fogGrad = ctx.createLinearGradient(0, h * 0.42, 0, h * 0.56);
-    fogGrad.addColorStop(0, "rgba(180, 202, 220, 0.0)");
-    fogGrad.addColorStop(0.6, "rgba(195, 215, 230, 0.45)");
-    fogGrad.addColorStop(1, "rgba(180, 202, 220, 0.1)");
-    ctx.fillStyle = fogGrad;
-    ctx.fillRect(0, h * 0.42, w, h * 0.18);
+    // Mountain Ridge 2 (Mid - lush deep alpine teal-green)
+    ctx.fillStyle = "#466e66";
+    ctx.beginPath();
+    ctx.moveTo(0, h * 0.55);
+    ctx.lineTo(w * 0.22, h * 0.46);
+    ctx.lineTo(w * 0.44, h * 0.51);
+    ctx.lineTo(w * 0.68, h * 0.45);
+    ctx.lineTo(w * 0.90, h * 0.49);
+    ctx.lineTo(w, h * 0.47);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
 
-    // Midground pine ridge (deep forest slate)
-    ctx.fillStyle = "#27433c";
-    drawPineForest(ctx, w, h * 0.46, 55, 75);
+    // Luminous mountain mist valley fog
+    const valleyFog = ctx.createLinearGradient(0, h * 0.44, 0, h * 0.56);
+    valleyFog.addColorStop(0, "rgba(235, 245, 255, 0.0)");
+    valleyFog.addColorStop(0.5, "rgba(240, 248, 255, 0.65)");
+    valleyFog.addColorStop(1, "rgba(225, 238, 248, 0.2)");
+    ctx.fillStyle = valleyFog;
+    ctx.fillRect(0, h * 0.44, w, h * 0.14);
 
-    // Cozy studio / cabin rooftops peeking through the trees with glowing warm lights
+    // Tier 1 Pine Forest (Vibrant mid-ground alpine emerald green)
+    ctx.fillStyle = "#2d684c";
+    drawPineForest(ctx, w, h * 0.48, 55, 78);
+
+    // Cozy studio / cabin rooftops with warm cedar shake roofs & bright amber windows
     drawCozyCabins(ctx, w, h);
 
-    // Foreground lush evergreen / pine tree canopy (reaching high into the window frame!)
-    ctx.fillStyle = "#1b3528";
-    drawPineForest(ctx, w, h * 0.56, 80, 115);
+    // Tier 2 Pine Forest (Rich lush forest green)
+    ctx.fillStyle = "#1e5238";
+    drawPineForest(ctx, w, h * 0.58, 80, 118);
 
-    // Deep rich wet pine branches right in the foreground
-    ctx.fillStyle = "#12251c";
-    drawPineForest(ctx, w, h * 0.68, 105, 145);
+    // Tier 3 Pine Forest (Foreground deep wet spruce with rich emerald undertones)
+    ctx.fillStyle = "#143d28";
+    drawPineForest(ctx, w, h * 0.70, 110, 155);
 
-    // Atmospheric rain mist bands
-    ctx.fillStyle = "rgba(235, 245, 255, 0.08)";
-    for (let i = 0; i < 6; i++) {
-      ctx.fillRect(0, h * 0.38 + i * 85, w, 28);
+    // Glistening wet pine branch needle highlights
+    ctx.fillStyle = "rgba(140, 225, 180, 0.18)";
+    drawPineForest(ctx, w, h * 0.72, 105, 140);
+
+    // Soft drifting rain mist bands across forest
+    ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+    for (let i = 0; i < 7; i++) {
+      ctx.fillRect(0, h * 0.38 + i * 80, w, 32);
     }
 
-    // Backdrop rain streaks (diagonal wind slant)
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.14)";
-    ctx.lineWidth = 1.2;
-    for (let i = 0; i < 400; i++) {
+    // Backdrop silver rain streaks (diagonal wind slant)
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.24)";
+    ctx.lineWidth = 1.3;
+    for (let i = 0; i < 450; i++) {
       const rx = Math.random() * w;
       const ry = Math.random() * h;
-      const len = 18 + Math.random() * 32;
+      const len = 20 + Math.random() * 36;
       ctx.beginPath();
       ctx.moveTo(rx, ry);
-      ctx.lineTo(rx - 4, ry + len);
+      ctx.lineTo(rx - 5, ry + len);
       ctx.stroke();
     }
   } else {
@@ -261,23 +290,27 @@ function drawCozyCabins(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ];
 
   cabins.forEach((c) => {
-    // Cabin silhouette
-    ctx.fillStyle = "#1e2e28";
+    // Cabin timber log silhouette
+    ctx.fillStyle = "#3d2b1f";
     ctx.fillRect(c.x, c.y, c.w, c.h);
 
-    // Pitched roof
-    ctx.fillStyle = "#15221d";
+    // Warm cedar shingle pitched roof
+    ctx.fillStyle = "#8a4524";
     ctx.beginPath();
-    ctx.moveTo(c.x - 8, c.y);
-    ctx.lineTo(c.x + c.w / 2, c.y - 18);
-    ctx.lineTo(c.x + c.w + 8, c.y);
+    ctx.moveTo(c.x - 10, c.y);
+    ctx.lineTo(c.x + c.w / 2, c.y - 20);
+    ctx.lineTo(c.x + c.w + 10, c.y);
     ctx.closePath();
     ctx.fill();
 
-    // Warm glowing cabin windows
-    ctx.fillStyle = "rgba(255, 205, 90, 0.92)";
-    ctx.fillRect(c.x + 12, c.y + 12, 14, 14);
-    ctx.fillRect(c.x + c.w - 26, c.y + 12, 14, 14);
+    // Stone chimney
+    ctx.fillStyle = "#4a4d52";
+    ctx.fillRect(c.x + c.w - 18, c.y - 26, 8, 16);
+
+    // Bright glowing warm amber cabin windows
+    ctx.fillStyle = "rgba(255, 225, 110, 0.98)";
+    ctx.fillRect(c.x + 10, c.y + 10, 16, 16);
+    ctx.fillRect(c.x + c.w - 28, c.y + 10, 16, 16);
 
     // Warm window glow reflection
     const winGlow = ctx.createRadialGradient(
@@ -286,10 +319,10 @@ function drawCozyCabins(ctx: CanvasRenderingContext2D, w: number, h: number) {
       4,
       c.x + c.w / 2,
       c.y + 18,
-      35
+      45
     );
-    winGlow.addColorStop(0, "rgba(255, 190, 70, 0.45)");
-    winGlow.addColorStop(1, "rgba(255, 190, 70, 0)");
+    winGlow.addColorStop(0, "rgba(255, 205, 80, 0.55)");
+    winGlow.addColorStop(1, "rgba(255, 205, 80, 0)");
     ctx.fillStyle = winGlow;
     ctx.fillRect(c.x - 10, c.y, c.w + 20, c.h + 10);
   });

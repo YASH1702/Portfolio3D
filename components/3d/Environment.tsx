@@ -319,16 +319,119 @@ export default function Environment() {
         <meshStandardMaterial color="#e0d8cc" roughness={0.7} metalness={0} />
       </mesh>
 
-      {/* ── CEILING LIGHT FIXTURE (decorative) ── */}
-      <group position={[0, 3.92, 0]}>
-        <mesh>
-          <cylinderGeometry args={[0.12, 0.12, 0.04, 16]} />
-          <meshStandardMaterial color="#d8d0c0" roughness={0.6} metalness={0.2} />
+      {/* ── EXPOSED ARCHITECTURAL OAK CEILING BEAMS (TIMBER RAFTERS) ── */}
+      <group name="ceiling-beams">
+        {[-4.2, -2.1, 0.0, 2.1, 4.2].map((zPos, idx) => (
+          <group key={`beam-${idx}`} position={[0, 3.91, zPos]}>
+            {/* Solid oak beam spanning across room width */}
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[12.0, 0.18, 0.16]} />
+              <meshStandardMaterial color="#b48c56" roughness={0.48} metalness={0.03} />
+            </mesh>
+            {/* Forged dark iron joist hanger plates at both wall ends */}
+            {[-5.96, 5.96].map((xEnd, eIdx) => (
+              <mesh key={eIdx} position={[xEnd, -0.02, 0]}>
+                <boxGeometry args={[0.06, 0.22, 0.19]} />
+                <meshStandardMaterial color="#1a1a1a" roughness={0.7} metalness={0.75} />
+              </mesh>
+            ))}
+          </group>
+        ))}
+      </group>
+
+      {/* ── ARCHITECTURAL TRACK LIGHTING SYSTEM (Black rail & brass spotlights) ── */}
+      <group name="track-lighting" position={[-1.6, 3.76, 0]}>
+        {/* Longitudinal matte black track rail */}
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[0.035, 0.04, 8.8]} />
+          <meshStandardMaterial color="#161616" roughness={0.4} metalness={0.8} />
         </mesh>
-        <mesh position={[0, -0.08, 0]}>
-          <cylinderGeometry args={[0.06, 0.04, 0.16, 10]} />
-          <meshStandardMaterial color="#c0b8a8" roughness={0.4} metalness={0.3} />
+        {/* Brass suspension stems attaching to oak beams */}
+        {[-4.2, -2.1, 0.0, 2.1, 4.2].map((zBeam, sIdx) => (
+          <group key={sIdx} position={[0, 0.08, zBeam]}>
+            <mesh>
+              <cylinderGeometry args={[0.006, 0.006, 0.16, 8]} />
+              <meshStandardMaterial color="#d4a855" roughness={0.3} metalness={0.85} />
+            </mesh>
+          </group>
+        ))}
+        {/* Directional track spotlight fixtures */}
+        {[
+          { z: -3.2, rotY: Math.PI / 4,   rotX: -0.45, label: "spot-hero-left" },
+          { z: -1.6, rotY: -Math.PI / 3,  rotX: -0.40, label: "spot-desk" },
+          { z: -0.4, rotY: Math.PI / 2,   rotX: -0.35, label: "spot-gallery-center" },
+          { z:  1.2, rotY: Math.PI / 2,   rotX: -0.35, label: "spot-gallery-work" },
+          { z:  2.6, rotY: -Math.PI / 4,  rotX: -0.40, label: "spot-lounge" },
+        ].map((spot, spIdx) => (
+          <group key={spIdx} position={[0, -0.04, spot.z]} rotation={[spot.rotX, spot.rotY, 0]}>
+            {/* Brass swivel connector stem */}
+            <mesh position={[0, 0.02, 0]}>
+              <cylinderGeometry args={[0.008, 0.008, 0.04, 8]} />
+              <meshStandardMaterial color="#d4a855" roughness={0.3} metalness={0.85} />
+            </mesh>
+            {/* Cylindrical spotlight canister body */}
+            <mesh castShadow position={[0, -0.07, 0]}>
+              <cylinderGeometry args={[0.036, 0.044, 0.12, 14]} />
+              <meshStandardMaterial color="#181818" roughness={0.35} metalness={0.7} />
+            </mesh>
+            {/* Brass trim bezel ring */}
+            <mesh position={[0, -0.13, 0]}>
+              <torusGeometry args={[0.042, 0.005, 8, 16]} />
+              <meshStandardMaterial color="#d4a855" roughness={0.25} metalness={0.88} />
+            </mesh>
+            {/* Internal warm lens glow */}
+            <mesh position={[0, -0.128, 0]}>
+              <circleGeometry args={[0.038, 14]} />
+              <meshStandardMaterial
+                color="#fff6e8"
+                emissive="#ffdfaa"
+                emissiveIntensity={isNightMode ? 0.9 : 0.4}
+              />
+            </mesh>
+          </group>
+        ))}
+      </group>
+
+      {/* ── SCANDINAVIAN MINIMALIST LIVING AREA PENDANT LIGHT ── */}
+      <group position={[-0.7, 2.92, 1.0]} name="living-pendant-light">
+        {/* Ultra-thin black suspension wire dropping from central beam */}
+        <mesh position={[0, 0.50, 0]}>
+          <cylinderGeometry args={[0.002, 0.002, 1.0, 4]} />
+          <meshStandardMaterial color="#1a1a1a" roughness={0.5} />
         </mesh>
+        {/* Brushed brass ceiling canopy disc */}
+        <mesh position={[0, 0.98, 0]}>
+          <cylinderGeometry args={[0.06, 0.06, 0.015, 14]} />
+          <meshStandardMaterial color="#d4a855" roughness={0.28} metalness={0.85} />
+        </mesh>
+        {/* Spun brass minimal wide dome shade */}
+        <mesh castShadow position={[0, 0.06, 0]}>
+          <cylinderGeometry args={[0.18, 0.28, 0.08, 24, 1, true]} />
+          <meshStandardMaterial color="#d4a855" roughness={0.3} metalness={0.82} side={2} />
+        </mesh>
+        {/* Top neck brass collar */}
+        <mesh position={[0, 0.11, 0]}>
+          <cylinderGeometry args={[0.03, 0.03, 0.04, 12]} />
+          <meshStandardMaterial color="#b88d3e" roughness={0.25} metalness={0.88} />
+        </mesh>
+        {/* Frosted opal glass diffuser dome */}
+        <mesh position={[0, 0.02, 0]}>
+          <sphereGeometry args={[0.075, 16, 12]} />
+          <meshStandardMaterial
+            color="#fff8ec"
+            emissive="#ffdfaa"
+            emissiveIntensity={isNightMode ? 0.95 : 0.35}
+            roughness={0.2}
+          />
+        </mesh>
+        {/* Warm ambient pool light over living rug */}
+        <pointLight
+          position={[0, -0.05, 0]}
+          intensity={isNightMode ? 0.75 : 0.3}
+          color="#ffeed2"
+          distance={4.2}
+          decay={2}
+        />
       </group>
     </group>
   );
