@@ -135,8 +135,14 @@
 - [x] **Editorial Experience Timeline**: Compact 3-step career timeline (2023 → 2024 → 2025) integrated into the editorial About overlay card (`AboutOverlay.tsx`).
 - [x] **Drei `useProgress` Driven Loading Screen**: Real asset loading progress percentage bar with graceful fallbacks (`LoadingScreen.tsx`).
 - [x] **Procedural Web Audio Ambient Rain Sound**: Web Audio API filtered noise simulation with dual day/night intensity levels and opt-in button + keyboard shortcut ('A') (`studioAudio.ts` & `AudioToggle.tsx`).
-- [x] **Branded OpenGraph Image (`/opengraph-image`)**: Dynamic Node.js ImageResponse social preview card for LinkedIn/Twitter previews (`opengraph-image.tsx`).
 - [x] **Comprehensive SEO Metadata**: Full OpenGraph tags, Twitter summary card, robots directives, and canonical URLs (`app/layout.tsx`).
+- [x] **1st-Page Projects Wall Visibility**: Project frames and canvas artworks are permanently mounted on the left wall (`X = -5.92`) right from the 0% establishing shot (`ProjectWall.tsx`).
+- [x] **Vibrant Daytime Window Scenery**: Luminous silver-azure sky with sunbeam glow breaks, multi-tier lush emerald alpine pine forests, misty mountain ridges, and glowing warm cedar cabins (`lib/rainTexture.ts` & `WindowView.tsx`).
+- [x] **Architectural Exposed Oak Ceiling Beams**: 5 solid oak timber rafters spanning across the ceiling at `Y = 3.91` with forged iron joist hangers (`Environment.tsx`).
+- [x] **Matte Black & Brass Track Lighting System**: Longitudinal track rail with 6 directional spotlight heads illuminating hero wall, desk, and gallery (`Environment.tsx`).
+- [x] **Scandinavian Living Area Pendant Fixture**: Spun brass and frosted opal glass diffuser dome suspended over the central rug area (`Environment.tsx`).
+- [x] **Gallery Picture Sconces & Hanging System**: Brass tubular art lights above each frame, continuous horizontal hanging rod with tension wires, and an engraved exhibition plaque (`ProjectWall.tsx`).
+- [x] **Gallery Exhibition Bench**: Low-profile smoked oak plinth bench with open art book and ceramic vase along the left wall floor (`ProjectWall.tsx`).
 
 ---
 
