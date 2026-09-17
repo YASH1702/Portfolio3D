@@ -33,8 +33,9 @@ export function useScrollCamera({
   const targetPos = useRef(new THREE.Vector3(0.0, 1.65, 5.2));
   const targetLook = useRef(new THREE.Vector3(0.0, 1.80, -5.86));
 
-  // Mouse normalized coordinates [-1, 1] for micro-parallax
+  // Mouse & Gyroscope normalized coordinates [-1, 1] for micro-parallax
   const mouseNorm = useRef({ x: 0, y: 0 });
+  const gyroNorm = useRef({ x: 0, y: 0 });
   const parallaxPos = useRef({ x: 0, y: 0 });
   const parallaxLook = useRef({ x: 0, y: 0 });
 
@@ -52,6 +53,18 @@ export function useScrollCamera({
       if (isFinePointer) {
         mouseNorm.current.x = (e.clientX / window.innerWidth) * 2 - 1;
         mouseNorm.current.y = (e.clientY / window.innerHeight) * 2 - 1;
+      }
+    };
+
+    // Mobile Gyroscope Parallax Listener
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma !== null && e.beta !== null) {
+        // Clamp gamma (tilt left/right, ±15 deg)
+        const g = Math.max(-15, Math.min(15, e.gamma)) / 15;
+        // Clamp beta (tilt front/back centered at ~45 deg hand holding posture, ±15 deg)
+        const b = Math.max(-15, Math.min(15, e.beta - 45)) / 15;
+        gyroNorm.current.x = g;
+        gyroNorm.current.y = b;
       }
     };
 
@@ -93,6 +106,7 @@ export function useScrollCamera({
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("deviceorientation", handleOrientation, { passive: true });
     window.addEventListener("pointerdown", handlePointerDown, { passive: true });
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerup", handlePointerUp, { passive: true });
@@ -100,6 +114,7 @@ export function useScrollCamera({
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("deviceorientation", handleOrientation);
       window.removeEventListener("pointerdown", handlePointerDown);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", handlePointerUp);
@@ -194,12 +209,15 @@ export function useScrollCamera({
       dt
     );
 
-    // Gentle micro-parallax offset calculation
+    // Gentle micro-parallax offset calculation (mouse + mobile gyroscope)
     if (!prefersReduced) {
-      const targetParallaxPosX = mouseNorm.current.x * 0.045;
-      const targetParallaxPosY = -mouseNorm.current.y * 0.035;
-      const targetParallaxLookX = mouseNorm.current.x * 0.07;
-      const targetParallaxLookY = -mouseNorm.current.y * 0.045;
+      const combinedX = mouseNorm.current.x + gyroNorm.current.x * 0.8;
+      const combinedY = mouseNorm.current.y + gyroNorm.current.y * 0.8;
+
+      const targetParallaxPosX = combinedX * 0.045;
+      const targetParallaxPosY = -combinedY * 0.035;
+      const targetParallaxLookX = combinedX * 0.07;
+      const targetParallaxLookY = -combinedY * 0.045;
 
       parallaxPos.current.x = dampedLerp(
         parallaxPos.current.x,

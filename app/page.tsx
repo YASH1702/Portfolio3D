@@ -12,6 +12,8 @@ import StudioControls from "@/components/ui/StudioControls";
 import AudioToggle from "@/components/ui/AudioToggle";
 import ScrollPrompt from "@/components/ui/ScrollPrompt";
 import CommandPalette from "@/components/ui/CommandPalette";
+import TerminalModal from "@/components/ui/TerminalModal";
+import BooksModal from "@/components/ui/BooksModal";
 import AboutOverlay from "@/components/sections/AboutOverlay";
 import ContactSection from "@/components/sections/ContactSection";
 
@@ -49,6 +51,12 @@ function PortfolioExperience() {
 
       {/* ── COMMAND PALETTE (Cmd+K / Ctrl+K) ── */}
       <CommandPalette />
+
+      {/* ── INTERACTIVE DEVELOPER CLI TERMINAL (` or ~) ── */}
+      <TerminalModal />
+
+      {/* ── INTERACTIVE BOOKSHELF READING LIST (B) ── */}
+      <BooksModal />
 
       {/* ── ZEN FOCUS MODE EXIT BANNER ── */}
       {isFocusMode && (

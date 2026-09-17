@@ -13,7 +13,10 @@ import {
   playLampClick,
   playDayNightSound,
   playNavBlip,
+  playBookFlip,
+  playVinylDrop,
 } from "@/lib/soundEffects";
+import { lofiAudio } from "@/lib/lofiAudio";
 
 export type MonitorDisplayMode = "code" | "terminal" | "architecture";
 
@@ -29,6 +32,12 @@ interface StudioContextType {
   monitorMode: MonitorDisplayMode;
   cycleMonitorMode: () => void;
   setMonitorMode: (mode: MonitorDisplayMode) => void;
+  isTerminalOpen: boolean;
+  toggleTerminal: (open?: boolean) => void;
+  isBooksModalOpen: boolean;
+  toggleBooksModal: (open?: boolean) => void;
+  isLofiPlaying: boolean;
+  toggleLofi: (playing?: boolean) => void;
 }
 
 const StudioContext = createContext<StudioContextType | null>(null);
@@ -39,6 +48,9 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [isAudioOn, setIsAudioOn] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [monitorMode, setMonitorMode] = useState<MonitorDisplayMode>("code");
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isBooksModalOpen, setIsBooksModalOpen] = useState(false);
+  const [isLofiPlaying, setIsLofiPlaying] = useState(false);
 
   const toggleNightMode = useCallback(() => {
     setIsNightMode((prev) => {
@@ -55,6 +67,28 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
 
   const toggleFocusMode = useCallback(() => {
     setIsFocusMode((prev) => !prev);
+  }, []);
+
+  const toggleTerminal = useCallback((open?: boolean) => {
+    setIsTerminalOpen((prev) => (typeof open === "boolean" ? open : !prev));
+  }, []);
+
+  const toggleBooksModal = useCallback((open?: boolean) => {
+    playBookFlip();
+    setIsBooksModalOpen((prev) => (typeof open === "boolean" ? open : !prev));
+  }, []);
+
+  const toggleLofi = useCallback((playing?: boolean) => {
+    setIsLofiPlaying((prev) => {
+      const next = typeof playing === "boolean" ? playing : !prev;
+      if (next) {
+        playVinylDrop();
+        lofiAudio.start();
+      } else {
+        lofiAudio.stop();
+      }
+      return next;
+    });
   }, []);
 
   const toggleAudio = useCallback(() => {
@@ -84,6 +118,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     return () => {
       stopRainAudio();
+      lofiAudio.stop();
     };
   }, []);
 
@@ -95,12 +130,16 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // Keyboard navigation listener (keys 1-4, N, L, A, F)
+  // Keyboard navigation listener (keys 1-4, N, L, A, F, B, M, `)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore if user is typing in an input or textarea
       const activeTag = document.activeElement?.tagName;
       if (activeTag === "INPUT" || activeTag === "TEXTAREA" || activeTag === "SELECT") {
+        if (e.key === "Escape") {
+          setIsTerminalOpen(false);
+          setIsBooksModalOpen(false);
+        }
         return;
       }
 
@@ -112,7 +151,10 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         window.scrollTo({ top: targetY, behavior: "smooth" });
       };
 
-      if (e.key === "1") {
+      if (e.key === "`" || e.key === "~") {
+        e.preventDefault();
+        toggleTerminal();
+      } else if (e.key === "1") {
         e.preventDefault();
         playNavBlip();
         scrollToFraction(0.0);
@@ -129,30 +171,51 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         playNavBlip();
         scrollToFraction(0.95);
       } else if (e.key.toLowerCase() === "n") {
-        // Toggle Day / Night mode with 'N'
         e.preventDefault();
         toggleNightMode();
       } else if (e.key.toLowerCase() === "l") {
-        // Toggle Desk Lamp with 'L'
         e.preventDefault();
         toggleLamp();
       } else if (e.key.toLowerCase() === "a") {
-        // Toggle Ambient Rain Audio with 'A'
         e.preventDefault();
         toggleAudio();
       } else if (e.key.toLowerCase() === "f") {
-        // Toggle Focus / Zen Mode with 'F'
         e.preventDefault();
         toggleFocusMode();
-      } else if (e.key === "Escape" && isFocusMode) {
+      } else if (e.key.toLowerCase() === "b") {
         e.preventDefault();
-        setIsFocusMode(false);
+        toggleBooksModal();
+      } else if (e.key.toLowerCase() === "m") {
+        e.preventDefault();
+        toggleLofi();
+      } else if (e.key === "Escape") {
+        if (isTerminalOpen) {
+          e.preventDefault();
+          setIsTerminalOpen(false);
+        } else if (isBooksModalOpen) {
+          e.preventDefault();
+          setIsBooksModalOpen(false);
+        } else if (isFocusMode) {
+          e.preventDefault();
+          setIsFocusMode(false);
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggleNightMode, toggleLamp, toggleAudio, toggleFocusMode, isFocusMode]);
+  }, [
+    toggleNightMode,
+    toggleLamp,
+    toggleAudio,
+    toggleFocusMode,
+    toggleTerminal,
+    toggleBooksModal,
+    toggleLofi,
+    isFocusMode,
+    isTerminalOpen,
+    isBooksModalOpen,
+  ]);
 
   return (
     <StudioContext.Provider
@@ -168,6 +231,12 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         monitorMode,
         cycleMonitorMode,
         setMonitorMode,
+        isTerminalOpen,
+        toggleTerminal,
+        isBooksModalOpen,
+        toggleBooksModal,
+        isLofiPlaying,
+        toggleLofi,
       }}
     >
       {children}
@@ -182,3 +251,4 @@ export function useStudio() {
   }
   return context;
 }
+

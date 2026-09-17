@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -78,6 +79,7 @@ export default function RootLayout({
     >
       <body style={{ height: "100%", margin: 0, overflowX: "hidden" }}>
         {children}
+        <Analytics />
       </body>
     </html>
   );

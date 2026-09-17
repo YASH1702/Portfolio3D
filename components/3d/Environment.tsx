@@ -1,10 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
+import { Billboard, Text } from "@react-three/drei";
 import * as THREE from "three";
 import { useStudio } from "@/context/StudioContext";
 import StudioClock from "./StudioClock";
+import VinylPlayer from "./VinylPlayer";
 
 /**
  * Environment — Rich architectural & cozy living/work atmospheric elements:
@@ -20,7 +22,8 @@ import StudioClock from "./StudioClock";
  */
 
 export default function Environment() {
-  const { isNightMode } = useStudio();
+  const { isNightMode, toggleBooksModal } = useStudio();
+  const [booksHovered, setBooksHovered] = useState(false);
 
   // Animation references
   const treeFoliageRef = useRef<THREE.Group>(null!);
@@ -350,32 +353,82 @@ export default function Environment() {
           <meshStandardMaterial color="#ede8dd" roughness={0.9} />
         </mesh>
 
-        {/* Curated Monographs — Row 1 */}
-        {[
-          { x: -0.32, h: 0.23, color: "#8b3838" }, // Clean Architecture
-          { x: -0.20, h: 0.20, color: "#284474" }, // Designing Data-Intensive Apps
-          { x: -0.08, h: 0.22, color: "#2d603a" }, // AI Systems & Neural Logic
-          { x: 0.06,  h: 0.19, color: "#7a5832" }, // TypeScript Patterns
-          { x: 0.18,  h: 0.24, color: "#543874" }, // Modern Distributed Systems
-        ].map((b, i) => (
-          <mesh key={i} castShadow position={[b.x, 0.72, -0.02]}>
-            <boxGeometry args={[0.095, b.h, 0.2]} />
-            <meshStandardMaterial color={b.color} roughness={0.75} metalness={0.05} />
-          </mesh>
-        ))}
+        {/* Interactive Curated Bookshelf — Click to Open Reading List */}
+        <group
+          name="interactive-books"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleBooksModal();
+          }}
+          onPointerEnter={(e) => {
+            e.stopPropagation();
+            setBooksHovered(true);
+            document.body.style.cursor = "pointer";
+          }}
+          onPointerLeave={() => {
+            setBooksHovered(false);
+            document.body.style.cursor = "auto";
+          }}
+        >
+          {/* Curated Monographs — Row 1 */}
+          {[
+            { x: -0.32, h: 0.23, color: "#8b3838" }, // Clean Architecture
+            { x: -0.20, h: 0.20, color: "#284474" }, // Designing Data-Intensive Apps
+            { x: -0.08, h: 0.22, color: "#2d603a" }, // AI Systems & Neural Logic
+            { x: 0.06,  h: 0.19, color: "#7a5832" }, // TypeScript Patterns
+            { x: 0.18,  h: 0.24, color: "#543874" }, // Modern Distributed Systems
+          ].map((b, i) => (
+            <mesh key={i} castShadow position={[b.x, 0.72, -0.02]}>
+              <boxGeometry args={[0.095, b.h, 0.2]} />
+              <meshStandardMaterial color={b.color} roughness={0.75} metalness={0.05} />
+            </mesh>
+          ))}
 
-        {/* Curated Monographs — Row 2 */}
-        {[
-          { x: -0.12, h: 0.21, color: "#704828" },
-          { x: 0.02,  h: 0.25, color: "#245a44" },
-          { x: 0.16,  h: 0.19, color: "#482860" },
-          { x: 0.28,  h: 0.22, color: "#643224" },
-        ].map((b, i) => (
-          <mesh key={i} castShadow position={[b.x, 1.22, -0.02]}>
-            <boxGeometry args={[0.095, b.h, 0.2]} />
-            <meshStandardMaterial color={b.color} roughness={0.75} metalness={0.05} />
-          </mesh>
-        ))}
+          {/* Curated Monographs — Row 2 */}
+          {[
+            { x: -0.12, h: 0.21, color: "#704828" },
+            { x: 0.02,  h: 0.25, color: "#245a44" },
+            { x: 0.16,  h: 0.19, color: "#482860" },
+            { x: 0.28,  h: 0.22, color: "#643224" },
+          ].map((b, i) => (
+            <mesh key={i} castShadow position={[b.x, 1.22, -0.02]}>
+              <boxGeometry args={[0.095, b.h, 0.2]} />
+              <meshStandardMaterial color={b.color} roughness={0.75} metalness={0.05} />
+            </mesh>
+          ))}
+
+          {/* Billboard Tooltip for Bookshelf */}
+          <Billboard position={[0, 1.5, 0]} follow={true}>
+            {booksHovered && (
+              <Text
+                fontSize={0.038}
+                color="#dfba74"
+                anchorX="center"
+                anchorY="middle"
+                fontWeight={700}
+                letterSpacing={0.06}
+              >
+                📚 Reading List [B]
+              </Text>
+            )}
+          </Billboard>
+        </group>
+      </group>
+
+      {/* ── RETRO VINYL TURNTABLE CONSOLE (Right wall near bookshelf) ── */}
+      <group position={[5.2, 0, -2.2]} rotation={[0, -Math.PI / 2, 0]} name="vinyl-console">
+        {/* Wood console table */}
+        <mesh castShadow receiveShadow position={[0, 0.38, 0]}>
+          <boxGeometry args={[0.54, 0.76, 0.34]} />
+          <meshStandardMaterial color="#3a2b1c" roughness={0.6} metalness={0.05} />
+        </mesh>
+        {/* Table top slab */}
+        <mesh receiveShadow position={[0, 0.77, 0]}>
+          <boxGeometry args={[0.58, 0.024, 0.38]} />
+          <meshStandardMaterial color="#4a3b2c" roughness={0.4} />
+        </mesh>
+        {/* Turntable sitting on top */}
+        <VinylPlayer position={[0, 0.78, 0]} />
       </group>
 
       {/* ── WALL DESIGN 1: ACOUSTIC VERTICAL OAK SLATS (Front wall flanking hero typography) ── */}

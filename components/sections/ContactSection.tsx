@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudio } from "@/context/StudioContext";
+import { triggerHaptic } from "@/lib/soundEffects";
 
 interface ContactSectionProps {
   visible: boolean;
@@ -16,6 +18,23 @@ interface ContactSectionProps {
  */
 export default function ContactSection({ visible }: ContactSectionProps) {
   const { isNightMode } = useStudio();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyBrief = () => {
+    triggerHaptic("success");
+    const briefText = `Yashwant Kariha — Full-Stack Developer & AI Systems Engineer
+Email: yashwantkariha1@gmail.com | Phone: +91 6375278279
+GitHub: https://github.com/YASH1702
+LinkedIn: https://linkedin.com/in/yashwant-kariha-740630207/
+Resume: https://yashwantkariha.com/resume
+Core Stack: Next.js 16, React 19, TypeScript, Node.js, PostgreSQL, Autonomous AI Agents`;
+
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(briefText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -149,11 +168,66 @@ export default function ContactSection({ visible }: ContactSectionProps) {
               />
             </div>
 
+            {/* Recruiter Quick Action: Copy Brief */}
+            <div style={{ marginTop: "18px", display: "flex", justifyContent: "center" }}>
+              <button
+                onClick={handleCopyBrief}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "10px 20px",
+                  borderRadius: "10px",
+                  border: isNightMode
+                    ? "1px solid rgba(224, 184, 116, 0.4)"
+                    : "1px solid rgba(180, 150, 110, 0.5)",
+                  background: copied
+                    ? isNightMode
+                      ? "rgba(34, 197, 94, 0.2)"
+                      : "rgba(34, 197, 94, 0.15)"
+                    : isNightMode
+                    ? "rgba(255, 255, 255, 0.06)"
+                    : "rgba(0, 0, 0, 0.04)",
+                  color: copied
+                    ? "#22c55e"
+                    : isNightMode
+                    ? "#dfba74"
+                    : "#6b4a1b",
+                  fontFamily: "var(--font-geist-mono, monospace)",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  boxShadow: copied ? "0 0 16px rgba(34, 197, 94, 0.3)" : "none",
+                }}
+                onMouseEnter={(e) => {
+                  if (!copied) {
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                    e.currentTarget.style.background = isNightMode
+                      ? "rgba(224, 184, 116, 0.15)"
+                      : "rgba(180, 150, 110, 0.18)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!copied) {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.background = isNightMode
+                      ? "rgba(255, 255, 255, 0.06)"
+                      : "rgba(0, 0, 0, 0.04)";
+                  }
+                }}
+              >
+                <span>{copied ? "✓ Copied Brief to Clipboard!" : "📋 Copy Recruiter Quick-Brief"}</span>
+              </button>
+            </div>
+
             {/* Minimal Footer */}
             <div
               style={{
-                marginTop: "26px",
-                paddingTop: "20px",
+                marginTop: "20px",
+                paddingTop: "16px",
                 borderTop: isNightMode
                   ? "1px solid rgba(224, 184, 116, 0.25)"
                   : "1px solid rgba(180, 150, 110, 0.35)",

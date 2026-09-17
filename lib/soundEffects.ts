@@ -22,9 +22,33 @@ function getAudioContext(): AudioContext | null {
 }
 
 /**
+ * Trigger subtle physical vibration haptics on supported mobile/touch devices
+ */
+export function triggerHaptic(type: "light" | "medium" | "heavy" | "success" = "light") {
+  if (typeof window === "undefined" || !("vibrate" in navigator)) return;
+  try {
+    switch (type) {
+      case "light":
+        navigator.vibrate(10);
+        break;
+      case "medium":
+        navigator.vibrate(22);
+        break;
+      case "heavy":
+        navigator.vibrate([35, 25, 35]);
+        break;
+      case "success":
+        navigator.vibrate([15, 30, 20]);
+        break;
+    }
+  } catch {}
+}
+
+/**
  * Tactile mechanical click when toggling the Desk Lamp
  */
 export function playLampClick() {
+  triggerHaptic("medium");
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -67,6 +91,7 @@ export function playLampClick() {
  * Atmospheric ambient chime when toggling Day / Night mode
  */
 export function playDayNightSound(toNight: boolean) {
+  triggerHaptic("medium");
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -95,6 +120,7 @@ export function playDayNightSound(toNight: boolean) {
  * Cozy rhythmic cat purr vibration
  */
 export function playCatPurr() {
+  triggerHaptic("heavy");
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -137,6 +163,7 @@ export function playCatPurr() {
  * High-tech tactile tick when cycling monitor mode
  */
 export function playTerminalTick() {
+  triggerHaptic("light");
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -162,6 +189,7 @@ export function playTerminalTick() {
  * Subtle feedback for navigation key shortcuts [1-4]
  */
 export function playNavBlip() {
+  triggerHaptic("light");
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -181,3 +209,84 @@ export function playNavBlip() {
   osc.start(now);
   osc.stop(now + 0.09);
 }
+
+/**
+ * Retro-mechanical terminal keypress tick
+ */
+export function playTerminalKey() {
+  triggerHaptic("light");
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  // Subtle pitch variation for natural typing feel
+  const baseFreq = 1800 + (Math.random() * 400 - 200);
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(baseFreq, now);
+  osc.frequency.exponentialRampToValueAtTime(300, now + 0.012);
+
+  gain.gain.setValueAtTime(0.05, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(now);
+  osc.stop(now + 0.015);
+}
+
+/**
+ * Tactile vinyl player needle drop / start sound
+ */
+export function playVinylDrop() {
+  triggerHaptic("medium");
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(120, now);
+  osc.frequency.exponentialRampToValueAtTime(45, now + 0.08);
+
+  gain.gain.setValueAtTime(0.15, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(now);
+  osc.stop(now + 0.09);
+}
+
+/**
+ * Soft book page turn paper sweep sound
+ */
+export function playBookFlip() {
+  triggerHaptic("light");
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(320, now);
+  osc.frequency.exponentialRampToValueAtTime(640, now + 0.04);
+
+  gain.gain.setValueAtTime(0.06, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(now);
+  osc.stop(now + 0.07);
+}
+

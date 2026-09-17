@@ -29,6 +29,10 @@ export default function CommandPalette() {
     toggleAudio,
     isFocusMode,
     toggleFocusMode,
+    toggleTerminal,
+    toggleBooksModal,
+    isLofiPlaying,
+    toggleLofi,
   } = useStudio();
 
   const scrollToProgress = (progress: number) => {
@@ -72,6 +76,30 @@ export default function CommandPalette() {
         sub: "Let's build something together",
         shortcut: "4",
         action: () => scrollToProgress(0.95),
+      },
+      {
+        id: "cli-terminal",
+        category: "Studio Controls",
+        title: "Open Developer CLI Terminal",
+        sub: "Interactive command-line prompt",
+        shortcut: "~",
+        action: () => toggleTerminal(true),
+      },
+      {
+        id: "books-reading",
+        category: "Studio Controls",
+        title: "Explore Engineering Bookshelf",
+        sub: "Core architecture & AI literature reading list",
+        shortcut: "B",
+        action: () => toggleBooksModal(true),
+      },
+      {
+        id: "ctrl-lofi",
+        category: "Studio Controls",
+        title: isLofiPlaying ? "Pause Lo-Fi Vinyl Beats" : "Play Lo-Fi Vinyl Beats",
+        sub: "Procedural synthesized jazz chords & tape warmth",
+        shortcut: "M",
+        action: () => toggleLofi(),
       },
       {
         id: "proj-jobpilot",
@@ -164,6 +192,10 @@ export default function CommandPalette() {
       toggleAudio,
       isFocusMode,
       toggleFocusMode,
+      toggleTerminal,
+      toggleBooksModal,
+      isLofiPlaying,
+      toggleLofi,
       router,
     ]
   );
