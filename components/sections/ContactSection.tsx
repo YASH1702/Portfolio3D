@@ -42,20 +42,22 @@ export default function ContactSection({ visible }: ContactSectionProps) {
           <div
             style={{
               background: isNightMode
-                ? "rgba(14, 18, 26, 0.94)"
-                : "rgba(255, 255, 255, 0.94)",
-              backdropFilter: "blur(16px)",
+                ? "rgba(12, 16, 26, 0.90)"
+                : "rgba(255, 255, 255, 0.90)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              borderRadius: "24px",
               border: isNightMode
-                ? "1px solid rgba(224, 184, 116, 0.35)"
-                : "1px solid rgba(180, 150, 110, 0.45)",
+                ? "1px solid rgba(224, 184, 116, 0.32)"
+                : "1px solid rgba(255, 255, 255, 0.75)",
               padding: "36px clamp(24px, 5vw, 56px)",
               textAlign: "center",
               maxWidth: "680px",
               width: "calc(100vw - 32px)",
               boxShadow: isNightMode
-                ? "0 24px 48px -15px rgba(0, 0, 0, 0.7)"
-                : "0 24px 48px -15px rgba(24, 20, 16, 0.12)",
-              transition: "background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease",
+                ? "0 28px 64px -15px rgba(0, 0, 0, 0.85), inset 0 1px 0 0 rgba(255, 255, 255, 0.14)"
+                : "0 24px 48px -15px rgba(24, 20, 16, 0.14), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)",
+              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
             {/* Section Tag */}
@@ -207,9 +209,10 @@ function ContactLink({
         border: isNightMode
           ? "1px solid rgba(224, 184, 116, 0.30)"
           : "1px solid rgba(180, 150, 110, 0.45)",
-        borderRadius: "6px",
+        borderRadius: "14px",
         textDecoration: "none",
         background: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.7)",
+        boxShadow: isNightMode ? "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)" : "inset 0 1px 0 0 rgba(255, 255, 255, 0.8)",
         transition: "all 0.2s ease",
       }}
       onMouseEnter={(e) => {

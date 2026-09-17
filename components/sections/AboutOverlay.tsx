@@ -52,21 +52,23 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
             pointerEvents: "all",
           }}
         >
-          {/* Editorial Card */}
+          {/* Modern Frosted Glass Card */}
           <div
             style={{
               background: isNightMode
-                ? "rgba(14, 18, 26, 0.94)"
-                : "rgba(255, 255, 255, 0.94)",
-              backdropFilter: "blur(16px)",
+                ? "rgba(12, 16, 26, 0.88)"
+                : "rgba(255, 255, 255, 0.88)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              borderRadius: "22px",
               border: isNightMode
-                ? "1px solid rgba(224, 184, 116, 0.35)"
-                : "1px solid rgba(180, 150, 110, 0.45)",
-              padding: "28px 32px",
+                ? "1px solid rgba(224, 184, 116, 0.28)"
+                : "1px solid rgba(255, 255, 255, 0.7)",
+              padding: "26px 30px",
               boxShadow: isNightMode
-                ? "0 24px 48px -15px rgba(0, 0, 0, 0.65)"
-                : "0 20px 40px -15px rgba(24, 20, 16, 0.12)",
-              transition: "background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease",
+                ? "0 28px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.12)"
+                : "0 20px 48px -15px rgba(24, 20, 16, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)",
+              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
             {/* Section Tag */}
@@ -93,7 +95,7 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
             <h2
               style={{
                 fontFamily: "var(--font-geist-sans, sans-serif)",
-                fontSize: "22px",
+                fontSize: "21px",
                 fontWeight: 800,
                 letterSpacing: "-0.02em",
                 color: isNightMode ? "#ffffff" : "#0d0c09",
@@ -109,10 +111,10 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
             <p
               style={{
                 fontFamily: "var(--font-geist-sans, sans-serif)",
-                fontSize: "13.5px",
-                lineHeight: 1.7,
+                fontSize: "13px",
+                lineHeight: 1.65,
                 color: isNightMode ? "#f0eade" : "#1a1916",
-                marginBottom: "22px",
+                marginBottom: "20px",
                 transition: "color 0.3s ease",
               }}
             >
@@ -121,14 +123,18 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
               and autonomous AI agent workflows.
             </p>
 
-            {/* Experience Timeline */}
+            {/* Micro Timeline */}
             <div
               style={{
-                marginBottom: "20px",
-                paddingBottom: "20px",
-                borderBottom: isNightMode
-                  ? "1px solid rgba(224, 184, 116, 0.25)"
-                  : "1px solid rgba(196, 168, 130, 0.35)",
+                padding: "12px 14px",
+                borderRadius: "14px",
+                background: isNightMode
+                  ? "rgba(255, 255, 255, 0.04)"
+                  : "rgba(0, 0, 0, 0.03)",
+                marginBottom: "18px",
+                border: isNightMode
+                  ? "1px solid rgba(224, 184, 116, 0.2)"
+                  : "1px solid rgba(196, 168, 130, 0.25)",
               }}
             >
               <div
@@ -139,10 +145,10 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                   letterSpacing: "0.18em",
                   color: isNightMode ? "#dfba74" : "#8a5e28",
                   textTransform: "uppercase",
-                  marginBottom: "12px",
+                  marginBottom: "10px",
                 }}
               >
-                Timeline
+                Experience Timeline
               </div>
               <div style={{ display: "flex", alignItems: "flex-start", gap: "0" }}>
                 {[
@@ -169,10 +175,10 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                       }}>{item.year}</div>
                       <div style={{
                         fontFamily: "var(--font-geist-sans, sans-serif)",
-                        fontSize: "10.5px",
+                        fontSize: "10px",
                         fontWeight: 500,
                         color: isNightMode ? "#d4c8b6" : "#24221c",
-                        lineHeight: 1.45,
+                        lineHeight: 1.4,
                         whiteSpace: "pre-line",
                         marginTop: "2px",
                       }}>{item.label}</div>
@@ -189,16 +195,16 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
               </div>
             </div>
 
-            {/* Categorized Skills */}
+            {/* Categorized Skills with Modern Micro-Pill Chips */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "12px",
-                paddingTop: "16px",
+                gap: "10px",
+                paddingTop: "14px",
                 borderTop: isNightMode
-                  ? "1px solid rgba(224, 184, 116, 0.25)"
-                  : "1px solid rgba(196, 168, 130, 0.35)",
+                  ? "1px solid rgba(224, 184, 116, 0.2)"
+                  : "1px solid rgba(196, 168, 130, 0.25)",
                 marginBottom: "16px",
               }}
             >
@@ -207,26 +213,39 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
                   <div
                     style={{
                       fontFamily: "var(--font-geist-mono, monospace)",
-                      fontSize: "9.5px",
+                      fontSize: "9px",
                       fontWeight: 700,
-                      letterSpacing: "0.18em",
+                      letterSpacing: "0.16em",
                       color: isNightMode ? "#dfba74" : "#8a5e28",
                       textTransform: "uppercase",
-                      marginBottom: "4px",
+                      marginBottom: "5px",
                     }}
                   >
                     {grp.category}
                   </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-geist-sans, sans-serif)",
-                      fontSize: "11.5px",
-                      fontWeight: 500,
-                      color: isNightMode ? "#ffffff" : "#141310",
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    {grp.items.join("  ·  ")}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                    {grp.items.map((skill) => (
+                      <span
+                        key={skill}
+                        style={{
+                          fontFamily: "var(--font-geist-mono, monospace)",
+                          fontSize: "10.5px",
+                          fontWeight: 600,
+                          color: isNightMode ? "#ffffff" : "#11110e",
+                          background: isNightMode
+                            ? "rgba(255, 255, 255, 0.07)"
+                            : "rgba(0, 0, 0, 0.05)",
+                          border: isNightMode
+                            ? "1px solid rgba(255, 255, 255, 0.12)"
+                            : "1px solid rgba(0, 0, 0, 0.08)",
+                          padding: "3px 8px",
+                          borderRadius: "10px",
+                          letterSpacing: "0.02em",
+                        }}
+                      >
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 </div>
               ))}

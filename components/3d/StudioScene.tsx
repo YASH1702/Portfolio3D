@@ -32,7 +32,7 @@ function AtmosphereManager() {
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    const targetHex = isNightMode ? "#121520" : "#d4ccc0";
+    const targetHex = isNightMode ? "#0a0d16" : "#ede6dc";
     fogColor.current.lerp(new THREE.Color(targetHex), 0.06);
 
     if (scene.fog) {
@@ -88,11 +88,11 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         gl.shadowMap.enabled = true;
         gl.shadowMap.type = THREE.PCFShadowMap;
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 0.88;
+        gl.toneMappingExposure = 0.90;
       }}
       style={{
-        background: isNightMode ? "#0f121a" : "#d8d0c4",
-        transition: "background 0.8s ease",
+        background: isNightMode ? "#0a0d16" : "#ede6dc",
+        transition: "background 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
       <AdaptiveDpr pixelated />
@@ -101,7 +101,7 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
       <AtmosphereManager />
 
       {/* Atmospheric depth fog */}
-      <fog attach="fog" args={["#d4ccc0", 9, 24]} />
+      <fog attach="fog" args={[isNightMode ? "#0a0d16" : "#ede6dc", 10, 26]} />
 
       {/* Lighting setup */}
       <Lighting />

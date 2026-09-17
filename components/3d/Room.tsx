@@ -30,6 +30,8 @@ export default function Room() {
 
   const glassMatRef = useRef<THREE.MeshStandardMaterial>(null!);
   const sunPatchRef = useRef<THREE.MeshBasicMaterial>(null!);
+  const wallMatRef = useRef<THREE.MeshStandardMaterial>(null!);
+  const floorMatRef = useRef<THREE.MeshStandardMaterial>(null!);
 
   const glassEmissive = useRef(0.08);
   const sunPatchOpacity = useRef(0.18);
@@ -53,6 +55,18 @@ export default function Room() {
     if (sunPatchRef.current) {
       sunPatchRef.current.opacity = sunPatchOpacity.current;
     }
+    if (wallMatRef.current) {
+      wallMatRef.current.color.lerp(
+        new THREE.Color(isNightMode ? "#111522" : "#f2ede4"),
+        0.05
+      );
+    }
+    if (floorMatRef.current) {
+      floorMatRef.current.color.lerp(
+        new THREE.Color(isNightMode ? "#181410" : "#baa074"),
+        0.05
+      );
+    }
   });
 
   return (
@@ -60,7 +74,7 @@ export default function Room() {
       {/* ── FLOOR ── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[W, D]} />
-        <meshStandardMaterial color={FLOOR} roughness={0.75} metalness={0.02} />
+        <meshStandardMaterial ref={floorMatRef} color={isNightMode ? "#181410" : "#baa074"} roughness={0.75} metalness={0.02} />
       </mesh>
 
       {/* ── PROJECTED ARCHITECTURAL SUNLIGHT PATCH ON FLOOR (Day Mode) ── */}
@@ -90,13 +104,13 @@ export default function Room() {
       {/* ── CEILING ── */}
       <mesh position={[0, H, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <planeGeometry args={[W, D]} />
-        <meshStandardMaterial color={CEIL} roughness={0.98} metalness={0} />
+        <meshStandardMaterial color={isNightMode ? "#0d101a" : "#faf7f2"} roughness={0.98} metalness={0} />
       </mesh>
 
       {/* ── FRONT WALL (Hero Identity) ── */}
       <mesh position={[0, H / 2, -D / 2]}>
         <planeGeometry args={[W, H]} />
-        <meshStandardMaterial color={WALL} roughness={0.88} metalness={0} />
+        <meshStandardMaterial ref={wallMatRef} color={isNightMode ? "#111522" : "#f2ede4"} roughness={0.88} metalness={0} />
       </mesh>
 
       {/* ── BACK WALL ── */}
