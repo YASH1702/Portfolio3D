@@ -264,9 +264,9 @@ export default function SleepingCat({
         </mesh>
       </group>
 
-      {/* ── SMALL FLOATING "PET ME" DIALOGUE (Always facing camera) ── */}
+      {/* ── CLEAN FLOATING "PET ME" / "PURR" TEXT (No background box) ── */}
       <Billboard
-        position={[0.04, 0.35, 0.04]}
+        position={[0.04, 0.33, 0.04]}
         follow={true}
         lockX={false}
         lockY={false}
@@ -275,66 +275,34 @@ export default function SleepingCat({
         <group ref={badgeRef}>
           {purring ? (
             /* Active purring love response */
-            <group scale={[0.95, 0.95, 0.95]}>
-              {/* Backing pill */}
-              <mesh position={[0, 0, -0.002]}>
-                <planeGeometry args={[0.22, 0.068]} />
-                <meshBasicMaterial color="#ff4d6d" transparent opacity={0.94} />
-              </mesh>
-              {/* Downward pointer triangle */}
-              <mesh position={[0, -0.041, -0.001]} rotation={[0, 0, Math.PI]}>
-                <coneGeometry args={[0.012, 0.016, 3]} />
-                <meshBasicMaterial color="#ff4d6d" transparent opacity={0.94} />
-              </mesh>
-              <Text
-                fontSize={0.038}
-                color="#ffffff"
-                anchorX="center"
-                anchorY="middle"
-                fontWeight={700}
-                letterSpacing={0.05}
-              >
-                purr... ❤️
-              </Text>
-            </group>
+            <Text
+              fontSize={0.042}
+              color="#ff4d6d"
+              anchorX="center"
+              anchorY="middle"
+              fontWeight={800}
+              letterSpacing={0.06}
+            >
+              purr... ❤️
+            </Text>
           ) : (
-            /* Idle subtle "pet me" invitation */
-            <group scale={hovered ? [1.06, 1.06, 1] : [1, 1, 1]}>
-              {/* Subtle outline border */}
-              <mesh position={[0, 0, -0.003]}>
-                <planeGeometry args={[0.208, 0.068]} />
-                <meshBasicMaterial
-                  color={isNightMode ? "#dfba74" : "#d8cbba"}
-                  transparent
-                  opacity={isNightMode ? 0.45 : 0.6}
-                />
-              </mesh>
-              {/* Pill background */}
-              <mesh position={[0, 0, -0.002]}>
-                <planeGeometry args={[0.198, 0.058]} />
-                <meshBasicMaterial
-                  color={isNightMode ? "#161c28" : "#ffffff"}
-                  transparent
-                  opacity={0.92}
-                />
-              </mesh>
-              {/* Downward pointer triangle pointing towards cat */}
-              <mesh position={[0, -0.036, -0.001]} rotation={[0, 0, Math.PI]}>
-                <coneGeometry args={[0.011, 0.015, 3]} />
-                <meshBasicMaterial
-                  color={isNightMode ? "#161c28" : "#ffffff"}
-                  transparent
-                  opacity={0.92}
-                />
-              </mesh>
-              {/* Dialogue text */}
+            /* Idle floating text */
+            <group scale={hovered ? [1.12, 1.12, 1] : [1, 1, 1]}>
               <Text
-                fontSize={0.033}
-                color={isNightMode ? "#f8ecd8" : "#1a1816"}
+                fontSize={0.036}
+                color={
+                  hovered
+                    ? isNightMode
+                      ? "#ffd166"
+                      : "#a85d0d"
+                    : isNightMode
+                    ? "#f8ecd8"
+                    : "#2a2620"
+                }
                 anchorX="center"
                 anchorY="middle"
                 fontWeight={700}
-                letterSpacing={0.07}
+                letterSpacing={0.08}
               >
                 pet me 🐾
               </Text>
