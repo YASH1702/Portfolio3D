@@ -170,6 +170,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         setMonitorMode,
       }}
     >
+      {children}
     </StudioContext.Provider>
   );
 }
