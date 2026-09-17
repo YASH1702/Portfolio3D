@@ -15,7 +15,7 @@ import { useStudio } from "@/context/StudioContext";
  * - Day/Night adaptive dial contrast
  */
 export default function StudioClock({
-  position = [-4.1, 3.42, -5.83],
+  position = [3.85, 2.85, -5.83],
 }: {
   position?: [number, number, number];
 }) {

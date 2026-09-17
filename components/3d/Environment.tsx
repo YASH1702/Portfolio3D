@@ -419,7 +419,7 @@ export default function Environment() {
       </group>
 
       {/* ── WALL DESIGN 3: MINIMALIST ARCHITECTURAL STUDIO WALL CLOCK ── */}
-      <StudioClock position={[2.8, 2.85, -5.83]} />
+      <StudioClock position={[3.85, 2.85, -5.83]} />
 
       {/* ── FLOOR BASEBOARD — Right wall ── */}
       <mesh position={[5.96, 0.06, 0]} rotation={[0, -Math.PI / 2, 0]}>
