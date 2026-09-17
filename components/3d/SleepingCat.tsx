@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { Text } from "@react-three/drei";
+import { playCatPurr } from "@/lib/soundEffects";
 
 /**
  * SleepingCat — a cozy curled-up sleeping ginger cat on the living room sofa.
@@ -52,6 +53,7 @@ export default function SleepingCat({
 
   const handleClick = (e: any) => {
     e.stopPropagation();
+    playCatPurr();
     setPurring(true);
     purrTimer.current = 2.4; // 2.4 seconds of purring delight
   };

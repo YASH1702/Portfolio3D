@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { interpolateCameraKeyframes } from "@/lib/cameraKeyframes";
-import { StudioProvider } from "@/context/StudioContext";
+import { StudioProvider, useStudio } from "@/context/StudioContext";
 import Navigation from "@/components/ui/Navigation";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import Cursor from "@/components/ui/Cursor";
@@ -11,6 +11,7 @@ import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import StudioControls from "@/components/ui/StudioControls";
 import AudioToggle from "@/components/ui/AudioToggle";
 import ScrollPrompt from "@/components/ui/ScrollPrompt";
+import CommandPalette from "@/components/ui/CommandPalette";
 import AboutOverlay from "@/components/sections/AboutOverlay";
 import ContactSection from "@/components/sections/ContactSection";
 
@@ -30,6 +31,7 @@ const SCROLL_HEIGHT = "500vh";
 
 function PortfolioExperience() {
   const { progress } = useScrollProgress();
+  const { isFocusMode, toggleFocusMode } = useStudio();
 
   const { section } = interpolateCameraKeyframes(progress);
 
@@ -45,29 +47,86 @@ function PortfolioExperience() {
       {/* ── CURSOR (desktop only) ── */}
       <Cursor />
 
-      {/* ── NAVIGATION ── */}
-      <Navigation scrollProgress={progress} currentSection={section} />
+      {/* ── COMMAND PALETTE (Cmd+K / Ctrl+K) ── */}
+      <CommandPalette />
 
-      {/* ── SCROLL PROGRESS + SECTION LABEL ── */}
-      <ScrollIndicator progress={progress} section={section} />
+      {/* ── ZEN FOCUS MODE EXIT BANNER ── */}
+      {isFocusMode && (
+        <div
+          style={{
+            position: "fixed",
+            top: "clamp(16px, 3vh, 26px)",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 110,
+            pointerEvents: "all",
+            animation: "fadeIn 0.3s ease",
+          }}
+        >
+          <button
+            onClick={toggleFocusMode}
+            aria-label="Exit Zen Focus Mode"
+            title="Exit Zen Focus Mode (Esc or F)"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "8px 18px",
+              borderRadius: "9999px",
+              background: "rgba(10, 14, 26, 0.70)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              border: "1px solid rgba(255, 255, 255, 0.22)",
+              color: "#ffffff",
+              fontFamily: "var(--font-geist-mono, monospace)",
+              fontSize: "11px",
+              fontWeight: 700,
+              letterSpacing: "0.14em",
+              cursor: "pointer",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.45)",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <span style={{ color: "#38bdf8" }}>✦</span>
+            <span>ZEN MODE ACTIVE</span>
+            <span style={{ opacity: 0.4 }}>·</span>
+            <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.7)" }}>PRESS [ESC] OR CLICK TO EXIT</span>
+          </button>
+        </div>
+      )}
 
-      {/* ── INTERACTIVE SCROLL PROMPT — bottom center (auto-hides on scroll) ── */}
-      <ScrollPrompt progress={progress} />
+      {/* ── 2D UI CONTROLS LAYER (Fades out in Zen Mode) ── */}
+      <div
+        style={{
+          opacity: isFocusMode ? 0 : 1,
+          pointerEvents: isFocusMode ? "none" : "auto",
+          transition: "opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        {/* ── NAVIGATION ── */}
+        <Navigation scrollProgress={progress} currentSection={section} />
 
-      {/* ── STUDIO CONTROLS (Day/Night + Lamp) — bottom right ── */}
-      <StudioControls />
+        {/* ── SCROLL PROGRESS + SECTION LABEL ── */}
+        <ScrollIndicator progress={progress} section={section} />
 
-      {/* ── AMBIENT AUDIO TOGGLE — bottom left ── */}
-      <AudioToggle />
+        {/* ── INTERACTIVE SCROLL PROMPT — bottom center (auto-hides on scroll) ── */}
+        <ScrollPrompt progress={progress} />
+
+        {/* ── STUDIO CONTROLS (Day/Night + Lamp + Zen) — bottom right ── */}
+        <StudioControls />
+
+        {/* ── AMBIENT AUDIO TOGGLE — bottom left ── */}
+        <AudioToggle />
+
+        {/* ── SECTION OVERLAYS ── */}
+        <AboutOverlay   visible={showAbout} />
+        <ContactSection visible={showContact} />
+      </div>
 
       {/* ── FIXED 3D CANVAS ── */}
       <div className="canvas-fixed" aria-hidden="true" role="presentation">
         <StudioScene scrollProgress={progress} />
       </div>
-
-      {/* ── SECTION OVERLAYS ── */}
-      <AboutOverlay   visible={showAbout} />
-      <ContactSection visible={showContact} />
 
       {/* ── VIRTUAL SCROLL DRIVER ── */}
       <div

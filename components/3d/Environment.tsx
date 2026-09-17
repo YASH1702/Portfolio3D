@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useStudio } from "@/context/StudioContext";
+import StudioClock from "./StudioClock";
 
 /**
  * Environment — Rich architectural & cozy living/work atmospheric elements:
@@ -416,6 +417,9 @@ export default function Environment() {
           <meshBasicMaterial color="#1a1a18" />
         </mesh>
       </group>
+
+      {/* ── WALL DESIGN 3: MINIMALIST ARCHITECTURAL STUDIO WALL CLOCK ── */}
+      <StudioClock position={[2.8, 2.85, -5.83]} />
 
       {/* ── FLOOR BASEBOARD — Right wall ── */}
       <mesh position={[5.96, 0.06, 0]} rotation={[0, -Math.PI / 2, 0]}>

@@ -9,7 +9,14 @@ import { useStudio } from "@/context/StudioContext";
  * Positioned in the bottom-right corner, unobtrusive and editorial.
  */
 export default function StudioControls() {
-  const { isNightMode, toggleNightMode, isLampOn, toggleLamp } = useStudio();
+  const {
+    isNightMode,
+    toggleNightMode,
+    isLampOn,
+    toggleLamp,
+    isFocusMode,
+    toggleFocusMode,
+  } = useStudio();
 
   return (
     <div
@@ -96,6 +103,48 @@ export default function StudioControls() {
       >
         <span>{isNightMode ? "🌙" : "☀️"}</span>
         <span>{isNightMode ? "NIGHT" : "DAY"}</span>
+      </button>
+
+      {/* ── ZEN / FOCUS MODE TOGGLE ── */}
+      <button
+        onClick={toggleFocusMode}
+        aria-label="Toggle Zen Focus Mode"
+        title="Toggle Zen Mode (Press 'F')"
+        style={{
+          fontFamily: "var(--font-geist-mono, monospace)",
+          fontSize: "11px",
+          fontWeight: 700,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: isFocusMode
+            ? isNightMode ? "#dfba74" : "#8b5520"
+            : isNightMode ? "#c4b8a4" : "#1e1b16",
+          background: isFocusMode
+            ? isNightMode
+              ? "rgba(224, 184, 116, 0.25)"
+              : "rgba(240, 200, 140, 0.35)"
+            : isNightMode
+              ? "rgba(10, 14, 24, 0.40)"
+              : "rgba(255, 255, 255, 0.25)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: isNightMode
+            ? "1px solid rgba(224, 184, 116, 0.35)"
+            : "1px solid rgba(255, 255, 255, 0.45)",
+          padding: "7px 13px",
+          borderRadius: "18px",
+          cursor: "pointer",
+          boxShadow: isNightMode
+            ? "0 4px 16px rgba(0, 0, 0, 0.35)"
+            : "0 2px 12px rgba(24, 20, 16, 0.06)",
+          transition: "all 0.2s ease",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        <span>✦</span>
+        <span>{isFocusMode ? "ZEN: ON" : "ZEN"}</span>
       </button>
     </div>
   );

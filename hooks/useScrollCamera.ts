@@ -38,18 +38,73 @@ export function useScrollCamera({
   const parallaxPos = useRef({ x: 0, y: 0 });
   const parallaxLook = useRef({ x: 0, y: 0 });
 
+  // Touch / pointer drag orbital look-around state
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+  const dragTarget = useRef({ x: 0, y: 0 });
+  const dragCurrent = useRef({ x: 0, y: 0 });
+
   useEffect(() => {
     if (prefersReduced) return;
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
-    if (!isFinePointer) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouseNorm.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseNorm.current.y = (e.clientY / window.innerHeight) * 2 - 1;
+      if (isFinePointer) {
+        mouseNorm.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseNorm.current.y = (e.clientY / window.innerHeight) * 2 - 1;
+      }
+    };
+
+    const handlePointerDown = (e: PointerEvent) => {
+      // Don't intercept clicks on interactive elements
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.closest("button") ||
+          target.closest("a") ||
+          target.closest("input") ||
+          target.closest("textarea") ||
+          target.closest("[role='button']"))
+      ) {
+        return;
+      }
+
+      isDragging.current = true;
+      dragStart.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!isDragging.current) return;
+
+      const dx = e.clientX - dragStart.current.x;
+      const dy = e.clientY - dragStart.current.y;
+      dragStart.current = { x: e.clientX, y: e.clientY };
+
+      const sensitivityX = 0.003;
+      const sensitivityY = 0.003;
+
+      // Update drag target look offset with clamps
+      dragTarget.current.x = Math.max(-0.75, Math.min(0.75, dragTarget.current.x + dx * sensitivityX));
+      dragTarget.current.y = Math.max(-0.40, Math.min(0.40, dragTarget.current.y - dy * sensitivityY));
+    };
+
+    const handlePointerUp = () => {
+      isDragging.current = false;
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerup", handlePointerUp, { passive: true });
+    window.addEventListener("pointercancel", handlePointerUp, { passive: true });
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
+    };
   }, [prefersReduced]);
 
   // Responsive FOV compensation for mobile portrait aspect ratios
@@ -173,16 +228,24 @@ export function useScrollCamera({
       );
     }
 
+    // Orbital touch/pointer drag damping
+    if (!isDragging.current) {
+      dragTarget.current.x = dampedLerp(dragTarget.current.x, 0, 2.2, dt);
+      dragTarget.current.y = dampedLerp(dragTarget.current.y, 0, 2.2, dt);
+    }
+    dragCurrent.current.x = dampedLerp(dragCurrent.current.x, dragTarget.current.x, 8.0, dt);
+    dragCurrent.current.y = dampedLerp(dragCurrent.current.y, dragTarget.current.y, 8.0, dt);
+
     // Apply combined camera position and lookAt
     camera.position.set(
-      currentPos.current.x + parallaxPos.current.x,
-      currentPos.current.y + parallaxPos.current.y,
+      currentPos.current.x + parallaxPos.current.x + dragCurrent.current.x * 0.12,
+      currentPos.current.y + parallaxPos.current.y + dragCurrent.current.y * 0.08,
       currentPos.current.z
     );
 
     camera.lookAt(
-      currentTarget.current.x + parallaxLook.current.x,
-      currentTarget.current.y + parallaxLook.current.y,
+      currentTarget.current.x + parallaxLook.current.x + dragCurrent.current.x,
+      currentTarget.current.y + parallaxLook.current.y + dragCurrent.current.y,
       currentTarget.current.z
     );
   });

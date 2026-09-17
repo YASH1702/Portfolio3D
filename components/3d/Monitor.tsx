@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
 import { useStudio } from "@/context/StudioContext";
+import { playTerminalTick } from "@/lib/soundEffects";
 
 /**
  * Monitor — interactive workstation display.
@@ -151,6 +152,7 @@ export default function Monitor({
 
   const handleClick = (e: any) => {
     e.stopPropagation();
+    playTerminalTick();
     cycleMonitorMode();
   };
 
