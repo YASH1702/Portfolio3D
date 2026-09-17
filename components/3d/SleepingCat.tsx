@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { Text } from "@react-three/drei";
+import { Text, Billboard } from "@react-three/drei";
+import { useStudio } from "@/context/StudioContext";
 import { playCatPurr } from "@/lib/soundEffects";
 
 /**
@@ -22,11 +23,13 @@ export default function SleepingCat({
   position?: [number, number, number];
   rotation?: [number, number, number];
 }) {
+  const { isNightMode } = useStudio();
   const bodyRef = useRef<THREE.Group>(null!);
   const headRef = useRef<THREE.Group>(null!);
   const tailRef = useRef<THREE.Group>(null!);
   const earRef = useRef<THREE.Group>(null!);
   const heartRef = useRef<THREE.Group>(null!);
+  const badgeRef = useRef<THREE.Group>(null!);
 
   const [purring, setPurring] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -122,6 +125,11 @@ export default function SleepingCat({
       heartRef.current.position.y = 0.32 + progress * 0.28;
       heartRef.current.position.x = 0.16 + Math.sin(progress * Math.PI * 3) * 0.04;
       heartRef.current.scale.setScalar(Math.sin(progress * Math.PI) * 1.1);
+    }
+
+    // Floating dialogue subtle vertical bob
+    if (badgeRef.current) {
+      badgeRef.current.position.y = Math.sin(t * 3.2) * 0.006;
     }
   });
 
@@ -256,19 +264,84 @@ export default function SleepingCat({
         </mesh>
       </group>
 
-      {/* ── FLOATING PURR / LOVE REACTION ── */}
-      {purring && (
-        <group ref={heartRef} position={[0.16, 0.34, 0.06]}>
-          <Text
-            fontSize={0.07}
-            color="#ff5e7e"
-            anchorX="center"
-            anchorY="middle"
-          >
-            purr... ❤️
-          </Text>
+      {/* ── SMALL FLOATING "PET ME" DIALOGUE (Always facing camera) ── */}
+      <Billboard
+        position={[0.04, 0.35, 0.04]}
+        follow={true}
+        lockX={false}
+        lockY={false}
+        lockZ={false}
+      >
+        <group ref={badgeRef}>
+          {purring ? (
+            /* Active purring love response */
+            <group scale={[0.95, 0.95, 0.95]}>
+              {/* Backing pill */}
+              <mesh position={[0, 0, -0.002]}>
+                <planeGeometry args={[0.22, 0.068]} />
+                <meshBasicMaterial color="#ff4d6d" transparent opacity={0.94} />
+              </mesh>
+              {/* Downward pointer triangle */}
+              <mesh position={[0, -0.041, -0.001]} rotation={[0, 0, Math.PI]}>
+                <coneGeometry args={[0.012, 0.016, 3]} />
+                <meshBasicMaterial color="#ff4d6d" transparent opacity={0.94} />
+              </mesh>
+              <Text
+                fontSize={0.038}
+                color="#ffffff"
+                anchorX="center"
+                anchorY="middle"
+                fontWeight={700}
+                letterSpacing={0.05}
+              >
+                purr... ❤️
+              </Text>
+            </group>
+          ) : (
+            /* Idle subtle "pet me" invitation */
+            <group scale={hovered ? [1.06, 1.06, 1] : [1, 1, 1]}>
+              {/* Subtle outline border */}
+              <mesh position={[0, 0, -0.003]}>
+                <planeGeometry args={[0.208, 0.068]} />
+                <meshBasicMaterial
+                  color={isNightMode ? "#dfba74" : "#d8cbba"}
+                  transparent
+                  opacity={isNightMode ? 0.45 : 0.6}
+                />
+              </mesh>
+              {/* Pill background */}
+              <mesh position={[0, 0, -0.002]}>
+                <planeGeometry args={[0.198, 0.058]} />
+                <meshBasicMaterial
+                  color={isNightMode ? "#161c28" : "#ffffff"}
+                  transparent
+                  opacity={0.92}
+                />
+              </mesh>
+              {/* Downward pointer triangle pointing towards cat */}
+              <mesh position={[0, -0.036, -0.001]} rotation={[0, 0, Math.PI]}>
+                <coneGeometry args={[0.011, 0.015, 3]} />
+                <meshBasicMaterial
+                  color={isNightMode ? "#161c28" : "#ffffff"}
+                  transparent
+                  opacity={0.92}
+                />
+              </mesh>
+              {/* Dialogue text */}
+              <Text
+                fontSize={0.033}
+                color={isNightMode ? "#f8ecd8" : "#1a1816"}
+                anchorX="center"
+                anchorY="middle"
+                fontWeight={700}
+                letterSpacing={0.07}
+              >
+                pet me 🐾
+              </Text>
+            </group>
+          )}
         </group>
-      )}
+      </Billboard>
     </group>
   );
 }
