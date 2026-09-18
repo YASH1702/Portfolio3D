@@ -20,8 +20,6 @@ export default function StudioControls() {
     cycleWeather,
     isLaserActive,
     toggleLaser,
-    areBlindsOpen,
-    toggleBlinds,
   } = useStudio();
 
   return (
@@ -111,11 +109,15 @@ export default function StudioControls() {
         <span className="ctrl-btn-text">{isNightMode ? "NIGHT" : "DAY"}</span>
       </button>
 
-      {/* ── WEATHER CYCLE TOGGLE ── */}
+      {/* ── WEATHER CYCLE TOGGLE (Day: Rain/Sunny/Snow, Night: Rain/Snow) ── */}
       <button
         onClick={cycleWeather}
         aria-label={`Cycle studio weather (currently ${weather})`}
-        title="Cycle Weather: Rain / Sunny / Snow (Press 'W')"
+        title={
+          isNightMode
+            ? "Cycle Night Atmosphere: Rain / Snow (Press 'W')"
+            : "Cycle Weather: Rain / Sunny / Snow (Press 'W')"
+        }
         style={{
           fontFamily: "var(--font-geist-mono, monospace)",
           fontSize: "11px",
@@ -149,44 +151,6 @@ export default function StudioControls() {
         <span className="ctrl-btn-text">
           {weather === "rain" ? "RAIN" : weather === "sunny" ? "SUNNY" : "SNOW"}
         </span>
-      </button>
-
-      {/* ── WINDOW BLINDS TOGGLE ── */}
-      <button
-        onClick={() => toggleBlinds()}
-        aria-label={`Toggle window blinds (currently ${areBlindsOpen ? "open" : "closed"})`}
-        title="Toggle Window Blinds (Press 'O')"
-        style={{
-          fontFamily: "var(--font-geist-mono, monospace)",
-          fontSize: "11px",
-          fontWeight: 700,
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: areBlindsOpen
-            ? isNightMode ? "#cbd5e1" : "#334155"
-            : isNightMode ? "#fbbf24" : "#b45309",
-          background: isNightMode
-            ? "rgba(10, 14, 24, 0.45)"
-            : "rgba(255, 255, 255, 0.35)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          border: isNightMode
-            ? "1px solid rgba(255, 255, 255, 0.2)"
-            : "1px solid rgba(255, 255, 255, 0.55)",
-          padding: "7px clamp(9px, 1.8vw, 13px)",
-          borderRadius: "18px",
-          cursor: "pointer",
-          boxShadow: isNightMode
-            ? "0 4px 16px rgba(0, 0, 0, 0.35)"
-            : "0 2px 12px rgba(24, 20, 16, 0.06)",
-          transition: "all 0.2s ease",
-          display: "flex",
-          alignItems: "center",
-          gap: "5px",
-        }}
-      >
-        <span>🪟</span>
-        <span className="ctrl-btn-text">{areBlindsOpen ? "BLINDS: OPEN" : "BLINDS: SHUT"}</span>
       </button>
 
       {/* ── RED LASER POINTER TOGGLE ── */}

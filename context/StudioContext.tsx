@@ -16,7 +16,6 @@ import {
   playBookFlip,
   playVinylDrop,
   playLaserClick,
-  playBlindsRattle,
 } from "@/lib/soundEffects";
 import { lofiAudio } from "@/lib/lofiAudio";
 
@@ -47,8 +46,6 @@ interface StudioContextType {
   toggleLaser: (active?: boolean) => void;
   laserTarget: [number, number, number] | null;
   setLaserTarget: (target: [number, number, number] | null) => void;
-  areBlindsOpen: boolean;
-  toggleBlinds: (open?: boolean) => void;
 }
 
 const StudioContext = createContext<StudioContextType | null>(null);
@@ -65,7 +62,6 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [weather, setWeather] = useState<StudioWeather>("rain");
   const [isLaserActive, setIsLaserActive] = useState(false);
   const [laserTarget, setLaserTarget] = useState<[number, number, number] | null>(null);
-  const [areBlindsOpen, setAreBlindsOpen] = useState(true);
 
   const toggleLaser = useCallback((active?: boolean) => {
     playLaserClick();
@@ -78,24 +74,27 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const toggleBlinds = useCallback((open?: boolean) => {
-    playBlindsRattle();
-    setAreBlindsOpen((prev) => (typeof open === "boolean" ? open : !prev));
-  }, []);
-
   const cycleWeather = useCallback(() => {
     playNavBlip();
     setWeather((prev) => {
+      if (isNightMode) {
+        // Night mode strictly supports Rain and Snow only
+        return prev === "rain" ? "snow" : "rain";
+      }
       if (prev === "rain") return "sunny";
       if (prev === "sunny") return "snow";
       return "rain";
     });
-  }, []);
+  }, [isNightMode]);
 
   const toggleNightMode = useCallback(() => {
     setIsNightMode((prev) => {
       const next = !prev;
       playDayNightSound(next);
+      if (next) {
+        // Entering Night Mode: ensure weather is strictly Rain or Snow
+        setWeather((current) => (current === "sunny" ? "rain" : current));
+      }
       return next;
     });
   }, []);
@@ -234,9 +233,6 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
       } else if (e.key.toLowerCase() === "p") {
         e.preventDefault();
         toggleLaser();
-      } else if (e.key.toLowerCase() === "o") {
-        e.preventDefault();
-        toggleBlinds();
       } else if (e.key === "Escape") {
         if (isTerminalOpen) {
           e.preventDefault();
@@ -263,7 +259,6 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     toggleLofi,
     cycleWeather,
     toggleLaser,
-    toggleBlinds,
     isFocusMode,
     isTerminalOpen,
     isBooksModalOpen,
@@ -295,8 +290,6 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         toggleLaser,
         laserTarget,
         setLaserTarget,
-        areBlindsOpen,
-        toggleBlinds,
       }}
     >
       {children}
