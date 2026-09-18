@@ -16,18 +16,20 @@ export default function StudioControls() {
     toggleLamp,
     isFocusMode,
     toggleFocusMode,
+    weather,
+    cycleWeather,
   } = useStudio();
 
   return (
     <div
       style={{
         position: "fixed",
-        right: "clamp(18px, 3.5vw, 44px)",
-        bottom: "clamp(16px, 3vh, 28px)",
+        right: "clamp(12px, 3.5vw, 44px)",
+        bottom: "clamp(14px, 3vh, 28px)",
         zIndex: 65,
         display: "flex",
         alignItems: "center",
-        gap: "10px",
+        gap: "clamp(5px, 1.5vw, 10px)",
         pointerEvents: "all",
       }}
     >
@@ -40,20 +42,20 @@ export default function StudioControls() {
           fontFamily: "var(--font-geist-mono, monospace)",
           fontSize: "11px",
           fontWeight: 700,
-          letterSpacing: "0.18em",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: isLampOn
             ? isNightMode ? "#dfba74" : "#946820"
             : isNightMode ? "#c4b8a4" : "#1e1b16",
           background: isNightMode
-            ? "rgba(10, 14, 24, 0.40)"
-            : "rgba(255, 255, 255, 0.25)",
+            ? "rgba(10, 14, 24, 0.45)"
+            : "rgba(255, 255, 255, 0.35)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
             ? "1px solid rgba(224, 184, 116, 0.30)"
-            : "1px solid rgba(255, 255, 255, 0.45)",
-          padding: "7px 13px",
+            : "1px solid rgba(255, 255, 255, 0.55)",
+          padding: "7px clamp(9px, 1.8vw, 13px)",
           borderRadius: "18px",
           cursor: "pointer",
           boxShadow: isNightMode
@@ -62,11 +64,11 @@ export default function StudioControls() {
           transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
-          gap: "6px",
+          gap: "5px",
         }}
       >
-        <span style={{ fontSize: "10px" }}>💡</span>
-        <span>{isLampOn ? "LAMP: ON" : "LAMP: OFF"}</span>
+        <span style={{ fontSize: "11px" }}>💡</span>
+        <span className="ctrl-btn-text">{isLampOn ? "LAMP: ON" : "LAMP: OFF"}</span>
       </button>
 
       {/* ── DAY / NIGHT TOGGLE ── */}
@@ -78,18 +80,18 @@ export default function StudioControls() {
           fontFamily: "var(--font-geist-mono, monospace)",
           fontSize: "11px",
           fontWeight: 700,
-          letterSpacing: "0.18em",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: isNightMode ? "#93c5fd" : "#1e1b16",
           background: isNightMode
-            ? "rgba(10, 14, 24, 0.40)"
-            : "rgba(255, 255, 255, 0.25)",
+            ? "rgba(10, 14, 24, 0.45)"
+            : "rgba(255, 255, 255, 0.35)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
             ? "1px solid rgba(147, 197, 253, 0.35)"
-            : "1px solid rgba(255, 255, 255, 0.45)",
-          padding: "7px 13px",
+            : "1px solid rgba(255, 255, 255, 0.55)",
+          padding: "7px clamp(9px, 1.8vw, 13px)",
           borderRadius: "18px",
           cursor: "pointer",
           boxShadow: isNightMode
@@ -98,11 +100,51 @@ export default function StudioControls() {
           transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
-          gap: "6px",
+          gap: "5px",
         }}
       >
         <span>{isNightMode ? "🌙" : "☀️"}</span>
-        <span>{isNightMode ? "NIGHT" : "DAY"}</span>
+        <span className="ctrl-btn-text">{isNightMode ? "NIGHT" : "DAY"}</span>
+      </button>
+
+      {/* ── WEATHER CYCLE TOGGLE ── */}
+      <button
+        onClick={cycleWeather}
+        aria-label={`Cycle studio weather (currently ${weather})`}
+        title="Cycle Weather: Rain / Sunny / Snow (Press 'W')"
+        style={{
+          fontFamily: "var(--font-geist-mono, monospace)",
+          fontSize: "11px",
+          fontWeight: 700,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: isNightMode ? "#a5f3fc" : "#0e7490",
+          background: isNightMode
+            ? "rgba(10, 14, 24, 0.45)"
+            : "rgba(255, 255, 255, 0.35)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: isNightMode
+            ? "1px solid rgba(165, 243, 252, 0.35)"
+            : "1px solid rgba(255, 255, 255, 0.55)",
+          padding: "7px clamp(9px, 1.8vw, 13px)",
+          borderRadius: "18px",
+          cursor: "pointer",
+          boxShadow: isNightMode
+            ? "0 4px 16px rgba(0, 0, 0, 0.35)"
+            : "0 2px 12px rgba(24, 20, 16, 0.06)",
+          transition: "all 0.2s ease",
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+        }}
+      >
+        <span>
+          {weather === "rain" ? "🌧️" : weather === "sunny" ? "☀️" : "❄️"}
+        </span>
+        <span className="ctrl-btn-text">
+          {weather === "rain" ? "RAIN" : weather === "sunny" ? "SUNNY" : "SNOW"}
+        </span>
       </button>
 
       {/* ── ZEN / FOCUS MODE TOGGLE ── */}
@@ -114,7 +156,7 @@ export default function StudioControls() {
           fontFamily: "var(--font-geist-mono, monospace)",
           fontSize: "11px",
           fontWeight: 700,
-          letterSpacing: "0.18em",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: isFocusMode
             ? isNightMode ? "#dfba74" : "#8b5520"
@@ -124,14 +166,14 @@ export default function StudioControls() {
               ? "rgba(224, 184, 116, 0.25)"
               : "rgba(240, 200, 140, 0.35)"
             : isNightMode
-              ? "rgba(10, 14, 24, 0.40)"
-              : "rgba(255, 255, 255, 0.25)",
+              ? "rgba(10, 14, 24, 0.45)"
+              : "rgba(255, 255, 255, 0.35)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
             ? "1px solid rgba(224, 184, 116, 0.35)"
-            : "1px solid rgba(255, 255, 255, 0.45)",
-          padding: "7px 13px",
+            : "1px solid rgba(255, 255, 255, 0.55)",
+          padding: "7px clamp(9px, 1.8vw, 13px)",
           borderRadius: "18px",
           cursor: "pointer",
           boxShadow: isNightMode
@@ -140,12 +182,20 @@ export default function StudioControls() {
           transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
-          gap: "6px",
+          gap: "5px",
         }}
       >
         <span>✦</span>
-        <span>{isFocusMode ? "ZEN: ON" : "ZEN"}</span>
+        <span className="ctrl-btn-text">{isFocusMode ? "ZEN: ON" : "ZEN"}</span>
       </button>
+
+      <style>{`
+        @media (max-width: 600px) {
+          .ctrl-btn-text {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

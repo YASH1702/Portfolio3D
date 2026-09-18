@@ -290,3 +290,46 @@ export function playBookFlip() {
   osc.stop(now + 0.07);
 }
 
+/**
+ * Soft ceramic mug clink and warm sip sound
+ */
+export function playCoffeeSip() {
+  triggerHaptic("medium");
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+
+  // Ceramic tap/clink
+  const clinkOsc = ctx.createOscillator();
+  const clinkGain = ctx.createGain();
+  clinkOsc.type = "sine";
+  clinkOsc.frequency.setValueAtTime(2600, now);
+  clinkOsc.frequency.exponentialRampToValueAtTime(1200, now + 0.035);
+
+  clinkGain.gain.setValueAtTime(0.12, now);
+  clinkGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+  clinkOsc.connect(clinkGain);
+  clinkGain.connect(ctx.destination);
+  clinkOsc.start(now);
+  clinkOsc.stop(now + 0.045);
+
+  // Soft gulp/sip body
+  const sipOsc = ctx.createOscillator();
+  const sipGain = ctx.createGain();
+  sipOsc.type = "triangle";
+  sipOsc.frequency.setValueAtTime(210, now + 0.03);
+  sipOsc.frequency.exponentialRampToValueAtTime(140, now + 0.14);
+
+  sipGain.gain.setValueAtTime(0.001, now + 0.03);
+  sipGain.gain.linearRampToValueAtTime(0.09, now + 0.06);
+  sipGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+  sipOsc.connect(sipGain);
+  sipGain.connect(ctx.destination);
+  sipOsc.start(now + 0.03);
+  sipOsc.stop(now + 0.17);
+}
+
+

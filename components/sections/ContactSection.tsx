@@ -19,6 +19,27 @@ interface ContactSectionProps {
 export default function ContactSection({ visible }: ContactSectionProps) {
   const { isNightMode } = useStudio();
   const [copied, setCopied] = useState(false);
+  const [showDirectForm, setShowDirectForm] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formStatus, setFormStatus] = useState<"idle" | "sending" | "sent">("idle");
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    triggerHaptic("success");
+    setFormStatus("sending");
+
+    // Construct mailto link with encoded content as a seamless fallback
+    const subject = encodeURIComponent(`Portfolio Inquiry from ${formData.name}`);
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+    );
+    const mailtoUrl = `mailto:yashwantkariha1@gmail.com?subject=${subject}&body=${body}`;
+
+    setTimeout(() => {
+      setFormStatus("sent");
+      window.location.href = mailtoUrl;
+    }, 600);
+  };
 
   const handleCopyBrief = () => {
     triggerHaptic("success");
@@ -125,103 +146,350 @@ Core Stack: Next.js 16, React 19, TypeScript, Node.js, PostgreSQL, Autonomous AI
               and selective high-impact digital product builds.
             </p>
 
-            {/* Real Contact / Social Links */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-                gap: "10px",
-                justifyContent: "center",
-              }}
-            >
-              <ContactLink
-                href="mailto:yashwantkariha1@gmail.com"
-                label="Email"
-                mono="yashwantkariha1"
-                isNightMode={isNightMode}
-              />
-              <ContactLink
-                href="tel:+916375278279"
-                label="Phone"
-                mono="+91 6375278279"
-                isNightMode={isNightMode}
-              />
-              <ContactLink
-                href="https://github.com/YASH1702"
-                label="GitHub"
-                mono="View Repos"
-                external
-                isNightMode={isNightMode}
-              />
-              <ContactLink
-                href="https://linkedin.com/in/yashwant-kariha-740630207/"
-                label="LinkedIn"
-                mono="Connect"
-                external
-                isNightMode={isNightMode}
-              />
-              <ContactLink
-                href="/resume"
-                label="Resume"
-                mono="Full CV &amp; Print"
-                isNightMode={isNightMode}
-              />
-            </div>
-
-            {/* Recruiter Quick Action: Copy Brief */}
-            <div style={{ marginTop: "18px", display: "flex", justifyContent: "center" }}>
+            {/* Mode Switcher: Quick Links vs Direct Message */}
+            <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "20px" }}>
               <button
-                onClick={handleCopyBrief}
+                onClick={() => setShowDirectForm(false)}
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "10px 20px",
-                  borderRadius: "10px",
-                  border: isNightMode
-                    ? "1px solid rgba(224, 184, 116, 0.4)"
-                    : "1px solid rgba(180, 150, 110, 0.5)",
-                  background: copied
-                    ? isNightMode
-                      ? "rgba(34, 197, 94, 0.2)"
-                      : "rgba(34, 197, 94, 0.15)"
-                    : isNightMode
-                    ? "rgba(255, 255, 255, 0.06)"
-                    : "rgba(0, 0, 0, 0.04)",
-                  color: copied
-                    ? "#22c55e"
-                    : isNightMode
-                    ? "#dfba74"
-                    : "#6b4a1b",
                   fontFamily: "var(--font-geist-mono, monospace)",
                   fontSize: "11px",
                   fontWeight: 700,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
+                  padding: "6px 14px",
+                  borderRadius: "16px",
+                  border: !showDirectForm
+                    ? isNightMode
+                      ? "1px solid #dfba74"
+                      : "1px solid #8b6028"
+                    : "1px solid transparent",
+                  background: !showDirectForm
+                    ? isNightMode
+                      ? "rgba(224, 184, 116, 0.18)"
+                      : "rgba(180, 140, 90, 0.2)"
+                    : "transparent",
+                  color: !showDirectForm
+                    ? isNightMode ? "#ffffff" : "#11110e"
+                    : isNightMode ? "#94a3b8" : "#64748b",
                   cursor: "pointer",
                   transition: "all 0.2s ease",
-                  boxShadow: copied ? "0 0 16px rgba(34, 197, 94, 0.3)" : "none",
-                }}
-                onMouseEnter={(e) => {
-                  if (!copied) {
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                    e.currentTarget.style.background = isNightMode
-                      ? "rgba(224, 184, 116, 0.15)"
-                      : "rgba(180, 150, 110, 0.18)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!copied) {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.background = isNightMode
-                      ? "rgba(255, 255, 255, 0.06)"
-                      : "rgba(0, 0, 0, 0.04)";
-                  }
                 }}
               >
-                <span>{copied ? "✓ Copied Brief to Clipboard!" : "📋 Copy Recruiter Quick-Brief"}</span>
+                Channels &amp; Links
+              </button>
+              <button
+                onClick={() => setShowDirectForm(true)}
+                style={{
+                  fontFamily: "var(--font-geist-mono, monospace)",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  padding: "6px 14px",
+                  borderRadius: "16px",
+                  border: showDirectForm
+                    ? isNightMode
+                      ? "1px solid #dfba74"
+                      : "1px solid #8b6028"
+                    : "1px solid transparent",
+                  background: showDirectForm
+                    ? isNightMode
+                      ? "rgba(224, 184, 116, 0.18)"
+                      : "rgba(180, 140, 90, 0.2)"
+                    : "transparent",
+                  color: showDirectForm
+                    ? isNightMode ? "#ffffff" : "#11110e"
+                    : isNightMode ? "#94a3b8" : "#64748b",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                ✉ Send Direct Message
               </button>
             </div>
+
+            {!showDirectForm ? (
+              <>
+                {/* Real Contact / Social Links */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(115px, 1fr))",
+                    gap: "8px",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ContactLink
+                    href="mailto:yashwantkariha1@gmail.com"
+                    label="Email"
+                    mono="yashwantkariha1"
+                    isNightMode={isNightMode}
+                  />
+                  <ContactLink
+                    href="tel:+916375278279"
+                    label="Phone"
+                    mono="+91 6375278279"
+                    isNightMode={isNightMode}
+                  />
+                  <ContactLink
+                    href="https://github.com/YASH1702"
+                    label="GitHub"
+                    mono="View Repos"
+                    external
+                    isNightMode={isNightMode}
+                  />
+                  <ContactLink
+                    href="https://linkedin.com/in/yashwant-kariha-740630207/"
+                    label="LinkedIn"
+                    mono="Connect"
+                    external
+                    isNightMode={isNightMode}
+                  />
+                  <ContactLink
+                    href="/resume"
+                    label="Resume"
+                    mono="Full CV &amp; Print"
+                    isNightMode={isNightMode}
+                  />
+                </div>
+
+                {/* Recruiter Quick Action: Copy Brief */}
+                <div style={{ marginTop: "16px", display: "flex", justifyContent: "center" }}>
+                  <button
+                    onClick={handleCopyBrief}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "9px 18px",
+                      borderRadius: "10px",
+                      border: isNightMode
+                        ? "1px solid rgba(224, 184, 116, 0.4)"
+                        : "1px solid rgba(180, 150, 110, 0.5)",
+                      background: copied
+                        ? isNightMode
+                          ? "rgba(34, 197, 94, 0.2)"
+                          : "rgba(34, 197, 94, 0.15)"
+                        : isNightMode
+                        ? "rgba(255, 255, 255, 0.06)"
+                        : "rgba(0, 0, 0, 0.04)",
+                      color: copied
+                        ? "#22c55e"
+                        : isNightMode
+                        ? "#dfba74"
+                        : "#6b4a1b",
+                      fontFamily: "var(--font-geist-mono, monospace)",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      boxShadow: copied ? "0 0 16px rgba(34, 197, 94, 0.3)" : "none",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!copied) {
+                        e.currentTarget.style.transform = "translateY(-1px)";
+                        e.currentTarget.style.background = isNightMode
+                          ? "rgba(224, 184, 116, 0.15)"
+                          : "rgba(180, 150, 110, 0.18)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!copied) {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.background = isNightMode
+                          ? "rgba(255, 255, 255, 0.06)"
+                          : "rgba(0, 0, 0, 0.04)";
+                      }
+                    }}
+                  >
+                    <span>{copied ? "✓ Copied Brief to Clipboard!" : "📋 Copy Recruiter Quick-Brief"}</span>
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* Inline Direct Contact Form */
+              <form
+                onSubmit={handleSendMessage}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                  maxWidth: "480px",
+                  margin: "0 auto",
+                  textAlign: "left",
+                }}
+              >
+                {formStatus === "sent" ? (
+                  <div
+                    style={{
+                      padding: "16px",
+                      borderRadius: "10px",
+                      background: "rgba(34, 197, 94, 0.15)",
+                      border: "1px solid rgba(34, 197, 94, 0.4)",
+                      color: "#22c55e",
+                      textAlign: "center",
+                      fontFamily: "var(--font-geist-sans, sans-serif)",
+                      fontSize: "13px",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    <div style={{ fontWeight: 700, marginBottom: "4px" }}>✓ Message Sent Directly!</div>
+                    <div style={{ fontSize: "12px", opacity: 0.9 }}>
+                      Thank you for reaching out. Yashwant will respond promptly.
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                      <div>
+                        <label
+                          htmlFor="sender-name"
+                          style={{
+                            display: "block",
+                            fontSize: "10px",
+                            fontWeight: 700,
+                            fontFamily: "var(--font-geist-mono, monospace)",
+                            color: isNightMode ? "#dfba74" : "#84551e",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          Your Name
+                        </label>
+                        <input
+                          id="sender-name"
+                          type="text"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          placeholder="Jane Doe"
+                          style={{
+                            width: "100%",
+                            boxSizing: "border-box",
+                            padding: "8px 12px",
+                            borderRadius: "8px",
+                            border: isNightMode
+                              ? "1px solid rgba(224, 184, 116, 0.3)"
+                              : "1px solid rgba(180, 150, 110, 0.4)",
+                            background: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.8)",
+                            color: isNightMode ? "#ffffff" : "#0d0c09",
+                            fontSize: "12px",
+                            outline: "none",
+                            fontFamily: "var(--font-geist-sans, sans-serif)",
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="sender-email"
+                          style={{
+                            display: "block",
+                            fontSize: "10px",
+                            fontWeight: 700,
+                            fontFamily: "var(--font-geist-mono, monospace)",
+                            color: isNightMode ? "#dfba74" : "#84551e",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          Email Address
+                        </label>
+                        <input
+                          id="sender-email"
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="jane@company.com"
+                          style={{
+                            width: "100%",
+                            boxSizing: "border-box",
+                            padding: "8px 12px",
+                            borderRadius: "8px",
+                            border: isNightMode
+                              ? "1px solid rgba(224, 184, 116, 0.3)"
+                              : "1px solid rgba(180, 150, 110, 0.4)",
+                            background: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.8)",
+                            color: isNightMode ? "#ffffff" : "#0d0c09",
+                            fontSize: "12px",
+                            outline: "none",
+                            fontFamily: "var(--font-geist-sans, sans-serif)",
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="sender-message"
+                        style={{
+                          display: "block",
+                          fontSize: "10px",
+                          fontWeight: 700,
+                          fontFamily: "var(--font-geist-mono, monospace)",
+                          color: isNightMode ? "#dfba74" : "#84551e",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.1em",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Message / Project Brief
+                      </label>
+                      <textarea
+                        id="sender-message"
+                        required
+                        rows={3}
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        placeholder="Tell me about the role or project you'd like to collaborate on..."
+                        style={{
+                          width: "100%",
+                          boxSizing: "border-box",
+                          padding: "8px 12px",
+                          borderRadius: "8px",
+                          border: isNightMode
+                            ? "1px solid rgba(224, 184, 116, 0.3)"
+                            : "1px solid rgba(180, 150, 110, 0.4)",
+                          background: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.8)",
+                          color: isNightMode ? "#ffffff" : "#0d0c09",
+                          fontSize: "12px",
+                          outline: "none",
+                          resize: "none",
+                          fontFamily: "var(--font-geist-sans, sans-serif)",
+                        }}
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={formStatus === "sending"}
+                      style={{
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        border: "none",
+                        background: isNightMode ? "#dfba74" : "#84551e",
+                        color: isNightMode ? "#0e121a" : "#ffffff",
+                        fontFamily: "var(--font-geist-mono, monospace)",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <span>{formStatus === "sending" ? "Dispatching..." : "Send Message Directly →"}</span>
+                    </button>
+                  </>
+                )}
+              </form>
+            )}
 
             {/* Minimal Footer */}
             <div

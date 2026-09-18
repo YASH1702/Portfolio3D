@@ -14,6 +14,7 @@ import ScrollPrompt from "@/components/ui/ScrollPrompt";
 import CommandPalette from "@/components/ui/CommandPalette";
 import TerminalModal from "@/components/ui/TerminalModal";
 import BooksModal from "@/components/ui/BooksModal";
+import LofiPlayerDock from "@/components/ui/LofiPlayerDock";
 import AboutOverlay from "@/components/sections/AboutOverlay";
 import ContactSection from "@/components/sections/ContactSection";
 
@@ -125,6 +126,9 @@ function PortfolioExperience() {
 
         {/* ── AMBIENT AUDIO TOGGLE — bottom left ── */}
         <AudioToggle />
+
+        {/* ── MINI LO-FI BEATS PLAYER DOCK (Active when Lo-Fi is playing) ── */}
+        <LofiPlayerDock />
 
         {/* ── SECTION OVERLAYS ── */}
         <AboutOverlay   visible={showAbout} />

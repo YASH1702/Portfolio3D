@@ -33,6 +33,8 @@ export default function CommandPalette() {
     toggleBooksModal,
     isLofiPlaying,
     toggleLofi,
+    weather,
+    cycleWeather,
   } = useStudio();
 
   const scrollToProgress = (progress: number) => {
@@ -153,6 +155,14 @@ export default function CommandPalette() {
         sub: "Hide 2D UI for pure 3D room immersion",
         shortcut: "F",
         action: () => toggleFocusMode(),
+      },
+      {
+        id: "ctrl-weather",
+        category: "Studio Controls",
+        title: `Weather: ${weather.toUpperCase()} (Cycle to Next)`,
+        sub: "Switch atmosphere between Rain 🌧️, Sunny ☀️, and Snow ❄️",
+        shortcut: "W",
+        action: () => cycleWeather(),
       },
       {
         id: "ext-resume",

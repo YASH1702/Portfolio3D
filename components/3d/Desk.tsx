@@ -2,10 +2,12 @@
 
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
+import { Billboard, Text } from "@react-three/drei";
 import * as THREE from "three";
 import Monitor from "./Monitor";
 import SteamParticles from "./SteamParticles";
 import { useStudio } from "@/context/StudioContext";
+import { playCoffeeSip } from "@/lib/soundEffects";
 
 /**
  * Desk — a modern, high-fidelity developer workstation.
@@ -45,6 +47,20 @@ export default function Desk() {
     e.stopPropagation();
     lampBounce.current = 1.0;
     toggleLamp();
+  };
+
+  const [mugHovered, setMugHovered] = useState(false);
+  const [sipping, setSipping] = useState(false);
+  const sipTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMugClick = (e: any) => {
+    e.stopPropagation();
+    playCoffeeSip();
+    setSipping(true);
+    if (sipTimer.current) clearTimeout(sipTimer.current);
+    sipTimer.current = setTimeout(() => {
+      setSipping(false);
+    }, 2400);
   };
 
   useFrame((_, delta) => {
@@ -344,16 +360,36 @@ export default function Desk() {
         </mesh>
       </group>
 
-      {/* ── COFFEE CUP ── */}
-      <group position={[0.58, 0.762, -0.1]}>
+      {/* ── COFFEE CUP (INTERACTIVE: CLICK TO SIP) ── */}
+      <group
+        position={[0.58, 0.762, -0.1]}
+        onClick={handleMugClick}
+        onPointerEnter={(e) => {
+          e.stopPropagation();
+          setMugHovered(true);
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerLeave={() => {
+          setMugHovered(false);
+          document.body.style.cursor = "auto";
+        }}
+      >
         <mesh castShadow>
           <cylinderGeometry args={[0.028, 0.022, 0.072, 12]} />
-          <meshStandardMaterial color={CUP} roughness={0.85} metalness={0} />
+          <meshStandardMaterial
+            color={mugHovered ? "#e0d4b8" : CUP}
+            roughness={0.85}
+            metalness={0}
+          />
         </mesh>
         {/* Handle */}
         <mesh position={[0.034, 0, 0]}>
           <torusGeometry args={[0.018, 0.005, 6, 12, Math.PI]} />
-          <meshStandardMaterial color={CUP} roughness={0.85} metalness={0} />
+          <meshStandardMaterial
+            color={mugHovered ? "#e0d4b8" : CUP}
+            roughness={0.85}
+            metalness={0}
+          />
         </mesh>
         {/* Coffee */}
         <mesh position={[0, 0.036, 0]}>
@@ -362,6 +398,33 @@ export default function Desk() {
         </mesh>
         {/* Steam rising from the coffee */}
         <SteamParticles />
+
+        {/* Floating Billboard Caffeine / Sip Badge */}
+        <Billboard position={[0, 0.13, 0]} follow={true}>
+          {sipping ? (
+            <Text
+              fontSize={0.034}
+              color="#dfba74"
+              anchorX="center"
+              anchorY="middle"
+              fontWeight={800}
+              letterSpacing={0.06}
+            >
+              ☕ +100mg Caffeine · 100% Focus
+            </Text>
+          ) : mugHovered ? (
+            <Text
+              fontSize={0.030}
+              color={isNightMode ? "#f8ecd8" : "#2a2620"}
+              anchorX="center"
+              anchorY="middle"
+              fontWeight={700}
+              letterSpacing={0.06}
+            >
+              ☕ sip coffee
+            </Text>
+          ) : null}
+        </Billboard>
       </group>
 
       {/* ── SMALL DESK SUCCULENT PLANT ── */}

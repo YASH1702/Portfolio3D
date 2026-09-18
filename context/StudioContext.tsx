@@ -19,6 +19,7 @@ import {
 import { lofiAudio } from "@/lib/lofiAudio";
 
 export type MonitorDisplayMode = "code" | "terminal" | "architecture";
+export type StudioWeather = "rain" | "sunny" | "snow";
 
 interface StudioContextType {
   isNightMode: boolean;
@@ -38,6 +39,8 @@ interface StudioContextType {
   toggleBooksModal: (open?: boolean) => void;
   isLofiPlaying: boolean;
   toggleLofi: (playing?: boolean) => void;
+  weather: StudioWeather;
+  cycleWeather: () => void;
 }
 
 const StudioContext = createContext<StudioContextType | null>(null);
@@ -51,6 +54,16 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isBooksModalOpen, setIsBooksModalOpen] = useState(false);
   const [isLofiPlaying, setIsLofiPlaying] = useState(false);
+  const [weather, setWeather] = useState<StudioWeather>("rain");
+
+  const cycleWeather = useCallback(() => {
+    playNavBlip();
+    setWeather((prev) => {
+      if (prev === "rain") return "sunny";
+      if (prev === "sunny") return "snow";
+      return "rain";
+    });
+  }, []);
 
   const toggleNightMode = useCallback(() => {
     setIsNightMode((prev) => {
@@ -188,6 +201,9 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
       } else if (e.key.toLowerCase() === "m") {
         e.preventDefault();
         toggleLofi();
+      } else if (e.key.toLowerCase() === "w") {
+        e.preventDefault();
+        cycleWeather();
       } else if (e.key === "Escape") {
         if (isTerminalOpen) {
           e.preventDefault();
@@ -212,6 +228,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     toggleTerminal,
     toggleBooksModal,
     toggleLofi,
+    cycleWeather,
     isFocusMode,
     isTerminalOpen,
     isBooksModalOpen,
@@ -237,6 +254,8 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         toggleBooksModal,
         isLofiPlaying,
         toggleLofi,
+        weather,
+        cycleWeather,
       }}
     >
       {children}

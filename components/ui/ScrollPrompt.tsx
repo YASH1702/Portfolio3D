@@ -138,6 +138,7 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
                 </span>
               </div>
               <div
+                className="scroll-prompt-sub"
                 style={{
                   fontFamily: "var(--font-geist-mono, monospace)",
                   fontSize: "9px",
@@ -147,12 +148,27 @@ export default function ScrollPrompt({ progress }: ScrollPromptProps) {
                   textTransform: "uppercase",
                 }}
               >
-                OR USE KEYS 1 · 2 · 3 · 4
+                <span className="desktop-hint">OR USE KEYS 1 · 2 · 3 · 4</span>
+                <span className="mobile-hint">SWIPE OR DRAG TO EXPLORE</span>
               </div>
             </div>
           </button>
 
           <style>{`
+            .mobile-hint {
+              display: none;
+            }
+            .desktop-hint {
+              display: inline;
+            }
+            @media (pointer: coarse), (max-width: 640px) {
+              .mobile-hint {
+                display: inline !important;
+              }
+              .desktop-hint {
+                display: none !important;
+              }
+            }
             @keyframes scrollDot {
               0% {
                 transform: translateY(0);

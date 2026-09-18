@@ -54,20 +54,20 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
         aria-label="Scroll to top"
         style={{
           fontFamily: "var(--font-geist-sans, sans-serif)",
-          fontSize: "13px",
+          fontSize: "clamp(11px, 2.8vw, 13px)",
           fontWeight: 800,
-          letterSpacing: "0.24em",
+          letterSpacing: "0.22em",
           color: isNightMode ? "#ffffff" : "#11110e",
           textTransform: "uppercase",
           background: isNightMode
-            ? "rgba(10, 14, 24, 0.35)"
-            : "rgba(255, 255, 255, 0.22)",
+            ? "rgba(10, 14, 24, 0.45)"
+            : "rgba(255, 255, 255, 0.35)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           border: isNightMode
             ? "1px solid rgba(224, 184, 116, 0.30)"
-            : "1px solid rgba(255, 255, 255, 0.45)",
-          padding: "7px 18px",
+            : "1px solid rgba(255, 255, 255, 0.55)",
+          padding: "7px clamp(10px, 2.5vw, 18px)",
           borderRadius: "24px",
           pointerEvents: "all",
           cursor: "pointer",
@@ -75,6 +75,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
             ? "0 8px 24px -4px rgba(0, 0, 0, 0.4)"
             : "0 4px 18px -2px rgba(24, 20, 16, 0.05)",
           transition: "all 0.25s ease",
+          flexShrink: 0,
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = "translateY(-1px)";
@@ -95,22 +96,22 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "10px",
+          gap: "clamp(6px, 1.5vw, 10px)",
           pointerEvents: "all",
         }}
       >
         <div
           style={{
             background: isNightMode
-              ? "rgba(10, 14, 24, 0.38)"
-              : "rgba(255, 255, 255, 0.25)",
+              ? "rgba(10, 14, 24, 0.45)"
+              : "rgba(255, 255, 255, 0.35)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
             border: isNightMode
               ? "1px solid rgba(224, 184, 116, 0.30)"
-              : "1px solid rgba(255, 255, 255, 0.45)",
+              : "1px solid rgba(255, 255, 255, 0.55)",
             borderRadius: "30px",
-            padding: "6px 18px",
+            padding: "5px clamp(10px, 2vw, 18px)",
             boxShadow: isNightMode
               ? "0 10px 30px -5px rgba(0, 0, 0, 0.45)"
               : "0 6px 22px -3px rgba(24, 20, 16, 0.06)",
@@ -120,7 +121,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
             role="list"
             style={{
               display: "flex",
-              gap: "clamp(16px, 2.5vw, 28px)",
+              gap: "clamp(10px, 2.2vw, 28px)",
               listStyle: "none",
               margin: 0,
               padding: 0,
@@ -136,9 +137,9 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
                     aria-current={isActive ? "page" : undefined}
                     style={{
                       fontFamily: "var(--font-geist-mono, monospace)",
-                      fontSize: "12px",
+                      fontSize: "clamp(10.5px, 2.4vw, 12px)",
                       fontWeight: isActive ? 700 : 600,
-                      letterSpacing: "0.18em",
+                      letterSpacing: "0.14em",
                       color: isActive
                         ? (isNightMode ? "#ffffff" : "#000000")
                         : (isNightMode ? "#f0e6d6" : "#201c16"),
@@ -148,7 +149,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
                       padding: "4px 2px",
                       display: "flex",
                       alignItems: "center",
-                      gap: "7px",
+                      gap: "5px",
                       position: "relative",
                       transition: "color 0.2s ease",
                       cursor: "pointer",
@@ -165,8 +166,9 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
                     }}
                   >
                     <span
+                      className="nav-item-num"
                       style={{
-                        fontSize: "9.5px",
+                        fontSize: "9px",
                         fontWeight: 700,
                         color: isNightMode ? "#dfba74" : "#946830",
                       }}
@@ -208,23 +210,24 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
             fontWeight: 700,
             color: isNightMode ? "#dfba74" : "#1e1b16",
             background: isNightMode
-              ? "rgba(10, 14, 24, 0.38)"
-              : "rgba(255, 255, 255, 0.25)",
+              ? "rgba(10, 14, 24, 0.45)"
+              : "rgba(255, 255, 255, 0.35)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
             border: isNightMode
               ? "1px solid rgba(224, 184, 116, 0.30)"
-              : "1px solid rgba(255, 255, 255, 0.45)",
+              : "1px solid rgba(255, 255, 255, 0.55)",
             borderRadius: "24px",
-            padding: "8px 13px",
+            padding: "7px 11px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
+            gap: "5px",
             boxShadow: isNightMode
               ? "0 10px 30px -5px rgba(0, 0, 0, 0.45)"
               : "0 6px 22px -3px rgba(24, 20, 16, 0.06)",
             transition: "all 0.2s ease",
+            flexShrink: 0,
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = "translateY(-1px)";
@@ -250,9 +253,20 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <span style={{ fontSize: "10px", letterSpacing: "0.08em", opacity: 0.9 }}>⌘K</span>
+          <span className="cmd-k-label" style={{ fontSize: "10px", letterSpacing: "0.08em", opacity: 0.9 }}>⌘K</span>
         </button>
       </div>
+
+      <style>{`
+        @media (max-width: 520px) {
+          .nav-item-num {
+            display: none !important;
+          }
+          .cmd-k-label {
+            display: none !important;
+          }
+        }
+      `}</style>
     </motion.nav>
   );
 }

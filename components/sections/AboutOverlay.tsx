@@ -45,10 +45,11 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
           style={{
             position: "fixed",
             bottom: "clamp(24px, 8vh, 80px)",
-            left: "clamp(20px, 4vw, 64px)",
+            left: "clamp(16px, 4vw, 64px)",
             zIndex: 50,
             maxWidth: "380px",
-            width: "calc(100vw - 40px)",
+            width: "calc(100vw - 32px)",
+            maxHeight: "min(580px, calc(100vh - 110px))",
             pointerEvents: "all",
           }}
         >
@@ -62,7 +63,10 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
               border: isNightMode
                 ? "1px solid rgba(224, 184, 116, 0.35)"
                 : "1px solid rgba(180, 150, 110, 0.45)",
-              padding: "28px 32px",
+              padding: "clamp(20px, 4vw, 28px) clamp(20px, 4vw, 32px)",
+              maxHeight: "min(580px, calc(100vh - 110px))",
+              overflowY: "auto",
+              overscrollBehavior: "contain",
               boxShadow: isNightMode
                 ? "0 24px 48px -15px rgba(0, 0, 0, 0.65)"
                 : "0 20px 40px -15px rgba(24, 20, 16, 0.12)",
