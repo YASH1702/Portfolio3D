@@ -54,7 +54,9 @@ export default function LaserPointer() {
 
       // If near desk (X ~ [-1.5, 1.5], Z ~ [-3.2, -1.2]), elevate to desk height (0.75m)
       const isOverDesk = clampedX >= -1.6 && clampedX <= 1.6 && clampedZ >= -3.2 && clampedZ <= -1.1;
-      const targetY = isOverDesk ? 0.76 : 0.015;
+      // If over couch seat cushions, elevate to cushion height (0.54m)
+      const isOverCouch = clampedX >= -2.3 && clampedX <= -0.5 && clampedZ >= 1.25 && clampedZ <= 1.8;
+      const targetY = isOverDesk ? 0.76 : isOverCouch ? 0.54 : 0.015;
 
       const targetVec = new THREE.Vector3(clampedX, targetY, clampedZ);
       currentPos.current.lerp(targetVec, Math.min(1, dt * 25));
