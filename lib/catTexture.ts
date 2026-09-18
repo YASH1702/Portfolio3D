@@ -25,57 +25,57 @@ export function getCatFurTexture(): THREE.CanvasTexture | null {
 
   if (!ctx) return null;
 
-  // Base warm ginger undercoat
+  // Base warm Golden Brown Persian coat underlayer
   const baseGrad = ctx.createLinearGradient(0, 0, 0, 1024);
-  baseGrad.addColorStop(0, "#d96f24");    // Top of head & spine (richer darker orange)
-  baseGrad.addColorStop(0.4, "#e88032");  // Mid flanks
-  baseGrad.addColorStop(0.75, "#f09b52"); // Lower flanks
-  baseGrad.addColorStop(1, "#faf4ea");   // Belly / throat (cream white)
+  baseGrad.addColorStop(0, "#8a4f20");    // Dorsal spine (rich sable golden brown)
+  baseGrad.addColorStop(0.25, "#a8692e"); // Upper shoulders
+  baseGrad.addColorStop(0.5, "#ba7e3e");  // Flanks (warm honey amber)
+  baseGrad.addColorStop(0.8, "#d8a86c");  // Lower belly
+  baseGrad.addColorStop(1, "#fdf6ea");   // Chest bib & paws (plush warm cream)
   ctx.fillStyle = baseGrad;
   ctx.fillRect(0, 0, 1024, 1024);
 
-  // Procedural soft fur noise & micro-strands
+  // Silky Persian micro-fur strands & hair texture
   ctx.save();
-  ctx.globalAlpha = 0.08;
-  for (let i = 0; i < 45000; i++) {
+  ctx.globalAlpha = 0.12;
+  for (let i = 0; i < 55000; i++) {
     const x = Math.random() * 1024;
     const y = Math.random() * 1024;
-    const len = 3 + Math.random() * 7;
-    const isDark = Math.random() > 0.45;
-    ctx.strokeStyle = isDark ? "#7a2f02" : "#fef0d8";
-    ctx.lineWidth = 0.75 + Math.random() * 0.8;
+    const len = 4 + Math.random() * 9;
+    const rand = Math.random();
+    ctx.strokeStyle = rand > 0.6 ? "#5c2f0f" : rand > 0.3 ? "#d49a58" : "#fef4df";
+    ctx.lineWidth = 0.8 + Math.random() * 0.9;
     ctx.beginPath();
     ctx.moveTo(x, y);
-    ctx.lineTo(x + (Math.random() - 0.5) * 2, y + len);
+    ctx.lineTo(x + (Math.random() - 0.5) * 2.5, y + len);
     ctx.stroke();
   }
   ctx.restore();
 
-  // Tabby tiger/mackerel stripes
+  // Soft shaded Persian dorsal shading (not harsh comic stripes, but soft smokey golden-brown waves)
   ctx.save();
-  ctx.globalAlpha = 0.28;
-  ctx.fillStyle = "#8a3504";
+  ctx.globalAlpha = 0.18;
+  ctx.fillStyle = "#633211";
 
-  // Spine central dorsal band
-  ctx.fillRect(480, 0, 64, 1024);
+  // Central dorsal blend
+  ctx.fillRect(470, 0, 84, 1024);
 
-  // Transverse body stripes
-  for (let y = 120; y < 900; y += 42) {
-    const thickness = 14 + Math.sin(y * 0.05) * 8;
+  for (let y = 140; y < 900; y += 55) {
+    const thickness = 22 + Math.sin(y * 0.04) * 10;
     ctx.beginPath();
-    ctx.ellipse(512, y, 420 + Math.sin(y * 0.1) * 60, thickness, 0, 0, Math.PI * 2);
+    ctx.ellipse(512, y, 400 + Math.sin(y * 0.08) * 50, thickness, 0, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.restore();
 
-  // White chest & throat bib mask
+  // Luxurious warm cream chest & throat ruff (Persian lion-like mane)
   ctx.save();
-  const bibGrad = ctx.createRadialGradient(512, 850, 40, 512, 850, 320);
-  bibGrad.addColorStop(0, "rgba(255, 250, 242, 0.95)");
-  bibGrad.addColorStop(0.5, "rgba(252, 242, 228, 0.7)");
-  bibGrad.addColorStop(1, "rgba(252, 242, 228, 0)");
+  const bibGrad = ctx.createRadialGradient(512, 860, 50, 512, 860, 360);
+  bibGrad.addColorStop(0, "rgba(255, 248, 238, 0.96)");
+  bibGrad.addColorStop(0.55, "rgba(250, 238, 220, 0.72)");
+  bibGrad.addColorStop(1, "rgba(250, 238, 220, 0)");
   ctx.fillStyle = bibGrad;
-  ctx.fillRect(200, 500, 624, 524);
+  ctx.fillRect(160, 480, 704, 544);
   ctx.restore();
 
   const texture = new THREE.CanvasTexture(canvas);

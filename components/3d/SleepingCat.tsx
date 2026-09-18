@@ -10,25 +10,32 @@ import { dampedLerp } from "@/lib/easings";
 import { getCatFurTexture } from "@/lib/catTexture";
 
 /**
- * SleepingCat — High-fidelity procedural feline with lifelike anatomy & sofa locomotion AI:
+ * Shortest-arc angle interpolation with exponential damping.
+ * Prevents 360-degree snap spins when crossing [-PI, PI].
+ */
+function lerpAngle(current: number, target: number, lambda: number, dt: number): number {
+  let diff = (target - current) % (Math.PI * 2);
+  if (diff < -Math.PI) diff += Math.PI * 2;
+  if (diff > Math.PI) diff -= Math.PI * 2;
+  return current + diff * (1 - Math.exp(-lambda * dt));
+}
+
+/**
+ * SleepingCat — High-fidelity procedural Persian feline with lifelike anatomy & sofa locomotion AI:
  *
  * Anatomical Sculpting:
- * - Realistic skull with sloped nasal bridge, sculpted whisker pads, pink nose leather & nostrils.
- * - Glassy hazel-amber eyes with dark eyelid contours, dilating pupils & dual specular glints.
- * - Curved feline ears with Henry's pocket notch & soft inner ear fuzz tufts.
- * - Organic torso with shoulder blade rise, spine curvature, and primordial underbelly pouch.
- * - Articulated feline legs with backward-facing hock joints, carpal wrists & white socks with pink toe beans.
- * - Segmented organic 4-joint tail with natural counterbalance sway.
- * - Procedural canvas fur texture with directional hair grain and tabby striping.
+ * - Broad, rounded Persian cranium, sweet snub nasal bridge, fluffy cream cheek ruffs & puff muzzle.
+ * - Deep copper/amber Persian eyes with glassy specular glints and realistic eyelid contours.
+ * - Small rounded ears with warm inner ear skin and soft cream fuzz tufts.
+ * - Luxurious lion-like chest ruff / mane cascading down between front paws.
+ * - Procedural canvas fur texture with directional hair grain and soft smokey dorsal shading.
  *
- * Locomotion & Edge-Leaning AI:
- * - Stalks smoothly across sofa cushions following the red laser dot.
- * - LEANING OVER BACK: When laser is behind sofa, cat stands up on hind legs, places front paws on back cushion,
- *   stretches neck and peers over the backrest to track the dot!
- * - LEANING OVER FRONT: When laser is on the floor in front, cat creeps to the front cushion rim, tilts downward,
- *   and peers over the edge.
- * - Iconic feline pre-pounce hip wiggle & swatting paw mechanics.
- * - Cozy curled sleeping state with organic harmonic breathing when inactive.
+ * Ideal Sitting & Locomotion AI:
+ * - Regal upright sitting pose when idle: front legs straight and planted side-by-side,
+ *   haunches folded flat on cushion, proud chest held high, tail curled gracefully around front paws.
+ * - Shortest-path angle interpolation eliminating 360-degree spin glitches.
+ * - Smooth continuous weight blending between sitting, stalking, and edge leaning.
+ * - Sofa edge-leaning AI: paws on backrest and neck craning over edge when laser is behind sofa.
  */
 
 const COUCH_WORLD_X = -1.4;
@@ -89,24 +96,29 @@ export default function SleepingCat({
   const currentYaw = useRef(rotation[1]);
   const walkPhase = useRef(0);
   const isWalkingRef = useRef(false);
-  const leanState = useRef<"normal" | "back_lean" | "front_lean" | "swat">("normal");
 
+  // Continuous blend weights to eliminate visual pops & snapping
+  const walkWeight = useRef(0); // 0 = stationary, 1 = full gait
+  const sitWeight = useRef(1);  // 1 = ideal sitting pose, 0 = active hunting
+  const leanState = useRef<"normal" | "back_lean" | "front_lean" | "swat">("normal");
+  const leanProgress = useRef(0); // -1 = front edge, +1 = backrest lean
   const swatProgress = useRef(0);
-  const leanProgress = useRef(0);
+
   const lastChirpRef = useRef(0);
   const purrTimer = useRef(0);
   const breathRef = useRef(0);
   const timeRef = useRef(0);
 
-  // Feline Palette
-  const GINGER_BASE = "#d46b1f";
-  const GINGER_DARK = "#963a06";
-  const CREAM_WHITE = "#fdfbf7";
-  const EAR_INNER   = "#ea9e88";
-  const NOSE_PINK   = "#e58585";
-  const TOE_BEANS   = "#f272a8";
-  const COLLAR_RED  = "#8f1414";
-  const BELL_GOLD   = "#facc15";
+  // Persian Golden-Brown Palette
+  const PERSIAN_GOLD  = "#c8853e"; // Golden honey amber coat
+  const PERSIAN_DARK  = "#733a12"; // Deep sable/chocolate dorsal shading
+  const PERSIAN_CREAM = "#fcf6ec"; // Plush warm ivory chest ruff & mitten paws
+  const EAR_INNER     = "#e89f88"; // Soft pinkish inner ear
+  const NOSE_PINK     = "#d9777f"; // Dusty rose feline nose leather
+  const TOE_BEANS     = "#db7b93"; // Soft rosy paw pads
+  const EYE_COPPER    = "#d97706"; // Luminous Persian copper-amber iris
+  const COLLAR_TEAL   = "#0f766e"; // Elegant deep teal velvet collar
+  const BELL_GOLD     = "#f59e0b"; // Polished brass bell
 
   const handlePointerEnter = (e: any) => {
     e.stopPropagation();
@@ -138,7 +150,7 @@ export default function SleepingCat({
       if (purrTimer.current <= 0) setPurring(false);
     }
 
-    // ── 1. LASER TRACKING & EDGE-LEANING TARGET COMPUTATION ──
+    // ── 1. LASER TRACKING & SOFA NAVIGATION COMPUTATION ──
     let targetX = position[0];
     let targetZ = position[2];
     let targetYaw = rotation[1];
@@ -147,7 +159,7 @@ export default function SleepingCat({
     let isFrontOfSofa = false;
 
     if (isLaserActive && laserTarget) {
-      // Calculate world distance
+      // Calculate world distance from cat to laser
       const curWorldX = COUCH_WORLD_X + currentPos.current.x * Math.cos(COUCH_ROT_Y) - currentPos.current.z * Math.sin(COUCH_ROT_Y);
       const curWorldZ = COUCH_WORLD_Z + currentPos.current.x * Math.sin(COUCH_ROT_Y) + currentPos.current.z * Math.cos(COUCH_ROT_Y);
       const dwx = laserTarget[0] - curWorldX;
@@ -163,32 +175,36 @@ export default function SleepingCat({
       const couchLaserX = dxWorld * cosR - dzWorld * sinR;
       const couchLaserZ = dxWorld * sinR + dzWorld * cosR;
 
-      // Detect edge scenarios
-      isBehindSofa = couchLaserZ < -0.18 || laserTarget[2] < 1.05;
-      isFrontOfSofa = couchLaserZ > 0.40;
+      // Detect edge scenarios relative to sofa geometry
+      isBehindSofa = couchLaserZ < -0.16 || laserTarget[2] < 1.10;
+      isFrontOfSofa = couchLaserZ > 0.38;
 
       if (isBehindSofa) {
-        // Walk right up to the back cushion edge
-        targetX = Math.max(-0.62, Math.min(0.35, couchLaserX * 0.3 - 0.1));
-        targetZ = -0.15; // Flush against back cushion
+        // Stalk right up to the back cushion seam and face backwards
+        targetX = Math.max(-0.62, Math.min(0.35, couchLaserX * 0.32 - 0.08));
+        targetZ = -0.15; // Flush against sofa back cushion
         targetYaw = Math.PI; // Face backwards toward the backrest
         leanState.current = "back_lean";
       } else if (isFrontOfSofa) {
-        // Walk right to the front cushion edge
-        targetX = Math.max(-0.62, Math.min(0.35, couchLaserX * 0.3 - 0.1));
-        targetZ = 0.23; // Front cushion edge
+        // Walk right to the front cushion edge and face forward
+        targetX = Math.max(-0.62, Math.min(0.35, couchLaserX * 0.32 - 0.08));
+        targetZ = 0.22; // Front cushion edge
         targetYaw = 0; // Face forward
         leanState.current = "front_lean";
       } else {
-        // Stalking on cushions
-        targetX = Math.max(-0.62, Math.min(0.35, couchLaserX * 0.28 - 0.12));
-        targetZ = Math.max(-0.12, Math.min(0.20, couchLaserZ * 0.18 + 0.04));
+        // Roaming across sofa cushions
+        targetX = Math.max(-0.62, Math.min(0.35, couchLaserX * 0.30 - 0.10));
+        targetZ = Math.max(-0.12, Math.min(0.18, couchLaserZ * 0.22 + 0.04));
 
         const moveDx = targetX - currentPos.current.x;
         const moveDz = targetZ - currentPos.current.z;
-        if (Math.hypot(moveDx, moveDz) > 0.04) {
+        const moveDist = Math.hypot(moveDx, moveDz);
+
+        // Deadband filter: don't flip yaw when tiny cursor twitch occurs
+        if (moveDist > 0.045) {
           targetYaw = Math.atan2(moveDx, moveDz);
         } else {
+          // Face the laser dot smoothly when stationary
           targetYaw = Math.atan2(couchLaserX - currentPos.current.x, couchLaserZ - currentPos.current.z);
         }
         leanState.current = distToLaserWorld < 0.85 ? "swat" : "normal";
@@ -197,21 +213,31 @@ export default function SleepingCat({
       leanState.current = "normal";
     }
 
-    // ── 2. SMOOTH POSITION & HEADING INTERPOLATION ──
+    // ── 2. FLUID POSITION & SHORTEST-PATH HEADING INTERPOLATION ──
     const prevX = currentPos.current.x;
     const prevZ = currentPos.current.z;
-    const walkSpeed = isLaserActive ? 4.8 : 2.2;
+    const walkSpeed = isLaserActive ? 4.2 : 2.0;
 
     currentPos.current.x = dampedLerp(currentPos.current.x, targetX, walkSpeed, dt);
     currentPos.current.z = dampedLerp(currentPos.current.z, targetZ, walkSpeed, dt);
-    currentYaw.current = dampedLerp(currentYaw.current, targetYaw, 5.5, dt);
+
+    // CRITICAL FIX: lerpAngle eliminates the 360-degree spin glitch!
+    currentYaw.current = lerpAngle(currentYaw.current, targetYaw, 5.2, dt);
 
     const stepDist = Math.hypot(currentPos.current.x - prevX, currentPos.current.z - prevZ);
-    const isWalking = stepDist > 0.0009;
-    isWalkingRef.current = isWalking;
+    const isMoving = stepDist > 0.0006;
+    isWalkingRef.current = isMoving;
 
-    if (isWalking) {
-      walkPhase.current += dt * 13.5;
+    // Smooth continuous walk weight (0 to 1) prevents leg popping
+    const targetWalkWeight = isMoving ? 1.0 : 0.0;
+    walkWeight.current = dampedLerp(walkWeight.current, targetWalkWeight, 7.5, dt);
+
+    // Smooth sit weight: 1 when idle, 0 when active hunting
+    const targetSitWeight = isLaserActive ? 0.0 : 1.0;
+    sitWeight.current = dampedLerp(sitWeight.current, targetSitWeight, 3.8, dt);
+
+    if (isMoving) {
+      walkPhase.current += dt * 12.0;
     }
 
     if (rootRef.current) {
@@ -219,87 +245,118 @@ export default function SleepingCat({
       rootRef.current.rotation.y = currentYaw.current;
     }
 
-    // ── 3. BODY POSTURE & EDGE-LEANING ANIMATION ──
+    // ── 3. BODY POSTURE & EDGE-LEANING INTERPOLATION ──
     const targetLean = leanState.current === "back_lean" ? 1.0 : leanState.current === "front_lean" ? -1.0 : 0;
-    leanProgress.current = dampedLerp(leanProgress.current, targetLean, 5.0, dt);
+    leanProgress.current = dampedLerp(leanProgress.current, targetLean, 4.5, dt);
 
-    const breathRate = purring ? 3.6 : isLaserActive ? 2.5 : 1.5;
+    const breathRate = purring ? 3.8 : isLaserActive ? 2.6 : 1.6;
     breathRef.current += dt * breathRate;
-    const breath = Math.sin(breathRef.current) * (purring ? 0.065 : 0.038);
+    const breath = Math.sin(breathRef.current) * (purring ? 0.055 : 0.032);
+
+    const sit = sitWeight.current;
+    const lean = leanProgress.current;
+    const walk = walkWeight.current;
 
     if (bodyRef.current) {
-      // Base height
-      let bodyY = 0.12;
-      let pitchX = 0;
+      // IDEAL SITTING POSE: Elevated chest, proud spine slope (~-0.28 rad)
+      // ACTIVE PROWLING POSE: Low predatory stance (y = 0.11, pitch = 0)
+      let baseBodyY = (1 - sit) * 0.11 + sit * 0.155;
+      let pitchX = sit * -0.28;
 
-      if (leanProgress.current > 0.05) {
-        // ── LEANING OVER BACK OF SOFA ──
-        // Rear body stands up high, front chest raises onto backrest
-        bodyY = 0.13 + leanProgress.current * 0.09;
-        pitchX = -leanProgress.current * 0.42; // Tilt body upward
-      } else if (leanProgress.current < -0.05) {
-        // ── LEANING OVER FRONT OF SOFA ──
-        // Front drops downward peering over cushion
-        bodyY = 0.12 + Math.abs(leanProgress.current) * 0.01;
-        pitchX = Math.abs(leanProgress.current) * 0.28; // Tilt body downward
-      } else if (leanState.current === "swat" && !isWalking) {
-        // Crouch low for pounce
-        bodyY = 0.095;
-        // Feline pre-pounce hip wiggle
-        bodyRef.current.rotation.z = Math.sin(t * 22) * 0.03;
+      if (lean > 0.05) {
+        // LEANING OVER BACK OF SOFA:
+        // Cat rears up, front paws rest on sofa back cushion
+        baseBodyY = 0.13 + lean * 0.08;
+        pitchX = -lean * 0.40;
+      } else if (lean < -0.05) {
+        // LEANING OVER FRONT EDGE:
+        // Chest dips down to inspect floor
+        baseBodyY = 0.11 + Math.abs(lean) * 0.01;
+        pitchX = Math.abs(lean) * 0.26;
+      } else if (leanState.current === "swat" && walk < 0.2) {
+        // Crouch low for pounce + feline pre-pounce hip wiggle
+        baseBodyY = 0.095;
+        bodyRef.current.rotation.z = Math.sin(t * 22) * 0.035;
       } else {
-        bodyRef.current.rotation.z = 0;
+        // Subtle natural body roll during walk
+        bodyRef.current.rotation.z = Math.sin(walkPhase.current) * 0.032 * walk;
       }
 
-      bodyRef.current.position.y = bodyY + (isWalking ? Math.abs(Math.sin(walkPhase.current)) * 0.012 : 0);
+      // Vertical stride bobbing
+      const walkBob = walk * Math.abs(Math.sin(walkPhase.current * 2)) * 0.01;
+      bodyRef.current.position.y = baseBodyY + walkBob;
       bodyRef.current.rotation.x = pitchX;
       bodyRef.current.scale.y = 1 + breath;
-      bodyRef.current.scale.x = 1 - breath * 0.22;
+      bodyRef.current.scale.x = 1 - breath * 0.2;
 
       if (purring) {
-        bodyRef.current.position.y += Math.sin(t * 45) * 0.003;
+        // Blissful purring micro-vibration
+        bodyRef.current.position.y += Math.sin(t * 48) * 0.0025;
       }
     }
 
-    // ── 4. LIMB KINEMATICS & PROWL GAIT ──
+    // ── 4. LIMB KINEMATICS & SITTING / WALKING HARMONY ──
     const phase = walkPhase.current;
 
-    if (isWalking && leanProgress.current < 0.1) {
-      // 4-beat lateral predatory feline walk sequence
-      if (legFLRef.current) legFLRef.current.rotation.x = Math.sin(phase) * 0.38;
-      if (legFRRef.current) legFRRef.current.rotation.x = Math.sin(phase + Math.PI) * 0.38;
-      if (legBLRef.current) legBLRef.current.rotation.x = Math.sin(phase + Math.PI * 0.5) * 0.30;
-      if (legBRRef.current) legBRRef.current.rotation.x = Math.sin(phase + Math.PI * 1.5) * 0.30;
-    } else if (leanProgress.current > 0.1) {
-      // Back lean: Front paws stretch forward & up onto the backrest cushion
-      const lean = leanProgress.current;
+    if (sit > 0.2) {
+      // ── IDEAL SITTING LIMB ALIGNMENT ──
+      // Front legs straight down, planted side-by-side on the sofa cushion
+      // Rear haunches folded flat on cushion
       if (legFLRef.current) {
-        legFLRef.current.position.set(0.09, 0.06 * lean, -0.06 * lean);
-        legFLRef.current.rotation.x = -0.45 * lean;
+        legFLRef.current.position.set(0.08, -0.055, 0.04);
+        legFLRef.current.rotation.x = dampedLerp(legFLRef.current.rotation.x, 0.28, 8, dt);
       }
       if (legFRRef.current) {
-        legFRRef.current.position.set(0.09, 0.06 * lean, -0.06 * lean);
-        legFRRef.current.rotation.x = -0.45 * lean;
+        legFRRef.current.position.set(0.08, -0.055, 0.10);
+        legFRRef.current.rotation.x = dampedLerp(legFRRef.current.rotation.x, 0.28, 8, dt);
       }
-      // Back haunches firmly plant
-      if (legBLRef.current) legBLRef.current.rotation.x = 0.2 * lean;
-      if (legBRRef.current) legBRRef.current.rotation.x = 0.2 * lean;
+      if (legBLRef.current) {
+        legBLRef.current.position.set(-0.11, -0.065, -0.06);
+        legBLRef.current.rotation.x = dampedLerp(legBLRef.current.rotation.x, -0.15, 8, dt);
+      }
+      if (legBRRef.current) {
+        legBRRef.current.position.set(-0.11, -0.065, 0.08);
+        legBRRef.current.rotation.x = dampedLerp(legBRRef.current.rotation.x, -0.15, 8, dt);
+      }
+    } else if (lean > 0.1) {
+      // ── LEANING OVER BACKREST: Front paws placed on back cushion ──
+      if (legFLRef.current) {
+        legFLRef.current.position.set(0.08, 0.07 * lean, -0.07 * lean);
+        legFLRef.current.rotation.x = -0.48 * lean;
+      }
+      if (legFRRef.current) {
+        legFRRef.current.position.set(0.08, 0.07 * lean, -0.07 * lean);
+        legFRRef.current.rotation.x = -0.48 * lean;
+      }
+      if (legBLRef.current) legBLRef.current.rotation.x = 0.22 * lean;
+      if (legBRRef.current) legBRRef.current.rotation.x = 0.22 * lean;
     } else {
-      // Stationary limb rest
+      // ── WALKING / STALKING GAIT (4-beat feline sequence) ──
+      const swingFL = Math.sin(phase) * 0.38 * walk;
+      const swingFR = Math.sin(phase + Math.PI) * 0.38 * walk;
+      const swingBL = Math.sin(phase + Math.PI * 0.5) * 0.30 * walk;
+      const swingBR = Math.sin(phase + Math.PI * 1.5) * 0.30 * walk;
+
       if (legFLRef.current) {
-        legFLRef.current.position.set(0.09, -0.04, 0.04);
-        legFLRef.current.rotation.x = dampedLerp(legFLRef.current.rotation.x, 0, 8, dt);
+        legFLRef.current.position.set(0.08, -0.04, 0.04);
+        legFLRef.current.rotation.x = swingFL;
       }
       if (legFRRef.current) {
-        legFRRef.current.position.set(0.09, -0.04, 0.12);
-        legFRRef.current.rotation.x = dampedLerp(legFRRef.current.rotation.x, 0, 8, dt);
+        legFRRef.current.position.set(0.08, -0.04, 0.10);
+        legFRRef.current.rotation.x = swingFR;
       }
-      if (legBLRef.current) legBLRef.current.rotation.x = dampedLerp(legBLRef.current.rotation.x, 0, 8, dt);
-      if (legBRRef.current) legBRRef.current.rotation.x = dampedLerp(legBRRef.current.rotation.x, 0, 8, dt);
+      if (legBLRef.current) {
+        legBLRef.current.position.set(-0.11, -0.02, -0.06);
+        legBLRef.current.rotation.x = swingBL;
+      }
+      if (legBRRef.current) {
+        legBRRef.current.position.set(-0.11, -0.02, 0.08);
+        legBRRef.current.rotation.x = swingBR;
+      }
 
       // Swatting physics when close to laser
       if (leanState.current === "swat") {
-        swatProgress.current = Math.min(1, swatProgress.current + dt * 6.5);
+        swatProgress.current = Math.min(1, swatProgress.current + dt * 6.0);
         if (Date.now() - lastChirpRef.current > 1600) {
           playLaserChirp();
           lastChirpRef.current = Date.now();
@@ -310,75 +367,75 @@ export default function SleepingCat({
 
       if (pawFRRef.current) {
         const swat = swatProgress.current;
-        pawFRRef.current.position.z = swat * 0.15;
-        pawFRRef.current.position.y = Math.sin(swat * Math.PI) * 0.07;
+        pawFRRef.current.position.z = swat * 0.14;
+        pawFRRef.current.position.y = Math.sin(swat * Math.PI) * 0.065;
       }
     }
 
-    // ── 5. HEAD TRACKING & NECK STRETCH ──
+    // ── 5. HEAD TRACKING & REGAL EXPRESSIONS ──
     if (headRef.current) {
       if (isLaserActive) {
-        if (leanProgress.current > 0.1) {
-          // Craning neck up and peering over backrest
-          const lean = leanProgress.current;
-          headRef.current.position.set(0.18, 0.16 + lean * 0.06, 0.05);
-          headRef.current.rotation.x = -0.32 * lean + Math.sin(t * 3.5) * 0.03;
-        } else if (leanProgress.current < -0.1) {
-          // Peering down over front edge
+        if (lean > 0.1) {
+          // Peering over the backrest cushion
+          headRef.current.position.set(0.18, 0.18 + lean * 0.06, 0.05);
+          headRef.current.rotation.x = -0.30 * lean + Math.sin(t * 3.5) * 0.02;
+        } else if (lean < -0.1) {
+          // Peering over front sofa rim
           headRef.current.position.set(0.19, 0.08, 0.06);
-          headRef.current.rotation.x = 0.25 + Math.sin(t * 3.5) * 0.03;
+          headRef.current.rotation.x = 0.24 + Math.sin(t * 3.5) * 0.02;
         } else {
           headRef.current.position.set(0.17, 0.12, 0.06);
-          headRef.current.rotation.x = 0.05 + Math.sin(t * 3.5) * 0.02;
+          headRef.current.rotation.x = 0.06 + Math.sin(t * 3.5) * 0.02;
         }
-        headRef.current.rotation.z = Math.sin(t * 2.0) * 0.03;
+        headRef.current.rotation.z = Math.sin(t * 2.0) * 0.025;
       } else {
-        headRef.current.position.set(0.16, 0.10, 0.06);
-        const purrNuzzle = purring ? Math.sin(t * 6) * 0.08 : 0;
-        headRef.current.rotation.x = 0.12 + Math.sin(breathRef.current * 0.9) * 0.03 + purrNuzzle;
-        headRef.current.rotation.z = -0.08 + Math.cos(breathRef.current * 0.7) * 0.02;
+        // Ideal sitting pose: head held high & regal with gentle purr / breathing sway
+        headRef.current.position.set(0.16, 0.155, 0.05);
+        const purrNuzzle = purring ? Math.sin(t * 6) * 0.06 : 0;
+        headRef.current.rotation.x = 0.10 + Math.sin(breathRef.current * 0.9) * 0.025 + purrNuzzle;
+        headRef.current.rotation.z = -0.06 + Math.cos(breathRef.current * 0.7) * 0.02;
       }
     }
 
     // Expressive Ears
     if (earLRef.current) {
-      const earTwitch = isLaserActive ? Math.sin(t * 8.5) * 0.07 : Math.sin(t * 1.15) > 0.95 ? Math.sin(t * 35) * 0.2 : 0;
-      earLRef.current.rotation.z = 0.32 + earTwitch;
+      const earTwitch = isLaserActive ? Math.sin(t * 8.5) * 0.06 : Math.sin(t * 1.15) > 0.95 ? Math.sin(t * 35) * 0.18 : 0;
+      earLRef.current.rotation.z = 0.28 + earTwitch;
     }
     if (earRRef.current) {
-      const earTwitch = isLaserActive ? Math.sin(t * 7.2) * 0.06 : Math.sin(t * 1.4) > 0.96 ? Math.sin(t * 32) * 0.18 : 0;
-      earRRef.current.rotation.z = -0.32 - earTwitch;
+      const earTwitch = isLaserActive ? Math.sin(t * 7.2) * 0.05 : Math.sin(t * 1.4) > 0.96 ? Math.sin(t * 32) * 0.16 : 0;
+      earRRef.current.rotation.z = -0.28 - earTwitch;
     }
 
     // Collar Bell Swing
     if (bellRef.current) {
-      const bellSway = isWalking ? Math.sin(walkPhase.current) * 0.22 : Math.sin(t * 2.4) * 0.05;
+      const bellSway = walk > 0.1 ? Math.sin(walkPhase.current) * 0.20 : Math.sin(t * 2.4) * 0.04;
       bellRef.current.rotation.z = bellSway;
     }
 
-    // ── 6. ORGANIC 4-SEGMENT FLUID TAIL ──
+    // ── 6. FLUID 4-SEGMENT PERSIAN TAIL ──
     if (tailSeg1.current && tailSeg2.current && tailSeg3.current) {
       if (isLaserActive) {
-        // High alert question-mark hunting arch
-        const excitedWag = Math.sin(t * 8) * 0.25;
-        tailSeg1.current.rotation.set(-0.6, 0, excitedWag * 0.5);
-        tailSeg2.current.rotation.set(-0.5, 0, excitedWag * 0.7);
-        tailSeg3.current.rotation.set(0.4, 0, excitedWag * 1.0);
+        // High alert question-mark hunting arch with excited wag
+        const excitedWag = Math.sin(t * 8) * 0.24;
+        tailSeg1.current.rotation.set(-0.55, 0, excitedWag * 0.5);
+        tailSeg2.current.rotation.set(-0.45, 0, excitedWag * 0.7);
+        tailSeg3.current.rotation.set(0.38, 0, excitedWag * 1.0);
       } else {
-        // Soft resting curve around body
-        const sleepSwish = Math.sin(t * 0.9) * 0.08;
-        tailSeg1.current.rotation.set(0.3, 0.4 + sleepSwish, -0.6);
-        tailSeg2.current.rotation.set(0.2, 0.5, -0.4);
-        tailSeg3.current.rotation.set(0.1, 0.6, -0.3);
+        // Ideal sitting pose: tail curls neatly around front paws
+        const tailPurr = purring ? Math.sin(t * 10) * 0.06 : Math.sin(t * 0.9) * 0.04;
+        tailSeg1.current.rotation.set(0.25, 0.65 + tailPurr, -0.45);
+        tailSeg2.current.rotation.set(0.15, 0.75, -0.35);
+        tailSeg3.current.rotation.set(0.08, 0.85, -0.25);
       }
     }
 
     // Floating heart when purring
     if (heartRef.current && purring) {
-      const progress = 1 - purrTimer.current / 2.5;
-      heartRef.current.position.y = 0.36 + progress * 0.28;
+      const progress = 1 - purrTimer.current / 2.8;
+      heartRef.current.position.y = 0.38 + progress * 0.28;
       heartRef.current.position.x = 0.14 + Math.sin(progress * Math.PI * 3) * 0.04;
-      heartRef.current.scale.setScalar(Math.sin(progress * Math.PI) * 1.1);
+      heartRef.current.scale.setScalar(Math.sin(progress * Math.PI) * 1.15);
     }
 
     // Dialogue bob
@@ -399,48 +456,48 @@ export default function SleepingCat({
       onClick={handleClick}
     >
       <group ref={bodyRef}>
-        {/* ── MAIN FELINE TORSO (Tapered ribcage with fur texture) ── */}
-        <mesh castShadow position={[0.02, 0.03, 0]} scale={[1.25, 0.9, 0.95]}>
-          <sphereGeometry args={[0.155, 24, 20]} />
+        {/* ── MAIN PERSIAN TORSO (Plush rounded ribcage with fur texture) ── */}
+        <mesh castShadow position={[0.02, 0.03, 0]} scale={[1.22, 0.96, 1.02]}>
+          <sphereGeometry args={[0.16, 24, 20]} />
           <meshStandardMaterial
             map={furMap ?? undefined}
-            color={hovered ? "#f08530" : GINGER_BASE}
+            color={hovered ? "#dca468" : PERSIAN_GOLD}
             roughness={0.88}
             metalness={0.02}
           />
         </mesh>
 
-        {/* ── WHITE CHEST RUFF & THROAT BIB ── */}
-        <mesh position={[0.085, 0.01, 0.04]} scale={[0.82, 0.6, 0.7]}>
-          <sphereGeometry args={[0.135, 16, 14]} />
-          <meshStandardMaterial color={CREAM_WHITE} roughness={0.92} metalness={0} />
+        {/* ── PLUSH PERSIAN CHEST RUFF (Lion-like cream mane) ── */}
+        <mesh position={[0.09, 0.015, 0.035]} scale={[0.88, 0.75, 0.82]}>
+          <sphereGeometry args={[0.138, 18, 16]} />
+          <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.94} metalness={0} />
         </mesh>
 
-        {/* ── LOWER PELVIS & HIND FLANKS ── */}
-        <mesh castShadow position={[-0.1, 0.01, 0]} scale={[1.05, 0.82, 0.9]}>
-          <sphereGeometry args={[0.14, 18, 16]} />
+        {/* ── LOWER PELVIS & SOFT HIND FLANKS ── */}
+        <mesh castShadow position={[-0.1, 0.01, 0]} scale={[1.08, 0.88, 0.98]}>
+          <sphereGeometry args={[0.145, 18, 16]} />
           <meshStandardMaterial
             map={furMap ?? undefined}
-            color={hovered ? "#f08530" : GINGER_BASE}
+            color={hovered ? "#dca468" : PERSIAN_GOLD}
             roughness={0.88}
           />
         </mesh>
 
-        {/* ── TABBY MACKEREL STRIPES ACROSS SPINE ── */}
+        {/* ── SOFT PERSIAN SABLE STRIPING ACROSS DORSAL SPINE ── */}
         {[-0.12, -0.04, 0.04].map((xOff, idx) => (
-          <mesh key={idx} position={[xOff, 0.11, 0]} scale={[0.1, 0.022, 0.7]}>
+          <mesh key={idx} position={[xOff, 0.115, 0]} scale={[0.11, 0.02, 0.65]}>
             <sphereGeometry args={[0.11, 10, 10]} />
-            <meshStandardMaterial color={GINGER_DARK} roughness={0.9} />
+            <meshStandardMaterial color={PERSIAN_DARK} roughness={0.92} opacity={0.55} transparent />
           </mesh>
         ))}
 
-        {/* ── STITCHED LEATHER COLLAR WITH POLISHED BELL ── */}
-        <group position={[0.14, 0.06, 0.04]} rotation={[0.2, -0.4, 0]}>
+        {/* ── ELEGANT VELVET COLLAR WITH POLISHED BELL ── */}
+        <group position={[0.14, 0.065, 0.035]} rotation={[0.2, -0.4, 0]}>
           <mesh>
-            <torusGeometry args={[0.076, 0.009, 8, 24]} />
-            <meshStandardMaterial color={COLLAR_RED} roughness={0.35} metalness={0.2} />
+            <torusGeometry args={[0.078, 0.009, 8, 24]} />
+            <meshStandardMaterial color={COLLAR_TEAL} roughness={0.35} metalness={0.15} />
           </mesh>
-          <mesh ref={bellRef} position={[0.078, -0.038, 0]}>
+          <mesh ref={bellRef} position={[0.08, -0.038, 0]}>
             <sphereGeometry args={[0.014, 12, 12]} />
             <meshStandardMaterial
               color={BELL_GOLD}
@@ -450,61 +507,61 @@ export default function SleepingCat({
           </mesh>
         </group>
 
-        {/* ── SCULPTED FELINE HEAD ── */}
-        <group ref={headRef} position={[0.17, 0.12, 0.06]}>
-          {/* Cranium with fur map */}
-          <mesh castShadow scale={[1.1, 0.95, 0.98]}>
-            <sphereGeometry args={[0.105, 22, 18]} />
+        {/* ── SCULPTED PERSIAN FELINE HEAD ── */}
+        <group ref={headRef} position={[0.17, 0.13, 0.05]}>
+          {/* Broad, sweet rounded Persian cranium */}
+          <mesh castShadow scale={[1.08, 0.98, 1.04]}>
+            <sphereGeometry args={[0.108, 22, 18]} />
             <meshStandardMaterial
               map={furMap ?? undefined}
-              color={hovered ? "#f08530" : GINGER_BASE}
+              color={hovered ? "#dca468" : PERSIAN_GOLD}
               roughness={0.85}
               metalness={0.02}
             />
           </mesh>
 
-          {/* Tabby forehead "M" crest */}
-          <mesh position={[0.076, 0.066, 0.025]} scale={[0.04, 0.016, 0.065]}>
+          {/* Gentle forehead shading */}
+          <mesh position={[0.076, 0.068, 0.025]} scale={[0.04, 0.016, 0.065]}>
             <sphereGeometry args={[0.06, 8, 8]} />
-            <meshStandardMaterial color={GINGER_DARK} roughness={0.9} />
+            <meshStandardMaterial color={PERSIAN_DARK} roughness={0.9} opacity={0.4} transparent />
           </mesh>
 
-          {/* Sloped Nasal Bridge (Connecting forehead to nose) */}
-          <mesh position={[0.088, 0.008, 0.022]} rotation={[0, 0, -0.45]} scale={[0.6, 1.1, 0.55]}>
-            <boxGeometry args={[0.042, 0.05, 0.045]} />
+          {/* Soft Snub Nasal Bridge (Persian sweet facial contour) */}
+          <mesh position={[0.086, 0.008, 0.022]} rotation={[0, 0, -0.42]} scale={[0.55, 1.0, 0.52]}>
+            <boxGeometry args={[0.042, 0.048, 0.042]} />
             <meshStandardMaterial
               map={furMap ?? undefined}
-              color={GINGER_BASE}
+              color={PERSIAN_GOLD}
               roughness={0.85}
             />
           </mesh>
 
-          {/* Chubby Cream Cheek Ruffs */}
-          <mesh position={[0.052, -0.02, 0.075]} scale={[0.7, 0.52, 0.58]}>
-            <sphereGeometry args={[0.06, 12, 10]} />
-            <meshStandardMaterial color={CREAM_WHITE} roughness={0.92} />
+          {/* Chubby Cream Persian Cheek Ruffs */}
+          <mesh position={[0.052, -0.02, 0.075]} scale={[0.74, 0.56, 0.62]}>
+            <sphereGeometry args={[0.062, 12, 10]} />
+            <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.94} />
           </mesh>
-          <mesh position={[0.052, -0.02, -0.035]} scale={[0.7, 0.52, 0.58]}>
-            <sphereGeometry args={[0.06, 12, 10]} />
-            <meshStandardMaterial color={CREAM_WHITE} roughness={0.92} />
+          <mesh position={[0.052, -0.02, -0.035]} scale={[0.74, 0.56, 0.62]}>
+            <sphereGeometry args={[0.062, 12, 10]} />
+            <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.94} />
           </mesh>
 
-          {/* Dual White Whisker Pads (Puff Muzzle) */}
-          <group position={[0.095, -0.018, 0.022]}>
+          {/* Dual Cream Whisker Pads (Puff Muzzle) */}
+          <group position={[0.093, -0.016, 0.022]}>
             <mesh position={[0, 0, 0.019]} scale={[0.62, 0.48, 0.48]}>
               <sphereGeometry args={[0.042, 12, 10]} />
-              <meshStandardMaterial color={CREAM_WHITE} roughness={0.92} />
+              <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.94} />
             </mesh>
             <mesh position={[0, 0, -0.019]} scale={[0.62, 0.48, 0.48]}>
               <sphereGeometry args={[0.042, 12, 10]} />
-              <meshStandardMaterial color={CREAM_WHITE} roughness={0.92} />
+              <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.94} />
             </mesh>
           </group>
 
-          {/* Inverted Triangular Nose Leather with Nostrils */}
-          <mesh position={[0.122, -0.006, 0.022]} scale={[0.8, 0.9, 1.1]}>
+          {/* Cute Dusty Rose Nose Leather */}
+          <mesh position={[0.118, -0.005, 0.022]} scale={[0.78, 0.88, 1.05]}>
             <coneGeometry args={[0.012, 0.014, 3]} />
-            <meshStandardMaterial color={NOSE_PINK} roughness={0.6} />
+            <meshStandardMaterial color={NOSE_PINK} roughness={0.65} />
           </mesh>
 
           {/* 6 Curved White Whiskers */}
@@ -512,7 +569,7 @@ export default function SleepingCat({
             <group key={wIdx}>
               {/* Left whiskers */}
               <mesh
-                position={[0.102, -0.022 + yOff, 0.055]}
+                position={[0.10, -0.02 + yOff, 0.055]}
                 rotation={[0, 0.28, yOff * 3.8]}
               >
                 <boxGeometry args={[0.085, 0.0012, 0.0012]} />
@@ -520,7 +577,7 @@ export default function SleepingCat({
               </mesh>
               {/* Right whiskers */}
               <mesh
-                position={[0.102, -0.022 + yOff, -0.012]}
+                position={[0.10, -0.02 + yOff, -0.012]}
                 rotation={[0, -0.28, -yOff * 3.8]}
               >
                 <boxGeometry args={[0.085, 0.0012, 0.0012]} />
@@ -529,33 +586,29 @@ export default function SleepingCat({
             </group>
           ))}
 
-          {/* ── EYES: Alert Glassy Eyes (Laser Active) vs Peaceful Slits (Sleeping) ── */}
+          {/* ── EYES: Deep Copper Persian Eyes (Hunting) vs Peaceful Slits (Sitting) ── */}
           {isLaserActive ? (
             <group>
               {/* Left Eye */}
-              <group position={[0.084, 0.035, 0.058]} rotation={[0, 0.26, 0]}>
-                {/* Dark Eyeliner Socket */}
+              <group position={[0.082, 0.035, 0.058]} rotation={[0, 0.26, 0]}>
                 <mesh scale={[1.05, 1.18, 1.05]}>
                   <sphereGeometry args={[0.017, 14, 14]} />
                   <meshBasicMaterial color="#1a0c04" />
                 </mesh>
-                {/* Luminous Hazel-Gold Iris */}
                 <mesh position={[0.004, 0, 0]}>
                   <sphereGeometry args={[0.015, 14, 14]} />
                   <meshStandardMaterial
-                    color="#f59e0b"
-                    emissive="#b45309"
+                    color={EYE_COPPER}
+                    emissive="#92400e"
                     emissiveIntensity={0.35}
                     roughness={0.15}
                     metalness={0.1}
                   />
                 </mesh>
-                {/* Dilating Vertical Black Slit Pupil */}
                 <mesh position={[0.012, 0, 0]}>
                   <boxGeometry args={[0.0035, 0.021, 0.0055]} />
                   <meshBasicMaterial color="#080808" />
                 </mesh>
-                {/* Dual Wet Specular Sparkles */}
                 <mesh position={[0.014, 0.006, 0.004]}>
                   <sphereGeometry args={[0.0025, 8, 8]} />
                   <meshBasicMaterial color="#ffffff" />
@@ -567,29 +620,25 @@ export default function SleepingCat({
               </group>
 
               {/* Right Eye */}
-              <group position={[0.084, 0.035, -0.015]} rotation={[0, -0.22, 0]}>
-                {/* Dark Eyeliner Socket */}
+              <group position={[0.082, 0.035, -0.015]} rotation={[0, -0.22, 0]}>
                 <mesh scale={[1.05, 1.18, 1.05]}>
                   <sphereGeometry args={[0.017, 14, 14]} />
                   <meshBasicMaterial color="#1a0c04" />
                 </mesh>
-                {/* Luminous Hazel-Gold Iris */}
                 <mesh position={[0.004, 0, 0]}>
                   <sphereGeometry args={[0.015, 14, 14]} />
                   <meshStandardMaterial
-                    color="#f59e0b"
-                    emissive="#b45309"
+                    color={EYE_COPPER}
+                    emissive="#92400e"
                     emissiveIntensity={0.35}
                     roughness={0.15}
                     metalness={0.1}
                   />
                 </mesh>
-                {/* Dilating Vertical Black Slit Pupil */}
                 <mesh position={[0.012, 0, 0]}>
                   <boxGeometry args={[0.0035, 0.021, 0.0055]} />
                   <meshBasicMaterial color="#080808" />
                 </mesh>
-                {/* Dual Wet Specular Sparkles */}
                 <mesh position={[0.014, 0.006, 0.004]}>
                   <sphereGeometry args={[0.0025, 8, 8]} />
                   <meshBasicMaterial color="#ffffff" />
@@ -601,86 +650,86 @@ export default function SleepingCat({
               </group>
             </group>
           ) : (
-            /* Peaceful Sleeping Curved Slits */
+            /* Peaceful Sleeping/Resting Curved Eye Slits */
             <group>
-              <mesh position={[0.08, 0.032, 0.062]} rotation={[0, 0.35, 0.1]}>
+              <mesh position={[0.078, 0.032, 0.062]} rotation={[0, 0.35, 0.1]}>
                 <boxGeometry args={[0.024, 0.004, 0.003]} />
                 <meshStandardMaterial color="#2a1204" roughness={0.9} />
               </mesh>
-              <mesh position={[0.08, 0.032, -0.018]} rotation={[0, -0.25, 0.1]}>
+              <mesh position={[0.078, 0.032, -0.018]} rotation={[0, -0.25, 0.1]}>
                 <boxGeometry args={[0.024, 0.004, 0.003]} />
                 <meshStandardMaterial color="#2a1204" roughness={0.9} />
               </mesh>
             </group>
           )}
 
-          {/* ── CURVED FELINE EARS WITH HENRY'S POCKET & INNER FUZZ ── */}
+          {/* ── SMALL ROUNDED PLUSH PERSIAN EARS ── */}
           {/* Left Ear */}
-          <group ref={earLRef} position={[0.015, 0.095, 0.06]} rotation={[-0.18, 0.28, 0.32]}>
-            <mesh castShadow scale={[1.1, 1.2, 0.8]}>
-              <coneGeometry args={[0.038, 0.068, 4]} />
-              <meshStandardMaterial color={GINGER_BASE} roughness={0.85} />
+          <group ref={earLRef} position={[0.012, 0.092, 0.058]} rotation={[-0.16, 0.26, 0.28]}>
+            <mesh castShadow scale={[1.05, 1.05, 0.75]}>
+              <coneGeometry args={[0.035, 0.060, 4]} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.85} />
             </mesh>
-            <mesh position={[0, 0, 0.004]} scale={[0.7, 0.75, 0.6]}>
-              <coneGeometry args={[0.032, 0.056, 4]} />
+            <mesh position={[0, 0, 0.004]} scale={[0.68, 0.70, 0.55]}>
+              <coneGeometry args={[0.030, 0.050, 4]} />
               <meshStandardMaterial color={EAR_INNER} roughness={0.95} />
             </mesh>
-            {/* White ear fuzz tuft */}
-            <mesh position={[0, -0.014, 0.006]} scale={[0.45, 0.35, 0.4]}>
+            {/* White ear fluff tuft */}
+            <mesh position={[0, -0.012, 0.006]} scale={[0.48, 0.38, 0.42]}>
               <sphereGeometry args={[0.02, 6, 6]} />
-              <meshBasicMaterial color={CREAM_WHITE} />
+              <meshBasicMaterial color={PERSIAN_CREAM} />
             </mesh>
           </group>
 
           {/* Right Ear */}
-          <group ref={earRRef} position={[-0.03, 0.095, -0.045]} rotation={[-0.18, -0.32, -0.32]}>
-            <mesh castShadow scale={[1.1, 1.2, 0.8]}>
-              <coneGeometry args={[0.038, 0.068, 4]} />
-              <meshStandardMaterial color={GINGER_BASE} roughness={0.85} />
+          <group ref={earRRef} position={[-0.028, 0.092, -0.042]} rotation={[-0.16, -0.30, -0.28]}>
+            <mesh castShadow scale={[1.05, 1.05, 0.75]}>
+              <coneGeometry args={[0.035, 0.060, 4]} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.85} />
             </mesh>
-            <mesh position={[0, 0, 0.004]} scale={[0.7, 0.75, 0.6]}>
-              <coneGeometry args={[0.032, 0.056, 4]} />
+            <mesh position={[0, 0, 0.004]} scale={[0.68, 0.70, 0.55]}>
+              <coneGeometry args={[0.030, 0.050, 4]} />
               <meshStandardMaterial color={EAR_INNER} roughness={0.95} />
             </mesh>
-            {/* White ear fuzz tuft */}
-            <mesh position={[0, -0.014, 0.006]} scale={[0.45, 0.35, 0.4]}>
+            {/* White ear fluff tuft */}
+            <mesh position={[0, -0.012, 0.006]} scale={[0.48, 0.38, 0.42]}>
               <sphereGeometry args={[0.02, 6, 6]} />
-              <meshBasicMaterial color={CREAM_WHITE} />
+              <meshBasicMaterial color={PERSIAN_CREAM} />
             </mesh>
           </group>
         </group>
 
-        {/* ── ARTICULATED LIMBS WITH WHITE MITTENS & PINK TOE PADS ── */}
+        {/* ── ARTICULATED LIMBS WITH WARM CREAM MITTENS & PINK TOE PADS ── */}
         {/* Front Left Leg */}
-        <group ref={legFLRef} position={[0.09, -0.04, 0.04]}>
-          <mesh castShadow scale={[0.85, 1.1, 0.85]}>
-            <cylinderGeometry args={[0.02, 0.022, 0.08, 10]} />
-            <meshStandardMaterial color={CREAM_WHITE} roughness={0.9} />
+        <group ref={legFLRef} position={[0.08, -0.055, 0.04]}>
+          <mesh castShadow scale={[0.9, 1.15, 0.9]}>
+            <cylinderGeometry args={[0.022, 0.024, 0.085, 10]} />
+            <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.9} />
           </mesh>
-          <mesh position={[0.012, -0.04, 0]} scale={[1.15, 0.55, 1.1]} castShadow>
-            <sphereGeometry args={[0.027, 10, 10]} />
-            <meshStandardMaterial color={CREAM_WHITE} roughness={0.9} />
+          <mesh position={[0.012, -0.042, 0]} scale={[1.15, 0.55, 1.1]} castShadow>
+            <sphereGeometry args={[0.028, 10, 10]} />
+            <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.9} />
           </mesh>
           {/* Pink toe beans */}
-          <mesh position={[0.023, -0.052, 0]} scale={[0.7, 0.28, 0.7]}>
+          <mesh position={[0.022, -0.053, 0]} scale={[0.7, 0.28, 0.7]}>
             <sphereGeometry args={[0.013, 8, 8]} />
             <meshStandardMaterial color={TOE_BEANS} roughness={0.8} />
           </mesh>
         </group>
 
         {/* Front Right Leg (Interactive swatting limb) */}
-        <group ref={legFRRef} position={[0.09, -0.04, 0.12]}>
+        <group ref={legFRRef} position={[0.08, -0.055, 0.10]}>
           <group ref={pawFRRef}>
-            <mesh castShadow scale={[0.85, 1.1, 0.85]}>
-              <cylinderGeometry args={[0.02, 0.022, 0.08, 10]} />
-              <meshStandardMaterial color={CREAM_WHITE} roughness={0.9} />
+            <mesh castShadow scale={[0.9, 1.15, 0.9]}>
+              <cylinderGeometry args={[0.022, 0.024, 0.085, 10]} />
+              <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.9} />
             </mesh>
-            <mesh position={[0.012, -0.04, 0]} scale={[1.15, 0.55, 1.1]} castShadow>
-              <sphereGeometry args={[0.027, 10, 10]} />
-              <meshStandardMaterial color={CREAM_WHITE} roughness={0.9} />
+            <mesh position={[0.012, -0.042, 0]} scale={[1.15, 0.55, 1.1]} castShadow>
+              <sphereGeometry args={[0.028, 10, 10]} />
+              <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.9} />
             </mesh>
             {/* Pink toe beans */}
-            <mesh position={[0.023, -0.052, 0]} scale={[0.7, 0.28, 0.7]}>
+            <mesh position={[0.022, -0.053, 0]} scale={[0.7, 0.28, 0.7]}>
               <sphereGeometry args={[0.013, 8, 8]} />
               <meshStandardMaterial color={TOE_BEANS} roughness={0.8} />
             </mesh>
@@ -688,52 +737,51 @@ export default function SleepingCat({
         </group>
 
         {/* Back Left Haunch & Thigh (With folded hock joint) */}
-        <group ref={legBLRef} position={[-0.12, -0.02, -0.06]}>
-          {/* Muscular feline thigh */}
-          <mesh castShadow scale={[1.25, 1.1, 0.95]}>
-            <sphereGeometry args={[0.055, 14, 12]} />
-            <meshStandardMaterial color={GINGER_BASE} roughness={0.88} />
+        <group ref={legBLRef} position={[-0.11, -0.065, -0.06]}>
+          <mesh castShadow scale={[1.28, 1.15, 0.98]}>
+            <sphereGeometry args={[0.058, 14, 12]} />
+            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
           </mesh>
           {/* Hock to foot */}
-          <mesh position={[0.01, -0.04, 0.02]} scale={[0.88, 0.48, 1.1]}>
+          <mesh position={[0.01, -0.038, 0.02]} scale={[0.88, 0.48, 1.1]}>
             <sphereGeometry args={[0.03, 8, 8]} />
-            <meshStandardMaterial color={CREAM_WHITE} roughness={0.9} />
+            <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.9} />
           </mesh>
         </group>
 
         {/* Back Right Haunch & Thigh */}
-        <group ref={legBRRef} position={[-0.12, -0.02, 0.08]}>
-          <mesh castShadow scale={[1.25, 1.1, 0.95]}>
-            <sphereGeometry args={[0.055, 14, 12]} />
-            <meshStandardMaterial color={GINGER_BASE} roughness={0.88} />
+        <group ref={legBRRef} position={[-0.11, -0.065, 0.08]}>
+          <mesh castShadow scale={[1.28, 1.15, 0.98]}>
+            <sphereGeometry args={[0.058, 14, 12]} />
+            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
           </mesh>
-          <mesh position={[0.01, -0.04, 0.02]} scale={[0.88, 0.48, 1.1]}>
+          <mesh position={[0.01, -0.038, 0.02]} scale={[0.88, 0.48, 1.1]}>
             <sphereGeometry args={[0.03, 8, 8]} />
-            <meshStandardMaterial color={CREAM_WHITE} roughness={0.9} />
+            <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.9} />
           </mesh>
         </group>
 
-        {/* ── ARTICULATED 4-SEGMENT FLUID TAIL ── */}
+        {/* ── PLUSH FLUFFY PERSIAN TAIL ── */}
         <group position={[-0.17, 0.06, -0.02]}>
           <group ref={tailSeg1}>
             <mesh position={[0, 0.04, 0]}>
-              <cylinderGeometry args={[0.022, 0.025, 0.08, 10]} />
-              <meshStandardMaterial color={GINGER_BASE} roughness={0.88} />
+              <cylinderGeometry args={[0.025, 0.028, 0.08, 10]} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
             </mesh>
             <group ref={tailSeg2} position={[0, 0.08, 0]}>
               <mesh position={[0, 0.04, 0]}>
-                <cylinderGeometry args={[0.018, 0.022, 0.08, 10]} />
-                <meshStandardMaterial color={GINGER_BASE} roughness={0.88} />
+                <cylinderGeometry args={[0.022, 0.025, 0.08, 10]} />
+                <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
               </mesh>
               <group ref={tailSeg3} position={[0, 0.08, 0]}>
                 <mesh position={[0, 0.035, 0]}>
-                  <cylinderGeometry args={[0.014, 0.018, 0.07, 10]} />
-                  <meshStandardMaterial color={GINGER_BASE} roughness={0.88} />
+                  <cylinderGeometry args={[0.018, 0.022, 0.07, 10]} />
+                  <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
                 </mesh>
-                {/* Fluffy Cream Tip */}
+                {/* Fluffy Cream Feathered Tip */}
                 <mesh ref={tailTip} position={[0, 0.08, 0]}>
-                  <sphereGeometry args={[0.024, 12, 10]} />
-                  <meshStandardMaterial color={CREAM_WHITE} roughness={0.92} />
+                  <sphereGeometry args={[0.028, 12, 10]} />
+                  <meshStandardMaterial color={PERSIAN_CREAM} roughness={0.94} />
                 </mesh>
               </group>
             </group>
@@ -743,7 +791,7 @@ export default function SleepingCat({
 
       {/* ── CLEAN FLOATING DIALOGUE BADGE ── */}
       <Billboard
-        position={[0.04, 0.38, 0.04]}
+        position={[0.04, 0.42, 0.04]}
         follow={true}
         lockX={false}
         lockY={false}
