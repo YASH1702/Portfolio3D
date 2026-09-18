@@ -46,6 +46,9 @@ interface StudioContextType {
   toggleLaser: (active?: boolean) => void;
   laserTarget: [number, number, number] | null;
   setLaserTarget: (target: [number, number, number] | null) => void;
+  yarnTarget: [number, number, number] | null;
+  isYarnMoving: boolean;
+  setYarnState: (target: [number, number, number] | null, isMoving: boolean) => void;
 }
 
 const StudioContext = createContext<StudioContextType | null>(null);
@@ -62,6 +65,13 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [weather, setWeather] = useState<StudioWeather>("rain");
   const [isLaserActive, setIsLaserActive] = useState(false);
   const [laserTarget, setLaserTarget] = useState<[number, number, number] | null>(null);
+  const [yarnTarget, setYarnTarget] = useState<[number, number, number] | null>([-0.85, 0.045, 1.25]);
+  const [isYarnMoving, setIsYarnMoving] = useState(false);
+
+  const setYarnState = useCallback((target: [number, number, number] | null, isMoving: boolean) => {
+    setYarnTarget(target);
+    setIsYarnMoving(isMoving);
+  }, []);
 
   const toggleLaser = useCallback((active?: boolean) => {
     playLaserClick();
@@ -290,6 +300,9 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         toggleLaser,
         laserTarget,
         setLaserTarget,
+        yarnTarget,
+        isYarnMoving,
+        setYarnState,
       }}
     >
       {children}

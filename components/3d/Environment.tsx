@@ -7,6 +7,7 @@ import * as THREE from "three";
 import { useStudio } from "@/context/StudioContext";
 import StudioClock from "./StudioClock";
 import VinylPlayer from "./VinylPlayer";
+import YarnBall from "./YarnBall";
 
 /**
  * Environment — Rich architectural & cozy living/work atmospheric elements:
@@ -98,6 +99,9 @@ export default function Environment() {
           </mesh>
         ))}
       </group>
+
+      {/* ── INTERACTIVE CAT TOY (ROLLING YARN BALL ON RUG) ── */}
+      <YarnBall initialPosition={[-0.85, 0.045, 1.25]} />
 
       {/* ── COZY BEANIE / BEAN BAG CHAIR WITH WARM BACKLIGHT ── */}
       <group position={[-2.6, 0, 1.2]} rotation={[0, 0.55, 0]} name="beanbag">

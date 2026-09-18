@@ -386,6 +386,47 @@ export function playLaserChirp() {
 }
 
 /**
+ * Tactile wool yarn ball bat / roll sound effect
+ */
+export function playYarnBat() {
+  triggerHaptic("light");
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+
+  // Soft low-frequency cushioned bounce thump
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(240, now);
+  osc.frequency.exponentialRampToValueAtTime(75, now + 0.07);
+
+  gain.gain.setValueAtTime(0.24, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.085);
+
+  // Soft wool friction swoosh
+  const oscFriction = ctx.createOscillator();
+  const gainFriction = ctx.createGain();
+  oscFriction.type = "triangle";
+  oscFriction.frequency.setValueAtTime(520, now + 0.01);
+  oscFriction.frequency.exponentialRampToValueAtTime(180, now + 0.09);
+
+  gainFriction.gain.setValueAtTime(0.08, now + 0.01);
+  gainFriction.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+  oscFriction.connect(gainFriction);
+  gainFriction.connect(ctx.destination);
+  oscFriction.start(now + 0.01);
+  oscFriction.stop(now + 0.105);
+}
+
+/**
  * Tactile wooden/aluminum venetian blind slat rattle and cord flutter
  */
 export function playBlindsRattle() {
@@ -415,3 +456,4 @@ export function playBlindsRattle() {
     osc.stop(clickTime + 0.04);
   }
 }
+

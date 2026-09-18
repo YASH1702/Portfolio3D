@@ -8,6 +8,7 @@ import { useStudio } from "@/context/StudioContext";
 import { playCatPurr, playLaserChirp } from "@/lib/soundEffects";
 import { dampedLerp } from "@/lib/easings";
 import { getCatFurTexture } from "@/lib/catTexture";
+import { yarnWorldPosition, yarnIsRolling } from "./YarnBall";
 
 /**
  * Shortest-arc angle interpolation with exponential damping.
@@ -158,6 +159,8 @@ export default function SleepingCat({
     let isBehindSofa = false;
     let isFrontOfSofa = false;
 
+    const isYarnActive = !isLaserActive && (yarnIsRolling.current || (Date.now() - yarnIsRolling.lastBatTime < 4500));
+
     if (isLaserActive && laserTarget) {
       // Calculate world distance from cat to laser
       const curWorldX = COUCH_WORLD_X + currentPos.current.x * Math.cos(COUCH_ROT_Y) - currentPos.current.z * Math.sin(COUCH_ROT_Y);
@@ -209,6 +212,19 @@ export default function SleepingCat({
         }
         leanState.current = distToLaserWorld < 0.85 ? "swat" : "normal";
       }
+    } else if (isYarnActive) {
+      // Coordinate transformation of yarn world pos into Couch local space
+      const dxWorld = yarnWorldPosition.x - COUCH_WORLD_X;
+      const dzWorld = yarnWorldPosition.z - COUCH_WORLD_Z;
+      const cosR = Math.cos(-COUCH_ROT_Y);
+      const sinR = Math.sin(-COUCH_ROT_Y);
+      const couchYarnX = dxWorld * cosR - dzWorld * sinR;
+      const couchYarnZ = dxWorld * sinR + dzWorld * cosR;
+
+      // Cat stays perched on the couch cushion, but turns its gaze toward the yarn ball!
+      const targetYawToYarn = Math.atan2(couchYarnX - currentPos.current.x, couchYarnZ - currentPos.current.z);
+      targetYaw = Math.max(-0.35, Math.min(1.15, targetYawToYarn));
+      leanState.current = "front_lean";
     } else {
       leanState.current = "normal";
     }
@@ -249,7 +265,7 @@ export default function SleepingCat({
     const targetLean = leanState.current === "back_lean" ? 1.0 : leanState.current === "front_lean" ? -1.0 : 0;
     leanProgress.current = dampedLerp(leanProgress.current, targetLean, 4.5, dt);
 
-    const breathRate = purring ? 3.8 : isLaserActive ? 2.6 : 1.6;
+    const breathRate = purring ? 3.8 : isLaserActive || isYarnActive ? 2.6 : 1.6;
     breathRef.current += dt * breathRate;
     const breath = Math.sin(breathRef.current) * (purring ? 0.055 : 0.032);
 
@@ -388,6 +404,11 @@ export default function SleepingCat({
           headRef.current.rotation.x = 0.06 + Math.sin(t * 3.5) * 0.02;
         }
         headRef.current.rotation.z = Math.sin(t * 2.0) * 0.025;
+      } else if (isYarnActive) {
+        // Peering down attentively at the rolling yarn ball on the living room rug
+        headRef.current.position.set(0.18, 0.11, 0.05);
+        headRef.current.rotation.x = 0.28 + Math.sin(t * 3.5) * 0.025;
+        headRef.current.rotation.z = Math.sin(t * 2.2) * 0.035;
       } else {
         // Ideal sitting pose: head held high & regal with gentle purr / breathing sway
         headRef.current.position.set(0.16, 0.155, 0.05);
@@ -399,12 +420,12 @@ export default function SleepingCat({
 
     // Expressive Ears
     if (earLRef.current) {
-      const earTwitch = isLaserActive ? Math.sin(t * 8.5) * 0.06 : Math.sin(t * 1.15) > 0.95 ? Math.sin(t * 35) * 0.18 : 0;
-      earLRef.current.rotation.z = 0.28 + earTwitch;
+      const earTwitch = isLaserActive || isYarnActive ? Math.sin(t * 8.5) * 0.06 : Math.sin(t * 1.15) > 0.95 ? Math.sin(t * 35) * 0.18 : 0;
+      earLRef.current.rotation.z = (isYarnActive ? 0.22 : 0.28) + earTwitch;
     }
     if (earRRef.current) {
-      const earTwitch = isLaserActive ? Math.sin(t * 7.2) * 0.05 : Math.sin(t * 1.4) > 0.96 ? Math.sin(t * 32) * 0.16 : 0;
-      earRRef.current.rotation.z = -0.28 - earTwitch;
+      const earTwitch = isLaserActive || isYarnActive ? Math.sin(t * 7.2) * 0.05 : Math.sin(t * 1.4) > 0.96 ? Math.sin(t * 32) * 0.16 : 0;
+      earRRef.current.rotation.z = (isYarnActive ? -0.22 : -0.28) - earTwitch;
     }
 
     // Collar Bell Swing
@@ -421,6 +442,12 @@ export default function SleepingCat({
         tailSeg1.current.rotation.set(-0.55, 0, excitedWag * 0.5);
         tailSeg2.current.rotation.set(-0.45, 0, excitedWag * 0.7);
         tailSeg3.current.rotation.set(0.38, 0, excitedWag * 1.0);
+      } else if (isYarnActive) {
+        // Inquisitive rhythmic tail flick while watching yarn roll
+        const flick = Math.sin(t * 5.5) * 0.16;
+        tailSeg1.current.rotation.set(-0.1, 0.4 + flick, -0.3);
+        tailSeg2.current.rotation.set(0.05, 0.5 + flick * 1.2, -0.2);
+        tailSeg3.current.rotation.set(0.2, 0.6 + flick * 1.5, -0.1);
       } else {
         // Ideal sitting pose: tail curls neatly around front paws
         const tailPurr = purring ? Math.sin(t * 10) * 0.06 : Math.sin(t * 0.9) * 0.04;
