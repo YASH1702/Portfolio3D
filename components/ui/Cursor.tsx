@@ -20,7 +20,7 @@ import { useStudio } from "@/context/StudioContext";
  * Fully disabled on touch devices and respects prefers-reduced-motion.
  */
 export default function Cursor() {
-  const { isLaserActive } = useStudio();
+  const { isLaserActive, isNightMode } = useStudio();
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
@@ -67,8 +67,8 @@ export default function Cursor() {
     const handleProjectHover = (e: Event) => {
       const custom = e as CustomEvent<{ title?: string; active: boolean }>;
       if (custom.detail?.active) {
-        projectHoverRef.current = custom.detail.title ?? "VIEW PROJECT";
-        setProjectHoverText(custom.detail.title ?? "VIEW PROJECT");
+        projectHoverRef.current = custom.detail.title ?? "VIEW CASE STUDY";
+        setProjectHoverText(custom.detail.title ?? "VIEW CASE STUDY");
       } else {
         projectHoverRef.current = null;
         setProjectHoverText(null);
@@ -98,14 +98,29 @@ export default function Cursor() {
         ringRef.current.style.height = `${size}px`;
         ringRef.current.style.marginLeft = `${-size / 2}px`;
         ringRef.current.style.marginTop = `${-size / 2}px`;
-        ringRef.current.style.borderColor = isLaserActive ? "#ff0033" : isProj ? "#8b7355" : "#1a1a18";
-        ringRef.current.style.backgroundColor = isLaserActive
-          ? "rgba(255, 0, 51, 0.12)"
-          : isProj
-          ? "rgba(196, 168, 130, 0.12)"
-          : "transparent";
-        ringRef.current.style.boxShadow = isLaserActive ? "0 0 12px rgba(255, 0, 51, 0.45)" : "none";
-        ringRef.current.style.opacity = isLaserActive ? "0.9" : isProj ? "0.8" : isHover ? "0.55" : "0.3";
+
+        if (isLaserActive) {
+          ringRef.current.style.borderColor = "#ff0033";
+          ringRef.current.style.backgroundColor = "rgba(255, 0, 51, 0.14)";
+          ringRef.current.style.boxShadow = "0 0 16px rgba(255, 0, 51, 0.55)";
+          ringRef.current.style.opacity = "0.95";
+        } else if (isProj) {
+          ringRef.current.style.borderColor = isNightMode ? "#e0b874" : "#dfa04e";
+          ringRef.current.style.backgroundColor = isNightMode
+            ? "rgba(224, 184, 116, 0.22)"
+            : "rgba(200, 150, 80, 0.22)";
+          ringRef.current.style.boxShadow = "0 0 14px rgba(224, 184, 116, 0.55)";
+          ringRef.current.style.opacity = "0.9";
+        } else {
+          ringRef.current.style.borderColor = isNightMode
+            ? "rgba(255, 255, 255, 0.65)"
+            : "rgba(26, 26, 24, 0.65)";
+          ringRef.current.style.backgroundColor = "transparent";
+          ringRef.current.style.boxShadow = isNightMode
+            ? "0 0 6px rgba(255, 255, 255, 0.3)"
+            : "0 0 0 1px rgba(255, 255, 255, 0.6)";
+          ringRef.current.style.opacity = isHover ? "0.75" : "0.45";
+        }
       }
 
       rafRef.current = requestAnimationFrame(animate);
@@ -119,11 +134,11 @@ export default function Cursor() {
       window.removeEventListener("project-hover", handleProjectHover);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [isLaserActive]);
+  }, [isLaserActive, isNightMode]);
 
   return (
     <>
-      {/* Precision Dot */}
+      {/* Precision Dot (Always visible with high-contrast dual halo) */}
       <div
         ref={dotRef}
         aria-hidden="true"
@@ -133,11 +148,17 @@ export default function Cursor() {
           left: 0,
           width: isLaserActive ? "7px" : "5px",
           height: isLaserActive ? "7px" : "5px",
-          background: isLaserActive ? "#ff0033" : "#1a1a18",
-          boxShadow: isLaserActive ? "0 0 10px #ff0033" : "none",
+          background: isLaserActive
+            ? "#ff0033"
+            : isNightMode
+            ? "#ffffff"
+            : "#141412",
+          boxShadow: isLaserActive
+            ? "0 0 12px #ff0033, 0 0 4px #ffffff"
+            : "0 0 0 1.5px rgba(255, 255, 255, 0.85), 0 1px 4px rgba(0, 0, 0, 0.5)",
           borderRadius: "50%",
           pointerEvents: "none",
-          zIndex: 10000,
+          zIndex: 999999,
           transform: "translate3d(-100px, -100px, 0)",
           marginLeft: isLaserActive ? "-3.5px" : "-2.5px",
           marginTop: isLaserActive ? "-3.5px" : "-2.5px",
@@ -156,20 +177,20 @@ export default function Cursor() {
           left: 0,
           width: "22px",
           height: "22px",
-          border: "1px solid #1a1a18",
+          border: "1.5px solid rgba(26, 26, 24, 0.65)",
           borderRadius: "50%",
           pointerEvents: "none",
-          zIndex: 9999,
+          zIndex: 999998,
           transform: "translate3d(-100px, -100px, 0)",
           marginLeft: "-11px",
           marginTop: "-11px",
-          opacity: 0.3,
-          transition: "width 0.22s ease, height 0.22s ease, opacity 0.22s ease, border-color 0.22s ease, background-color 0.22s ease",
+          opacity: 0.45,
+          transition: "width 0.22s ease, height 0.22s ease, opacity 0.22s ease, border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease",
           willChange: "transform",
         }}
       />
 
-      {/* Hover Label for 3D Project Frames */}
+      {/* Hover Label for 3D Project Frames (High-contrast case study badge) */}
       <div
         ref={labelRef}
         aria-hidden="true"
@@ -178,15 +199,19 @@ export default function Cursor() {
           top: 0,
           left: 0,
           pointerEvents: "none",
-          zIndex: 10001,
+          zIndex: 1000000,
           fontFamily: "var(--font-geist-mono, monospace)",
           fontSize: "9px",
+          fontWeight: 700,
           letterSpacing: "0.18em",
-          color: "#ffffff",
-          background: "rgba(24, 22, 18, 0.92)",
-          padding: "4px 8px",
-          borderRadius: "2px",
-          border: "1px solid rgba(196, 168, 130, 0.4)",
+          color: isNightMode ? "#ffd993" : "#ffffff",
+          background: isNightMode ? "rgba(10, 14, 24, 0.95)" : "rgba(20, 18, 14, 0.95)",
+          padding: "5px 9px",
+          borderRadius: "3px",
+          border: isNightMode
+            ? "1px solid rgba(224, 184, 116, 0.7)"
+            : "1px solid rgba(224, 184, 116, 0.55)",
+          boxShadow: "0 4px 18px rgba(0, 0, 0, 0.45)",
           textTransform: "uppercase",
           transform: "translate3d(-100px, -100px, 0)",
           opacity: projectHoverText ? 1 : 0,

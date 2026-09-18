@@ -47,9 +47,6 @@ function PortfolioExperience() {
       {/* ── LOADING SCREEN (self-driving via useProgress) ── */}
       <LoadingScreen />
 
-      {/* ── CURSOR (desktop only) ── */}
-      <Cursor />
-
       {/* ── COMMAND PALETTE (Cmd+K / Ctrl+K) ── */}
       <CommandPalette />
 
@@ -228,9 +225,5 @@ function PortfolioExperience() {
 }
 
 export default function Home() {
-  return (
-    <StudioProvider>
-      <PortfolioExperience />
-    </StudioProvider>
-  );
+  return <PortfolioExperience />;
 }

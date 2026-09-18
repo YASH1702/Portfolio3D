@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { StudioProvider } from "@/context/StudioContext";
+import Cursor from "@/components/ui/Cursor";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -78,7 +80,10 @@ export default function RootLayout({
       style={{ height: "100%" }}
     >
       <body style={{ height: "100%", margin: 0, overflowX: "hidden" }}>
-        {children}
+        <StudioProvider>
+          <Cursor />
+          {children}
+        </StudioProvider>
         <Analytics />
       </body>
     </html>
