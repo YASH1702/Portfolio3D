@@ -109,10 +109,10 @@ export default function SleepingCat({
   const breathRef = useRef(0);
   const timeRef = useRef(0);
 
-  // Persian Golden-Brown Palette
-  const PERSIAN_GOLD  = "#c8853e"; // Golden honey amber coat
-  const PERSIAN_DARK  = "#733a12"; // Deep sable/chocolate dorsal shading
-  const PERSIAN_CREAM = "#fcf6ec"; // Plush warm ivory chest ruff & mitten paws
+  // Persian Golden-Brown Palette (warm luminous golden honey tones)
+  const PERSIAN_GOLD  = "#d9924c"; // Warm glowing golden honey coat
+  const PERSIAN_DARK  = "#a65c22"; // Warm golden chestnut shading
+  const PERSIAN_CREAM = "#fff8ee"; // Plush warm ivory chest ruff & mitten paws
   const EAR_INNER     = "#e89f88"; // Soft pinkish inner ear
   const NOSE_PINK     = "#d9777f"; // Dusty rose feline nose leather
   const TOE_BEANS     = "#db7b93"; // Soft rosy paw pads
@@ -461,9 +461,11 @@ export default function SleepingCat({
           <sphereGeometry args={[0.16, 24, 20]} />
           <meshStandardMaterial
             map={furMap ?? undefined}
-            color={hovered ? "#dca468" : PERSIAN_GOLD}
-            roughness={0.88}
+            color={furMap ? (hovered ? "#fff0dc" : "#ffffff") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
+            roughness={0.65}
             metalness={0.02}
+            emissive="#522c0c"
+            emissiveIntensity={0.12}
           />
         </mesh>
 
@@ -478,16 +480,18 @@ export default function SleepingCat({
           <sphereGeometry args={[0.145, 18, 16]} />
           <meshStandardMaterial
             map={furMap ?? undefined}
-            color={hovered ? "#dca468" : PERSIAN_GOLD}
-            roughness={0.88}
+            color={furMap ? (hovered ? "#fff0dc" : "#ffffff") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
+            roughness={0.65}
+            emissive="#522c0c"
+            emissiveIntensity={0.12}
           />
         </mesh>
 
-        {/* ── SOFT PERSIAN SABLE STRIPING ACROSS DORSAL SPINE ── */}
-        {[-0.12, -0.04, 0.04].map((xOff, idx) => (
-          <mesh key={idx} position={[xOff, 0.115, 0]} scale={[0.11, 0.02, 0.65]}>
-            <sphereGeometry args={[0.11, 10, 10]} />
-            <meshStandardMaterial color={PERSIAN_DARK} roughness={0.92} opacity={0.55} transparent />
+        {/* ── SOFT PERSIAN SABLE ACCENTS ACROSS DORSAL SPINE ── */}
+        {[-0.10, 0.0, 0.06].map((xOff, idx) => (
+          <mesh key={idx} position={[xOff, 0.116, 0]} scale={[0.09, 0.015, 0.55]}>
+            <sphereGeometry args={[0.10, 8, 8]} />
+            <meshStandardMaterial color={PERSIAN_DARK} roughness={0.7} opacity={0.18} transparent />
           </mesh>
         ))}
 
@@ -514,16 +518,18 @@ export default function SleepingCat({
             <sphereGeometry args={[0.108, 22, 18]} />
             <meshStandardMaterial
               map={furMap ?? undefined}
-              color={hovered ? "#dca468" : PERSIAN_GOLD}
-              roughness={0.85}
+              color={furMap ? (hovered ? "#fff0dc" : "#ffffff") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
+              roughness={0.65}
               metalness={0.02}
+              emissive="#522c0c"
+              emissiveIntensity={0.12}
             />
           </mesh>
 
           {/* Gentle forehead shading */}
           <mesh position={[0.076, 0.068, 0.025]} scale={[0.04, 0.016, 0.065]}>
             <sphereGeometry args={[0.06, 8, 8]} />
-            <meshStandardMaterial color={PERSIAN_DARK} roughness={0.9} opacity={0.4} transparent />
+            <meshStandardMaterial color={PERSIAN_DARK} roughness={0.9} opacity={0.20} transparent />
           </mesh>
 
           {/* Soft Snub Nasal Bridge (Persian sweet facial contour) */}
@@ -531,8 +537,10 @@ export default function SleepingCat({
             <boxGeometry args={[0.042, 0.048, 0.042]} />
             <meshStandardMaterial
               map={furMap ?? undefined}
-              color={PERSIAN_GOLD}
-              roughness={0.85}
+              color={furMap ? "#ffffff" : PERSIAN_GOLD}
+              roughness={0.7}
+              emissive="#522c0c"
+              emissiveIntensity={0.10}
             />
           </mesh>
 
@@ -668,7 +676,7 @@ export default function SleepingCat({
           <group ref={earLRef} position={[0.012, 0.092, 0.058]} rotation={[-0.16, 0.26, 0.28]}>
             <mesh castShadow scale={[1.05, 1.05, 0.75]}>
               <coneGeometry args={[0.035, 0.060, 4]} />
-              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.85} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
             </mesh>
             <mesh position={[0, 0, 0.004]} scale={[0.68, 0.70, 0.55]}>
               <coneGeometry args={[0.030, 0.050, 4]} />
@@ -685,7 +693,7 @@ export default function SleepingCat({
           <group ref={earRRef} position={[-0.028, 0.092, -0.042]} rotation={[-0.16, -0.30, -0.28]}>
             <mesh castShadow scale={[1.05, 1.05, 0.75]}>
               <coneGeometry args={[0.035, 0.060, 4]} />
-              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.85} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
             </mesh>
             <mesh position={[0, 0, 0.004]} scale={[0.68, 0.70, 0.55]}>
               <coneGeometry args={[0.030, 0.050, 4]} />
@@ -740,7 +748,7 @@ export default function SleepingCat({
         <group ref={legBLRef} position={[-0.11, -0.065, -0.06]}>
           <mesh castShadow scale={[1.28, 1.15, 0.98]}>
             <sphereGeometry args={[0.058, 14, 12]} />
-            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
+            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
           </mesh>
           {/* Hock to foot */}
           <mesh position={[0.01, -0.038, 0.02]} scale={[0.88, 0.48, 1.1]}>
@@ -753,7 +761,7 @@ export default function SleepingCat({
         <group ref={legBRRef} position={[-0.11, -0.065, 0.08]}>
           <mesh castShadow scale={[1.28, 1.15, 0.98]}>
             <sphereGeometry args={[0.058, 14, 12]} />
-            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
+            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
           </mesh>
           <mesh position={[0.01, -0.038, 0.02]} scale={[0.88, 0.48, 1.1]}>
             <sphereGeometry args={[0.03, 8, 8]} />
@@ -766,17 +774,17 @@ export default function SleepingCat({
           <group ref={tailSeg1}>
             <mesh position={[0, 0.04, 0]}>
               <cylinderGeometry args={[0.025, 0.028, 0.08, 10]} />
-              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
             </mesh>
             <group ref={tailSeg2} position={[0, 0.08, 0]}>
               <mesh position={[0, 0.04, 0]}>
                 <cylinderGeometry args={[0.022, 0.025, 0.08, 10]} />
-                <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
+                <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
               </mesh>
               <group ref={tailSeg3} position={[0, 0.08, 0]}>
                 <mesh position={[0, 0.035, 0]}>
                   <cylinderGeometry args={[0.018, 0.022, 0.07, 10]} />
-                  <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.88} />
+                  <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
                 </mesh>
                 {/* Fluffy Cream Feathered Tip */}
                 <mesh ref={tailTip} position={[0, 0.08, 0]}>

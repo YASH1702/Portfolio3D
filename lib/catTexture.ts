@@ -25,13 +25,13 @@ export function getCatFurTexture(): THREE.CanvasTexture | null {
 
   if (!ctx) return null;
 
-  // Base warm Golden Brown Persian coat underlayer
+  // Base warm Golden Brown Persian coat underlayer (luminous golden honey palette)
   const baseGrad = ctx.createLinearGradient(0, 0, 0, 1024);
-  baseGrad.addColorStop(0, "#8a4f20");    // Dorsal spine (rich sable golden brown)
-  baseGrad.addColorStop(0.25, "#a8692e"); // Upper shoulders
-  baseGrad.addColorStop(0.5, "#ba7e3e");  // Flanks (warm honey amber)
-  baseGrad.addColorStop(0.8, "#d8a86c");  // Lower belly
-  baseGrad.addColorStop(1, "#fdf6ea");   // Chest bib & paws (plush warm cream)
+  baseGrad.addColorStop(0, "#b86828");    // Dorsal spine (warm golden russet)
+  baseGrad.addColorStop(0.22, "#cf823a"); // Upper shoulders (rich honey amber)
+  baseGrad.addColorStop(0.48, "#e29d4e"); // Flanks (radiant golden apricot)
+  baseGrad.addColorStop(0.78, "#f0bc76"); // Lower belly (soft warm gold)
+  baseGrad.addColorStop(1, "#fff9f0");   // Chest bib & paws (plush ivory cream)
   ctx.fillStyle = baseGrad;
   ctx.fillRect(0, 0, 1024, 1024);
 
@@ -43,7 +43,7 @@ export function getCatFurTexture(): THREE.CanvasTexture | null {
     const y = Math.random() * 1024;
     const len = 4 + Math.random() * 9;
     const rand = Math.random();
-    ctx.strokeStyle = rand > 0.6 ? "#5c2f0f" : rand > 0.3 ? "#d49a58" : "#fef4df";
+    ctx.strokeStyle = rand > 0.6 ? "#8d4514" : rand > 0.3 ? "#e2a050" : "#fff8ea";
     ctx.lineWidth = 0.8 + Math.random() * 0.9;
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -52,18 +52,18 @@ export function getCatFurTexture(): THREE.CanvasTexture | null {
   }
   ctx.restore();
 
-  // Soft shaded Persian dorsal shading (not harsh comic stripes, but soft smokey golden-brown waves)
+  // Gentle warm golden-chestnut dorsal contouring (no dark muddy bands)
   ctx.save();
-  ctx.globalAlpha = 0.18;
-  ctx.fillStyle = "#633211";
+  ctx.globalAlpha = 0.10;
+  ctx.fillStyle = "#8a4214";
 
   // Central dorsal blend
   ctx.fillRect(470, 0, 84, 1024);
 
   for (let y = 140; y < 900; y += 55) {
-    const thickness = 22 + Math.sin(y * 0.04) * 10;
+    const thickness = 20 + Math.sin(y * 0.04) * 8;
     ctx.beginPath();
-    ctx.ellipse(512, y, 400 + Math.sin(y * 0.08) * 50, thickness, 0, 0, Math.PI * 2);
+    ctx.ellipse(512, y, 380 + Math.sin(y * 0.08) * 40, thickness, 0, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.restore();
@@ -71,9 +71,9 @@ export function getCatFurTexture(): THREE.CanvasTexture | null {
   // Luxurious warm cream chest & throat ruff (Persian lion-like mane)
   ctx.save();
   const bibGrad = ctx.createRadialGradient(512, 860, 50, 512, 860, 360);
-  bibGrad.addColorStop(0, "rgba(255, 248, 238, 0.96)");
-  bibGrad.addColorStop(0.55, "rgba(250, 238, 220, 0.72)");
-  bibGrad.addColorStop(1, "rgba(250, 238, 220, 0)");
+  bibGrad.addColorStop(0, "rgba(255, 250, 242, 0.98)");
+  bibGrad.addColorStop(0.55, "rgba(252, 242, 228, 0.78)");
+  bibGrad.addColorStop(1, "rgba(252, 242, 228, 0)");
   ctx.fillStyle = bibGrad;
   ctx.fillRect(160, 480, 704, 544);
   ctx.restore();
