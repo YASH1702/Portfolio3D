@@ -26,9 +26,10 @@ const NOTEBOOK  = "#f0ede5";
 const CUP       = "#d4c5a0";
 
 export default function Desk() {
-  const { isLampOn, toggleLamp, isNightMode } = useStudio();
+  const { isLampOn, toggleLamp, isNightMode, isLaserActive, toggleLaser } = useStudio();
   const lampHeadRef = useRef<THREE.Group>(null!);
   const [lampHovered, setLampHovered] = useState(false);
+  const [laserPenHovered, setLaserPenHovered] = useState(false);
   const lampBounce = useRef(0);
 
   const handleLampEnter = (e: any) => {
@@ -353,11 +354,98 @@ export default function Desk() {
           <boxGeometry args={[0.04, 0.012, 0.155]} />
           <meshStandardMaterial color="#c0b8a0" roughness={0.9} metalness={0} />
         </mesh>
-        {/* Pen */}
-        <mesh castShadow position={[0.14, 0.015, 0.04]} rotation={[0, 0.3, 0]}>
-          <cylinderGeometry args={[0.004, 0.004, 0.2, 6]} />
-          <meshStandardMaterial color="#2a2a2a" roughness={0.4} metalness={0.4} />
+      </group>
+
+      {/* ── INTERACTIVE RED LASER POINTER PEN ── */}
+      <group
+        position={[0.67, 0.772, 0.08]}
+        rotation={[0, 0.28, Math.PI / 2]}
+        onPointerEnter={(e) => {
+          e.stopPropagation();
+          setLaserPenHovered(true);
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerLeave={(e) => {
+          e.stopPropagation();
+          setLaserPenHovered(false);
+          document.body.style.cursor = "default";
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleLaser();
+        }}
+      >
+        {/* Invisible hit cylinder */}
+        <mesh visible={false}>
+          <cylinderGeometry args={[0.035, 0.035, 0.22, 8]} />
+          <meshBasicMaterial transparent opacity={0} />
         </mesh>
+
+        {/* Anodized metallic barrel */}
+        <mesh castShadow>
+          <cylinderGeometry args={[0.0065, 0.0065, 0.15, 16]} />
+          <meshStandardMaterial
+            color={laserPenHovered ? "#2e3440" : "#1a1c23"}
+            roughness={0.25}
+            metalness={0.85}
+          />
+        </mesh>
+
+        {/* Silver pocket clip */}
+        <mesh position={[0.008, 0.02, 0]}>
+          <boxGeometry args={[0.002, 0.06, 0.004]} />
+          <meshStandardMaterial color="#e2e8f0" roughness={0.2} metalness={0.9} />
+        </mesh>
+
+        {/* Brass aperture tip */}
+        <mesh position={[0, -0.076, 0]}>
+          <cylinderGeometry args={[0.0055, 0.0065, 0.012, 16]} />
+          <meshStandardMaterial color="#d4af37" roughness={0.3} metalness={0.8} />
+        </mesh>
+
+        {/* Glowing laser crystal diode at tip */}
+        <mesh position={[0, -0.083, 0]}>
+          <sphereGeometry args={[0.0035, 10, 10]} />
+          <meshBasicMaterial color={isLaserActive ? "#ff0033" : "#4a0404"} />
+        </mesh>
+
+        {/* Metallic push button on top */}
+        <mesh position={[0, 0.077, 0]}>
+          <cylinderGeometry args={[0.0045, 0.0045, 0.008, 12]} />
+          <meshStandardMaterial
+            color={isLaserActive ? "#ff0033" : "#cbd5e1"}
+            emissive={isLaserActive ? "#ff0033" : "#000000"}
+            emissiveIntensity={isLaserActive ? 0.8 : 0}
+            roughness={0.3}
+            metalness={0.8}
+          />
+        </mesh>
+
+        {/* Hover Tooltip */}
+        {laserPenHovered && (
+          <Billboard position={[0, 0.14, 0]}>
+            <group scale={[0.85, 0.85, 0.85]}>
+              <mesh position={[0, 0, -0.002]}>
+                <planeGeometry args={[1.5, 0.24]} />
+                <meshBasicMaterial
+                  color={isNightMode ? "#0f172a" : "#ffffff"}
+                  transparent
+                  opacity={0.94}
+                />
+              </mesh>
+              <Text
+                position={[0, 0, 0]}
+                fontSize={0.07}
+                color={isLaserActive ? "#ff4757" : isNightMode ? "#93c5fd" : "#1e293b"}
+                anchorX="center"
+                anchorY="middle"
+                font="/fonts/GeistMono-Bold.ttf"
+              >
+                {isLaserActive ? "🔴 Put Down Laser" : "🔴 Pick Up Laser Pointer"}
+              </Text>
+            </group>
+          </Billboard>
+        )}
       </group>
 
       {/* ── COFFEE CUP (INTERACTIVE: CLICK TO SIP) ── */}

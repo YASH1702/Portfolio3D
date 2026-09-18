@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useStudio } from "@/context/StudioContext";
 import { dampedLerp } from "@/lib/easings";
+import WindowBlinds from "@/components/3d/WindowBlinds";
 
 /**
  * Room — Architectural studio shell.
@@ -26,7 +27,7 @@ const BASE      = "#d8d2c6";
 const W = 12, H = 4, D = 12;
 
 export default function Room() {
-  const { isNightMode } = useStudio();
+  const { isNightMode, areBlindsOpen } = useStudio();
 
   const glassMatRef = useRef<THREE.MeshStandardMaterial>(null!);
   const sunPatchRef = useRef<THREE.MeshBasicMaterial>(null!);
@@ -37,8 +38,8 @@ export default function Room() {
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
 
-    const targetGlass = isNightMode ? 0.02 : 0.08;
-    const targetSunPatch = isNightMode ? 0.0 : 0.16;
+    const targetGlass = isNightMode ? 0.02 : (areBlindsOpen ? 0.08 : 0.03);
+    const targetSunPatch = isNightMode ? 0.0 : (areBlindsOpen ? 0.16 : 0.04);
 
     glassEmissive.current = dampedLerp(glassEmissive.current, targetGlass, 4, dt);
     sunPatchOpacity.current = dampedLerp(sunPatchOpacity.current, targetSunPatch, 4, dt);
@@ -85,6 +86,21 @@ export default function Room() {
           <planeGeometry args={[0.06, 2.4]} />
           <meshBasicMaterial color="#7a6240" transparent opacity={0.12} />
         </mesh>
+
+        {/* Slatted horizontal blinds shadows across floor (when blinds are closed) */}
+        {!areBlindsOpen && (
+          <group position={[0, 0, 0.002]}>
+            {Array.from({ length: 11 }, (_, i) => {
+              const y = -1.0 + (i * 2.0) / 10;
+              return (
+                <mesh key={i} position={[0, y, 0]}>
+                  <planeGeometry args={[3.18, 0.075]} />
+                  <meshBasicMaterial color="#634d32" transparent opacity={0.22} />
+                </mesh>
+              );
+            })}
+          </group>
+        )}
       </group>
 
       {/* ── CEILING ── */}
@@ -166,6 +182,9 @@ export default function Room() {
           <boxGeometry args={[0.06, 2.2, 0.04]} />
           <meshStandardMaterial color="#c0b8aa" roughness={0.5} metalness={0.1} />
         </mesh>
+
+        {/* Architectural Louver Venetian Blinds */}
+        <WindowBlinds />
 
         {/* 4 Ultra-Clear Architectural Glass Panes (Transparent to reveal vibrant outside rain landscape) */}
         {[

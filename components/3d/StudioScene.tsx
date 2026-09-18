@@ -16,6 +16,7 @@ import ProjectWall from "./ProjectWall";
 import ScrollCamera from "./ScrollCamera";
 import Environment from "./Environment";
 import WindowView from "./WindowView";
+import LaserPointer from "./LaserPointer";
 
 interface StudioSceneProps {
   scrollProgress: number;
@@ -115,6 +116,7 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
         <Couch />
         <HeroWall />
         <ProjectWall scrollProgress={scrollProgress} />
+        <LaserPointer />
       </Suspense>
 
       {/* Scroll-driven camera with micro-parallax */}

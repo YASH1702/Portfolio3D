@@ -35,6 +35,10 @@ export default function CommandPalette() {
     toggleLofi,
     weather,
     cycleWeather,
+    isLaserActive,
+    toggleLaser,
+    areBlindsOpen,
+    toggleBlinds,
   } = useStudio();
 
   const scrollToProgress = (progress: number) => {
@@ -163,6 +167,22 @@ export default function CommandPalette() {
         sub: "Switch atmosphere between Rain 🌧️, Sunny ☀️, and Snow ❄️",
         shortcut: "W",
         action: () => cycleWeather(),
+      },
+      {
+        id: "ctrl-blinds",
+        category: "Studio Controls",
+        title: areBlindsOpen ? "Close Architectural Window Blinds" : "Open Architectural Window Blinds",
+        sub: "Tilt venetian louvers for moody studio slatted shadows",
+        shortcut: "O",
+        action: () => toggleBlinds(),
+      },
+      {
+        id: "ctrl-laser",
+        category: "Studio Controls",
+        title: isLaserActive ? "Turn Off Red Laser Pointer" : "Turn On Red Laser Pointer",
+        sub: "Glowing red laser dot across the room that the cat chases",
+        shortcut: "P",
+        action: () => toggleLaser(),
       },
       {
         id: "ext-resume",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useStudio } from "@/context/StudioContext";
 
 /**
  * Cursor — minimal custom cursor for desktop.
@@ -19,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
  * Fully disabled on touch devices and respects prefers-reduced-motion.
  */
 export default function Cursor() {
+  const { isLaserActive } = useStudio();
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
@@ -89,18 +91,21 @@ export default function Cursor() {
       if (ringRef.current) {
         const isProj = !!projectHoverRef.current;
         const isHover = hoveredRef.current || isProj;
-        const size = isProj ? 44 : isHover ? 34 : 22;
+        const size = isLaserActive ? 28 : (isProj ? 44 : isHover ? 34 : 22);
 
         ringRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
         ringRef.current.style.width = `${size}px`;
         ringRef.current.style.height = `${size}px`;
         ringRef.current.style.marginLeft = `${-size / 2}px`;
         ringRef.current.style.marginTop = `${-size / 2}px`;
-        ringRef.current.style.borderColor = isProj ? "#8b7355" : "#1a1a18";
-        ringRef.current.style.backgroundColor = isProj
+        ringRef.current.style.borderColor = isLaserActive ? "#ff0033" : isProj ? "#8b7355" : "#1a1a18";
+        ringRef.current.style.backgroundColor = isLaserActive
+          ? "rgba(255, 0, 51, 0.12)"
+          : isProj
           ? "rgba(196, 168, 130, 0.12)"
           : "transparent";
-        ringRef.current.style.opacity = isProj ? "0.8" : isHover ? "0.55" : "0.3";
+        ringRef.current.style.boxShadow = isLaserActive ? "0 0 12px rgba(255, 0, 51, 0.45)" : "none";
+        ringRef.current.style.opacity = isLaserActive ? "0.9" : isProj ? "0.8" : isHover ? "0.55" : "0.3";
       }
 
       rafRef.current = requestAnimationFrame(animate);
@@ -114,7 +119,7 @@ export default function Cursor() {
       window.removeEventListener("project-hover", handleProjectHover);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [isLaserActive]);
 
   return (
     <>
@@ -126,16 +131,18 @@ export default function Cursor() {
           position: "fixed",
           top: 0,
           left: 0,
-          width: "5px",
-          height: "5px",
-          background: "#1a1a18",
+          width: isLaserActive ? "7px" : "5px",
+          height: isLaserActive ? "7px" : "5px",
+          background: isLaserActive ? "#ff0033" : "#1a1a18",
+          boxShadow: isLaserActive ? "0 0 10px #ff0033" : "none",
           borderRadius: "50%",
           pointerEvents: "none",
           zIndex: 10000,
           transform: "translate3d(-100px, -100px, 0)",
-          marginLeft: "-2.5px",
-          marginTop: "-2.5px",
+          marginLeft: isLaserActive ? "-3.5px" : "-2.5px",
+          marginTop: isLaserActive ? "-3.5px" : "-2.5px",
           willChange: "transform",
+          transition: "background 0.2s ease, width 0.2s ease, height 0.2s ease, box-shadow 0.2s ease",
         }}
       />
 

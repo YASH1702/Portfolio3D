@@ -332,4 +332,86 @@ export function playCoffeeSip() {
   sipOsc.stop(now + 0.17);
 }
 
+/**
+ * Clicky tactile microswitch sound for laser pointer toggle
+ */
+export function playLaserClick() {
+  triggerHaptic("light");
+  const ctx = getAudioContext();
+  if (!ctx) return;
 
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(3200, now);
+  osc.frequency.exponentialRampToValueAtTime(1400, now + 0.025);
+
+  gain.gain.setValueAtTime(0.14, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.035);
+}
+
+/**
+ * Playful kitten chirp / curious chirp when swatting at laser
+ */
+export function playLaserChirp() {
+  triggerHaptic("light");
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = "sine";
+  // Pitch bend upward then downward chirp (like an excited "mrr-ep!")
+  osc.frequency.setValueAtTime(680, now);
+  osc.frequency.exponentialRampToValueAtTime(1240, now + 0.08);
+  osc.frequency.exponentialRampToValueAtTime(920, now + 0.18);
+
+  gain.gain.setValueAtTime(0.001, now);
+  gain.gain.linearRampToValueAtTime(0.12, now + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.24);
+}
+
+/**
+ * Tactile wooden/aluminum venetian blind slat rattle and cord flutter
+ */
+export function playBlindsRattle() {
+  triggerHaptic("medium");
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+
+  // Flutter burst across 5 rapid clicks
+  for (let i = 0; i < 5; i++) {
+    const clickTime = now + i * 0.038 + Math.random() * 0.01;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = i % 2 === 0 ? "triangle" : "sine";
+    osc.frequency.setValueAtTime(900 + Math.random() * 700, clickTime);
+    osc.frequency.exponentialRampToValueAtTime(240, clickTime + 0.03);
+
+    const amp = 0.07 * (1 - i * 0.15);
+    gain.gain.setValueAtTime(amp, clickTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, clickTime + 0.035);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(clickTime);
+    osc.stop(clickTime + 0.04);
+  }
+}
