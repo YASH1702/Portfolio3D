@@ -14,6 +14,7 @@ export default function AudioToggle() {
 
   return (
     <div
+      className="audio-toggle-root"
       style={{
         position: "fixed",
         left: "clamp(12px, 3.5vw, 44px)",
@@ -70,8 +71,8 @@ export default function AudioToggle() {
       </button>
 
       <style>{`
-        @media (max-width: 600px) {
-          .audio-btn-text {
+        @media (max-width: 767px) {
+          .audio-toggle-root {
             display: none !important;
           }
         }

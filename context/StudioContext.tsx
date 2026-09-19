@@ -49,6 +49,10 @@ interface StudioContextType {
   yarnTarget: [number, number, number] | null;
   isYarnMoving: boolean;
   setYarnState: (target: [number, number, number] | null, isMoving: boolean) => void;
+  isGyroActive: boolean;
+  toggleGyro: () => Promise<boolean>;
+  isMobileDockOpen: boolean;
+  toggleMobileDock: (open?: boolean) => void;
 }
 
 const StudioContext = createContext<StudioContextType | null>(null);
@@ -67,6 +71,45 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [laserTarget, setLaserTarget] = useState<[number, number, number] | null>(null);
   const [yarnTarget, setYarnTarget] = useState<[number, number, number] | null>([-0.85, 0.045, 1.25]);
   const [isYarnMoving, setIsYarnMoving] = useState(false);
+  const [isGyroActive, setIsGyroActive] = useState(false);
+  const [isMobileDockOpen, setIsMobileDockOpen] = useState(false);
+
+  const toggleMobileDock = useCallback((open?: boolean) => {
+    setIsMobileDockOpen((prev) => (typeof open === "boolean" ? open : !prev));
+  }, []);
+
+  const toggleGyro = useCallback(async () => {
+    if (isGyroActive) {
+      setIsGyroActive(false);
+      return false;
+    }
+
+    // Check for iOS 13+ permission
+    if (
+      typeof window !== "undefined" &&
+      typeof (DeviceOrientationEvent as any) !== "undefined" &&
+      typeof (DeviceOrientationEvent as any).requestPermission === "function"
+    ) {
+      try {
+        const res = await (DeviceOrientationEvent as any).requestPermission();
+        if (res === "granted") {
+          setIsGyroActive(true);
+          return true;
+        } else {
+          setIsGyroActive(false);
+          return false;
+        }
+      } catch (err) {
+        console.warn("DeviceOrientation permission error:", err);
+        setIsGyroActive(false);
+        return false;
+      }
+    } else {
+      // Android or browsers not requiring permission
+      setIsGyroActive(true);
+      return true;
+    }
+  }, [isGyroActive]);
 
   const setYarnState = useCallback((target: [number, number, number] | null, isMoving: boolean) => {
     setYarnTarget(target);
@@ -303,6 +346,10 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         yarnTarget,
         isYarnMoving,
         setYarnState,
+        isGyroActive,
+        toggleGyro,
+        isMobileDockOpen,
+        toggleMobileDock,
       }}
     >
       {children}

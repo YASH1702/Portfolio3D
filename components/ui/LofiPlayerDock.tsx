@@ -9,6 +9,7 @@ export default function LofiPlayerDock() {
 
   return (
     <div
+      className="lofi-dock-root"
       style={{
         position: "fixed",
         bottom: "clamp(14px, 3vh, 28px)",
@@ -113,6 +114,13 @@ export default function LofiPlayerDock() {
         @keyframes eqAnim {
           0% { height: 3px; }
           100% { height: 12px; }
+        }
+
+        @media (max-width: 767px) {
+          .lofi-dock-root {
+            bottom: 64px !important;
+            padding: 4px 10px !important;
+          }
         }
       `}</style>
     </div>

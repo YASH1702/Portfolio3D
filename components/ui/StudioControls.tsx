@@ -24,6 +24,7 @@ export default function StudioControls() {
 
   return (
     <div
+      className="studio-controls-root"
       style={{
         position: "fixed",
         right: "clamp(12px, 3.5vw, 44px)",
@@ -242,8 +243,8 @@ export default function StudioControls() {
       </button>
 
       <style>{`
-        @media (max-width: 600px) {
-          .ctrl-btn-text {
+        @media (max-width: 767px) {
+          .studio-controls-root {
             display: none !important;
           }
         }

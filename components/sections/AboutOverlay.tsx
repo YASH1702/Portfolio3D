@@ -237,12 +237,12 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
           aria-label="About Yashwant Kariha"
           style={{
             position: "fixed",
-            bottom: "clamp(24px, 8vh, 80px)",
+            bottom: "clamp(62px, 8.5vh, 80px)",
             left: "clamp(16px, 4vw, 64px)",
             zIndex: 50,
             maxWidth: "420px",
             width: "calc(100vw - 32px)",
-            maxHeight: "min(620px, calc(100vh - 100px))",
+            maxHeight: "min(600px, calc(100vh - 130px))",
             pointerEvents: "all",
           }}
         >
@@ -257,8 +257,9 @@ export default function AboutOverlay({ visible }: AboutOverlayProps) {
               border: isNightMode
                 ? "1px solid rgba(224, 184, 116, 0.35)"
                 : "1px solid rgba(180, 150, 110, 0.45)",
+              borderRadius: "14px",
               padding: "clamp(18px, 3.5vw, 24px) clamp(18px, 3.5vw, 28px)",
-              maxHeight: "min(620px, calc(100vh - 100px))",
+              maxHeight: "min(600px, calc(100vh - 130px))",
               overflowY: "auto",
               overscrollBehavior: "contain",
               boxShadow: isNightMode

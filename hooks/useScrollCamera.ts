@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { interpolateCameraKeyframes } from "@/lib/cameraKeyframes";
 import { dampedLerp } from "@/lib/easings";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useStudio } from "@/context/StudioContext";
 
 interface UseScrollCameraProps {
   scrollProgress: number;
@@ -26,6 +27,7 @@ export function useScrollCamera({
 }: UseScrollCameraProps) {
   const { camera, size } = useThree();
   const prefersReduced = useReducedMotion();
+  const { isGyroActive } = useStudio();
 
   // Base keyframe animated camera state
   const currentPos = useRef(new THREE.Vector3(0.0, 1.65, 5.2));
@@ -211,13 +213,15 @@ export function useScrollCamera({
 
     // Gentle micro-parallax offset calculation (mouse + mobile gyroscope)
     if (!prefersReduced) {
-      const combinedX = mouseNorm.current.x + gyroNorm.current.x * 0.8;
-      const combinedY = mouseNorm.current.y + gyroNorm.current.y * 0.8;
+      const gyroWeight = isGyroActive ? 1.8 : 0.6;
+      const combinedX = mouseNorm.current.x + gyroNorm.current.x * gyroWeight;
+      const combinedY = mouseNorm.current.y + gyroNorm.current.y * gyroWeight;
 
-      const targetParallaxPosX = combinedX * 0.045;
-      const targetParallaxPosY = -combinedY * 0.035;
-      const targetParallaxLookX = combinedX * 0.07;
-      const targetParallaxLookY = -combinedY * 0.045;
+      const scaleMult = isGyroActive ? 1.4 : 1.0;
+      const targetParallaxPosX = combinedX * 0.045 * scaleMult;
+      const targetParallaxPosY = -combinedY * 0.035 * scaleMult;
+      const targetParallaxLookX = combinedX * 0.07 * scaleMult;
+      const targetParallaxLookY = -combinedY * 0.045 * scaleMult;
 
       parallaxPos.current.x = dampedLerp(
         parallaxPos.current.x,

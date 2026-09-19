@@ -69,11 +69,15 @@ function PauseOnHidden() {
 
 export default function StudioScene({ scrollProgress }: StudioSceneProps) {
   const { isNightMode } = useStudio();
+  const isMobile =
+    typeof window !== "undefined"
+      ? window.innerWidth < 768 || navigator.maxTouchPoints > 0
+      : false;
 
   return (
     <Canvas
       shadows
-      dpr={[1, 1.5]}
+      dpr={isMobile ? [1, 1.35] : [1, 1.5]}
       camera={{
         position: [0.0, 1.65, 5.2],
         fov: 60,
@@ -94,6 +98,7 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
       style={{
         background: isNightMode ? "#0f121a" : "#d8d0c4",
         transition: "background 0.8s ease",
+        touchAction: "pan-y",
       }}
     >
       <AdaptiveDpr pixelated />

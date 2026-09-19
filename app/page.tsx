@@ -15,6 +15,8 @@ import CommandPalette from "@/components/ui/CommandPalette";
 import TerminalModal from "@/components/ui/TerminalModal";
 import BooksModal from "@/components/ui/BooksModal";
 import LofiPlayerDock from "@/components/ui/LofiPlayerDock";
+import MobileStudioDock from "@/components/ui/MobileStudioDock";
+import MobileSectionNav from "@/components/ui/MobileSectionNav";
 import AboutOverlay from "@/components/sections/AboutOverlay";
 import ContactSection from "@/components/sections/ContactSection";
 
@@ -126,6 +128,12 @@ function PortfolioExperience() {
 
         {/* ── MINI LO-FI BEATS PLAYER DOCK (Active when Lo-Fi is playing) ── */}
         <LofiPlayerDock />
+
+        {/* ── MOBILE TOUCH QUICK-JUMP SECTION NAV (Bottom-Left on Mobile) ── */}
+        <MobileSectionNav scrollProgress={progress} />
+
+        {/* ── MOBILE CONSOLIDATED STUDIO DOCK (Bottom-Right on Mobile) ── */}
+        <MobileStudioDock />
 
         {/* ── SECTION OVERLAYS ── */}
         <AboutOverlay   visible={showAbout} />
