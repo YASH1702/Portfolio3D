@@ -44,29 +44,6 @@ function AtmosphereManager() {
   return null;
 }
 
-/**
- * PauseOnHidden — pauses the WebGL render loop when the browser tab is hidden,
- * and resumes it cleanly when the tab becomes visible again.
- * Uses R3F's invalidate() to re-kickstart the continuous loop on resume.
- */
-function PauseOnHidden() {
-  const { gl, invalidate } = useThree();
-  useEffect(() => {
-    const handleVisibility = () => {
-      if (document.hidden) {
-        // Pause: clear the animation loop to save GPU/battery
-        gl.setAnimationLoop(null);
-      } else {
-        // Resume: R3F will restart its own loop on next invalidate
-        invalidate();
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
-    return () => document.removeEventListener("visibilitychange", handleVisibility);
-  }, [gl, invalidate]);
-  return null;
-}
-
 export default function StudioScene({ scrollProgress }: StudioSceneProps) {
   const { isNightMode } = useStudio();
   const isMobile =
@@ -103,7 +80,6 @@ export default function StudioScene({ scrollProgress }: StudioSceneProps) {
     >
       <AdaptiveDpr pixelated />
       <AdaptiveEvents />
-      <PauseOnHidden />
       <AtmosphereManager />
 
       {/* Atmospheric depth fog */}

@@ -331,12 +331,12 @@ export default function YarnBall({
                 />
               </mesh>
               <Text
-                font="/fonts/GeistMono-Bold.ttf"
                 fontSize={0.032}
                 color={isNightMode ? "#dfba74" : "#633c14"}
                 anchorX="center"
                 anchorY="middle"
                 position={[0, 0.002, 0.005]}
+                fontWeight={700}
               >
                 🧶 Bat Yarn
               </Text>

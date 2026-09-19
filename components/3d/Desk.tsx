@@ -439,7 +439,7 @@ export default function Desk() {
                 color={isLaserActive ? "#ff4757" : isNightMode ? "#93c5fd" : "#1e293b"}
                 anchorX="center"
                 anchorY="middle"
-                font="/fonts/GeistMono-Bold.ttf"
+                fontWeight={700}
               >
                 {isLaserActive ? "🔴 Put Down Laser" : "🔴 Pick Up Laser Pointer"}
               </Text>
