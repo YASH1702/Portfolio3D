@@ -37,6 +37,7 @@ export default function CommandPalette() {
     cycleWeather,
     isLaserActive,
     toggleLaser,
+    toggleRecruiterModal,
   } = useStudio();
 
   const scrollToProgress = (progress: number) => {
@@ -177,6 +178,14 @@ export default function CommandPalette() {
         action: () => toggleLaser(),
       },
       {
+        id: "recruiter-dossier",
+        category: "Connect",
+        title: "⚡ Recruiter Fast-Track Dossier",
+        sub: "1-minute executive summary, verified metrics & instant contact",
+        shortcut: "R",
+        action: () => toggleRecruiterModal(true),
+      },
+      {
         id: "ext-resume",
         category: "Connect",
         title: "View Printable Resume / CV",
@@ -218,6 +227,11 @@ export default function CommandPalette() {
       toggleBooksModal,
       isLofiPlaying,
       toggleLofi,
+      weather,
+      cycleWeather,
+      isLaserActive,
+      toggleLaser,
+      toggleRecruiterModal,
       router,
     ]
   );

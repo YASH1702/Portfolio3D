@@ -14,6 +14,7 @@ import ScrollPrompt from "@/components/ui/ScrollPrompt";
 import CommandPalette from "@/components/ui/CommandPalette";
 import TerminalModal from "@/components/ui/TerminalModal";
 import BooksModal from "@/components/ui/BooksModal";
+import RecruiterModal from "@/components/ui/RecruiterModal";
 import LofiPlayerDock from "@/components/ui/LofiPlayerDock";
 import MobileStudioDock from "@/components/ui/MobileStudioDock";
 import MobileSectionNav from "@/components/ui/MobileSectionNav";
@@ -57,6 +58,9 @@ function PortfolioExperience() {
 
       {/* ── INTERACTIVE BOOKSHELF READING LIST (B) ── */}
       <BooksModal />
+
+      {/* ── RECRUITER FAST-TRACK DOSSIER (R) ── */}
+      <RecruiterModal />
 
       {/* ── ZEN FOCUS MODE EXIT BANNER ── */}
       {isFocusMode && (

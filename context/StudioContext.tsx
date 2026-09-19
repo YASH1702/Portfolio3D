@@ -53,6 +53,8 @@ interface StudioContextType {
   toggleGyro: () => Promise<boolean>;
   isMobileDockOpen: boolean;
   toggleMobileDock: (open?: boolean) => void;
+  isRecruiterModalOpen: boolean;
+  toggleRecruiterModal: (open?: boolean) => void;
 }
 
 const StudioContext = createContext<StudioContextType | null>(null);
@@ -73,6 +75,12 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [isYarnMoving, setIsYarnMoving] = useState(false);
   const [isGyroActive, setIsGyroActive] = useState(false);
   const [isMobileDockOpen, setIsMobileDockOpen] = useState(false);
+  const [isRecruiterModalOpen, setIsRecruiterModalOpen] = useState(false);
+
+  const toggleRecruiterModal = useCallback((open?: boolean) => {
+    playNavBlip();
+    setIsRecruiterModalOpen((prev) => (typeof open === "boolean" ? open : !prev));
+  }, []);
 
   const toggleMobileDock = useCallback((open?: boolean) => {
     setIsMobileDockOpen((prev) => (typeof open === "boolean" ? open : !prev));
@@ -286,6 +294,9 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
       } else if (e.key.toLowerCase() === "p") {
         e.preventDefault();
         toggleLaser();
+      } else if (e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        toggleRecruiterModal();
       } else if (e.key === "Escape") {
         if (isTerminalOpen) {
           e.preventDefault();
@@ -293,6 +304,9 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         } else if (isBooksModalOpen) {
           e.preventDefault();
           setIsBooksModalOpen(false);
+        } else if (isRecruiterModalOpen) {
+          e.preventDefault();
+          setIsRecruiterModalOpen(false);
         } else if (isFocusMode) {
           e.preventDefault();
           setIsFocusMode(false);
@@ -312,9 +326,11 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     toggleLofi,
     cycleWeather,
     toggleLaser,
+    toggleRecruiterModal,
     isFocusMode,
     isTerminalOpen,
     isBooksModalOpen,
+    isRecruiterModalOpen,
   ]);
 
   return (
@@ -350,6 +366,8 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         toggleGyro,
         isMobileDockOpen,
         toggleMobileDock,
+        isRecruiterModalOpen,
+        toggleRecruiterModal,
       }}
     >
       {children}

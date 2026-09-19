@@ -40,6 +40,7 @@ export default function MobileStudioDock() {
     toggleGyro,
     toggleTerminal,
     toggleBooksModal,
+    toggleRecruiterModal,
   } = useStudio();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -342,29 +343,61 @@ export default function MobileStudioDock() {
                 <button
                   onClick={() => {
                     handleClose();
-                    toggleTerminal(true);
+                    toggleRecruiterModal(true);
                   }}
-                  className="quick-tool-btn"
+                  className="quick-tool-btn recruiter-mobile-btn"
                   style={{
-                    color: isNightMode ? "#dfba74" : "#84551e",
-                    borderColor: isNightMode ? "rgba(224, 184, 116, 0.3)" : "rgba(180, 150, 110, 0.4)",
+                    color: isNightMode ? "#34d399" : "#065f46",
+                    borderColor: isNightMode ? "rgba(52, 211, 153, 0.45)" : "rgba(16, 185, 129, 0.45)",
+                    background: isNightMode ? "rgba(52, 211, 153, 0.12)" : "rgba(16, 185, 129, 0.08)",
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                    fontWeight: 800,
                   }}
                 >
-                  <span>⚡ Developer CLI (~ )</span>
+                  <span>⚡</span>
+                  <span>Recruiter Fast-Track Dossier (1-min)</span>
+                  <span
+                    style={{
+                      width: "6px",
+                      height: "6px",
+                      borderRadius: "50%",
+                      background: "#10b981",
+                      boxShadow: "0 0 6px rgba(16, 185, 129, 0.9)",
+                    }}
+                  />
                 </button>
-                <button
-                  onClick={() => {
-                    handleClose();
-                    toggleBooksModal(true);
-                  }}
-                  className="quick-tool-btn"
-                  style={{
-                    color: isNightMode ? "#dfba74" : "#84551e",
-                    borderColor: isNightMode ? "rgba(224, 184, 116, 0.3)" : "rgba(180, 150, 110, 0.4)",
-                  }}
-                >
-                  <span>📚 Bookshelf Reading</span>
-                </button>
+                <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+                  <button
+                    onClick={() => {
+                      handleClose();
+                      toggleTerminal(true);
+                    }}
+                    className="quick-tool-btn"
+                    style={{
+                      color: isNightMode ? "#dfba74" : "#84551e",
+                      borderColor: isNightMode ? "rgba(224, 184, 116, 0.3)" : "rgba(180, 150, 110, 0.4)",
+                    }}
+                  >
+                    <span>⚡ CLI (~ )</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleClose();
+                      toggleBooksModal(true);
+                    }}
+                    className="quick-tool-btn"
+                    style={{
+                      color: isNightMode ? "#dfba74" : "#84551e",
+                      borderColor: isNightMode ? "rgba(224, 184, 116, 0.3)" : "rgba(180, 150, 110, 0.4)",
+                    }}
+                  >
+                    <span>📚 Bookshelf</span>
+                  </button>
+                </div>
               </div>
             </motion.aside>
           </>
@@ -525,7 +558,8 @@ export default function MobileStudioDock() {
 
         .mobile-dock-footer {
           display: flex;
-          gap: 10px;
+          flex-direction: column;
+          gap: 8px;
           padding-top: 12px;
           border-top: 1px solid rgba(150, 150, 150, 0.2);
         }

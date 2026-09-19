@@ -24,7 +24,7 @@ function scrollToProgress(progress: number) {
 }
 
 export default function Navigation({ scrollProgress, currentSection }: NavigationProps) {
-  const { isNightMode } = useStudio();
+  const { isNightMode, toggleRecruiterModal } = useStudio();
   // Fade navigation in after initial load
   const isAtTop = scrollProgress < 0.03;
 
@@ -255,6 +255,62 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
           </svg>
           <span className="cmd-k-label" style={{ fontSize: "10px", letterSpacing: "0.08em", opacity: 0.9 }}>⌘K</span>
         </button>
+
+        {/* ── RECRUITER FAST-TRACK BUTTON ── */}
+        <button
+          onClick={() => toggleRecruiterModal(true)}
+          aria-label="Open Recruiter Quick Dossier (R)"
+          title="Recruiter Fast-Track (Press 'R' or Click)"
+          style={{
+            fontFamily: "var(--font-geist-mono, monospace)",
+            fontSize: "11px",
+            fontWeight: 700,
+            color: isNightMode ? "#6ee7b7" : "#065f46",
+            background: isNightMode
+              ? "rgba(10, 24, 20, 0.55)"
+              : "rgba(236, 253, 245, 0.65)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: isNightMode
+              ? "1px solid rgba(52, 211, 153, 0.45)"
+              : "1px solid rgba(16, 185, 129, 0.4)",
+            borderRadius: "24px",
+            padding: "7px 11px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            boxShadow: isNightMode
+              ? "0 8px 24px -4px rgba(0, 0, 0, 0.45)"
+              : "0 4px 16px -2px rgba(16, 185, 129, 0.12)",
+            transition: "all 0.2s ease",
+            flexShrink: 0,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-1px)";
+            e.currentTarget.style.borderColor = isNightMode ? "#34d399" : "#059669";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.borderColor = isNightMode
+              ? "rgba(52, 211, 153, 0.45)"
+              : "rgba(16, 185, 129, 0.4)";
+          }}
+        >
+          <span style={{ fontSize: "12px", lineHeight: 1 }}>⚡</span>
+          <span className="recruiter-nav-text" style={{ fontSize: "10.5px", letterSpacing: "0.06em", fontWeight: 700 }}>
+            Recruiter
+          </span>
+          <span
+            style={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              background: "#10b981",
+              boxShadow: "0 0 6px rgba(16, 185, 129, 0.9)",
+            }}
+          />
+        </button>
       </div>
 
       <style>{`
@@ -263,6 +319,9 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
             display: none !important;
           }
           .cmd-k-label {
+            display: none !important;
+          }
+          .recruiter-nav-text {
             display: none !important;
           }
         }
