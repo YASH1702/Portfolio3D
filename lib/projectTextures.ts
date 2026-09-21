@@ -334,116 +334,162 @@ function drawBusinessFlowUI(ctx: CanvasRenderingContext2D, w: number, h: number)
 function drawAIAutomationUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
   // Background
   const bgGrad = ctx.createLinearGradient(0, 0, w, h);
-  bgGrad.addColorStop(0, "#12081c");
-  bgGrad.addColorStop(1, "#1c0c2e");
+  bgGrad.addColorStop(0, "#090d16");
+  bgGrad.addColorStop(1, "#0f172a");
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, w, h);
 
   // Top header
-  ctx.fillStyle = "#25123d";
+  ctx.fillStyle = "#162032";
   ctx.fillRect(0, 0, w, 56);
 
   drawWindowDots(ctx, 24, 28);
 
-  ctx.fillStyle = "#d8b4fe";
+  ctx.fillStyle = "#38bdf8";
   ctx.font = "600 16px monospace";
-  ctx.fillText("workflow.ai/builder — Visual Multi-Model Pipeline Engine", 100, 34);
+  ctx.fillText("app.socialpilot.io/studio — Multi-Platform AI Copywriting Studio", 100, 34);
 
-  drawBadge(ctx, w - 210, 16, "● PIPELINE RUNNING", "#c084fc", "#3b0764");
+  drawBadge(ctx, w - 210, 16, "● GPT-4o STREAMING", "#00d2b4", "#042f2e");
 
-  // Main canvas area for visual workflow nodes
-  const mx = 60;
-  const my = 80;
+  // Main layout
+  const mx = 40;
+  const my = 76;
 
-  ctx.fillStyle = "#faf5ff";
-  ctx.font = "700 24px sans-serif";
-  ctx.fillText("Autonomous Enterprise Workflow Graph", mx, my + 10);
+  // Title
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "700 22px sans-serif";
+  ctx.fillText("AI Multi-Platform Copywriting Studio & Schedule", mx, my + 14);
 
-  ctx.fillStyle = "#c084fc";
-  ctx.font = "14px monospace";
-  ctx.fillText("Node.js Runtime • Redis Job Queue • Multi-Model (OpenAI / Anthropic) • 420ms Latency", mx, my + 34);
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "13px monospace";
+  ctx.fillText("Omni-Channel Engine • 4 Platforms • 15 SaaS Phases Shipped • Recharts Suite", mx, my + 36);
 
-  // Node graph editor preview
-  const gy = my + 60;
-  ctx.fillStyle = "#180928";
-  ctx.strokeStyle = "#3b1754";
-  roundRect(ctx, mx, gy, w - 120, h - gy - 40, 10);
-  ctx.fill();
-  ctx.stroke();
-
-  // Grid background in graph
-  ctx.strokeStyle = "rgba(192, 132, 252, 0.07)";
-  ctx.lineWidth = 1;
-  for (let x = mx; x < w - 60; x += 30) {
-    ctx.beginPath();
-    ctx.moveTo(x, gy);
-    ctx.lineTo(x, h - 40);
-    ctx.stroke();
-  }
-  for (let y = gy; y < h - 40; y += 30) {
-    ctx.beginPath();
-    ctx.moveTo(mx, y);
-    ctx.lineTo(w - 60, y);
-    ctx.stroke();
-  }
-
-  // 4 Connected Pipeline Nodes
-  const nodes = [
-    { x: mx + 40, y: gy + 110, title: "01 · WEBHOOK TRIGGER", desc: "POST /api/v1/inbound-lead\nPayload: JSON Validated", tag: "HTTP IN", color: "#38bdf8" },
-    { x: mx + 270, y: gy + 60, title: "02 · AI PARSER (GPT-4o)", desc: "Entity Extraction\nSentiment & Intent Scoring", tag: "OPENAI", color: "#a855f7" },
-    { x: mx + 270, y: gy + 220, title: "02b · RESEARCH FALLBACK", desc: "Anthropic Claude 3.5\nTechnical Spec Analysis", tag: "CLAUDE", color: "#f59e0b" },
-    { x: mx + 540, y: gy + 130, title: "03 · DB PERSISTENCE", desc: "PostgreSQL Prisma Upsert\nRedis Cache Invalidation", tag: "POSTGRES", color: "#4ade80" },
-    { x: mx + 730, y: gy + 130, title: "04 · NOTIFICATION", desc: "Slack Alert + Email\nLatency: 380ms", tag: "DISPATCH", color: "#ec4899" },
+  // 4 Top Metric Cards
+  const kpis = [
+    { label: "MONTHLY IMPRESSIONS", val: "128,450", change: "+24.8% vs last month", col: "#00d2b4" },
+    { label: "ENGAGEMENT RATE", val: "8.42%", change: "+3.1% vs benchmark", col: "#a3e635" },
+    { label: "DISPATCHED POSTS", val: "184", change: "100% On-Time (Vercel Cron)", col: "#38bdf8" },
+    { label: "CONTENT HEALTH", val: "88 / 100", change: "Tier 1 Viral Readiness", col: "#c084fc" },
   ];
 
-  // Draw connecting curved bezier wires between nodes
-  ctx.strokeStyle = "#c084fc";
-  ctx.lineWidth = 2.5;
-
-  // Node 1 to 2
-  drawBezierWire(ctx, nodes[0].x + 180, nodes[0].y + 40, nodes[1].x, nodes[1].y + 40);
-  // Node 1 to 2b
-  drawBezierWire(ctx, nodes[0].x + 180, nodes[0].y + 40, nodes[2].x, nodes[2].y + 40);
-  // Node 2 to 3
-  drawBezierWire(ctx, nodes[1].x + 180, nodes[1].y + 40, nodes[3].x, nodes[3].y + 40);
-  // Node 2b to 3
-  drawBezierWire(ctx, nodes[2].x + 180, nodes[2].y + 40, nodes[3].x, nodes[3].y + 40);
-  // Node 3 to 4
-  drawBezierWire(ctx, nodes[3].x + 150, nodes[3].y + 40, nodes[4].x, nodes[4].y + 40);
-
-  // Draw nodes
-  nodes.forEach((node) => {
-    const nw = node.x > mx + 500 ? 150 : 180;
-    ctx.fillStyle = "#220e38";
-    ctx.strokeStyle = node.color;
-    ctx.lineWidth = 1.5;
-    roundRect(ctx, node.x, node.y, nw, 86, 8);
+  const cardW = (w - mx * 2 - 36) / 4;
+  kpis.forEach((kpi, i) => {
+    const cx = mx + i * (cardW + 12);
+    const cy = my + 54;
+    ctx.fillStyle = "#101626";
+    ctx.strokeStyle = "#1e2b42";
+    roundRect(ctx, cx, cy, cardW, 84, 8);
     ctx.fill();
     ctx.stroke();
 
-    // Node header tag
-    ctx.fillStyle = node.color;
+    ctx.fillStyle = "#64748b";
     ctx.font = "700 10px monospace";
-    ctx.fillText(node.tag, node.x + 12, node.y + 20);
+    ctx.fillText(kpi.label, cx + 14, cy + 22);
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "600 12px sans-serif";
-    ctx.fillText(node.title, node.x + 12, node.y + 38);
+    ctx.fillStyle = kpi.col;
+    ctx.font = "800 22px sans-serif";
+    ctx.fillText(kpi.val, cx + 14, cy + 50);
 
-    ctx.fillStyle = "#d8b4fe";
+    ctx.fillStyle = "#94a3b8";
     ctx.font = "11px sans-serif";
-    const lines = node.desc.split("\n");
-    lines.forEach((l, li) => {
-      ctx.fillText(l, node.x + 12, node.y + 56 + li * 16);
-    });
+    ctx.fillText(kpi.change, cx + 14, cy + 70);
   });
 
-  // Footer status bar
-  ctx.fillStyle = "rgba(24, 9, 40, 0.95)";
-  ctx.fillRect(mx, h - 75, w - 120, 35);
-  ctx.fillStyle = "#a855f7";
+  // Split view: Left editor panel, Right preview cards
+  const py = my + 154;
+  const leftW = 420;
+  const rightW = w - mx * 2 - leftW - 20;
+
+  // Left Editor Panel
+  ctx.fillStyle = "#0c111e";
+  ctx.strokeStyle = "#1e2a40";
+  roundRect(ctx, mx, py, leftW, h - py - 30, 8);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "#00d2b4";
+  ctx.font = "700 11px monospace";
+  ctx.fillText("CORE PRODUCT PROMPT", mx + 16, py + 26);
+
+  ctx.fillStyle = "#131b2e";
+  ctx.strokeStyle = "#23334d";
+  roundRect(ctx, mx + 16, py + 36, leftW - 32, 90, 6);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "#cbd5e1";
+  ctx.font = "12px sans-serif";
+  ctx.fillText("We just benchmarked our new distributed vector", mx + 26, py + 60);
+  ctx.fillText("indexing engine with 10x throughput & 0 cold starts.", mx + 26, py + 80);
+  ctx.fillText("Built in Rust with Wasm pre-filtering.", mx + 26, py + 100);
+
+  // Platform badges
+  ctx.fillStyle = "#64748b";
+  ctx.font = "700 10px monospace";
+  ctx.fillText("TARGET PLATFORMS (CALIBRATED)", mx + 16, py + 150);
+
+  const platforms = [
+    { name: "✓ LinkedIn", col: "#0a66c2" },
+    { name: "✓ Twitter/X", col: "#0284c7" },
+    { name: "✓ Instagram", col: "#e1306c" },
+    { name: "✓ TikTok", col: "#ff0050" }
+  ];
+  platforms.forEach((p, idx) => {
+    const bx = mx + 16 + (idx % 2) * 195;
+    const by = py + 164 + Math.floor(idx / 2) * 36;
+    ctx.fillStyle = "#121828";
+    ctx.strokeStyle = p.col;
+    roundRect(ctx, bx, by, 185, 28, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = p.col;
+    ctx.font = "600 12px sans-serif";
+    ctx.fillText(p.name, bx + 12, by + 18);
+  });
+
+  // Right Preview Panel
+  ctx.fillStyle = "#0e1424";
+  ctx.strokeStyle = "#1e2a40";
+  roundRect(ctx, mx + leftW + 20, py, rightW, h - py - 30, 8);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "#38bdf8";
+  ctx.font = "700 11px monospace";
+  ctx.fillText("GENERATED OMNI PREVIEWS (AUTO-CONSTRAINED)", mx + leftW + 36, py + 26);
+
+  // Post Card Preview
+  const rx = mx + leftW + 36;
+  const ry = py + 40;
+  ctx.fillStyle = "#12192a";
+  ctx.strokeStyle = "#23334d";
+  roundRect(ctx, rx, ry, rightW - 32, 190, 6);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "700 13px sans-serif";
+  ctx.fillText("Alex Rivera (Principal Architect) • LinkedIn Variant", rx + 14, ry + 26);
+
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "12px sans-serif";
+  ctx.fillText("Sub-millisecond vector search isn't just about faster HNSW graphs—it's about zero memory", rx + 14, ry + 52);
+  ctx.fillText("fragmentation under concurrent production bursts. ⚡", rx + 14, ry + 72);
+  ctx.fillText("1. Memory-Mapped Files: Slashed P99 latency from 14.2ms to 0.8ms.", rx + 14, ry + 100);
+  ctx.fillText("2. Zero Cold Starts: Container restarts instantly without re-indexing.", rx + 14, ry + 120);
+  ctx.fillText("3. Wasm Query Pre-filtering: 80% fewer similarity distances calculated.", rx + 14, ry + 140);
+
+  ctx.fillStyle = "#38bdf8";
+  ctx.font = "11px monospace";
+  ctx.fillText("#VectorDB #DistributedSystems #RustLang #DatabaseArchitecture", rx + 14, ry + 172);
+
+  // Bottom action bar
+  ctx.fillStyle = "rgba(12, 17, 30, 0.95)";
+  ctx.fillRect(mx, h - 68, w - mx * 2, 34);
+  ctx.fillStyle = "#00d2b4";
   ctx.font = "12px monospace";
-  ctx.fillText("Redis Queue Active • 1,240 runs today • 0 failures • 99.99% uptime", mx + 20, h - 52);
+  ctx.fillText("Vercel Cron Publisher Active • Bearer Security • HTML5 Drag & Drop Scheduler Ready", mx + 16, h - 46);
 }
 
 function drawDefaultUI(ctx: CanvasRenderingContext2D, w: number, h: number, project: Project) {

@@ -211,6 +211,7 @@ export default function ProjectScreenshotGallery({ screenshots, projectTitle }: 
             fill
             priority
             sizes="(max-width: 800px) 100vw, 800px"
+            unoptimized={activeScreenshot.isAnimated}
             style={{ objectFit: "contain" }}
           />
         </div>
@@ -290,6 +291,7 @@ export default function ProjectScreenshotGallery({ screenshots, projectTitle }: 
                 alt={item.caption}
                 fill
                 sizes="140px"
+                unoptimized={item.isAnimated}
                 style={{ objectFit: "cover" }}
               />
               <span
@@ -396,6 +398,7 @@ export default function ProjectScreenshotGallery({ screenshots, projectTitle }: 
                 alt={activeScreenshot.caption}
                 fill
                 sizes="100vw"
+                unoptimized={activeScreenshot.isAnimated}
                 style={{ objectFit: "contain" }}
               />
             </div>
