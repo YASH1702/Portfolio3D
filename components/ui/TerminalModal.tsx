@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useStudio } from "@/context/StudioContext";
 import { playTerminalKey, playCatPurr, triggerHaptic } from "@/lib/soundEffects";
 
@@ -346,41 +347,51 @@ Based in India, building high-performance web applications, autonomous AI agent 
     }
   };
 
-  if (!isTerminalOpen) return null;
-
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9999,
-        background: "rgba(0, 0, 0, 0.75)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "16px",
-      }}
-      onClick={() => toggleTerminal(false)}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "760px",
-          height: "480px",
-          maxHeight: "85vh",
-          background: isNightMode ? "rgba(10, 14, 23, 0.96)" : "rgba(15, 23, 42, 0.96)",
-          borderRadius: "14px",
-          border: "1px solid rgba(56, 189, 248, 0.3)",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 24px rgba(56, 189, 248, 0.15)",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          fontFamily: "var(--font-geist-mono, monospace)",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {isTerminalOpen && (
+        <motion.div
+          key="terminal-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "rgba(0, 0, 0, 0.75)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "16px",
+          }}
+          onClick={() => toggleTerminal(false)}
+        >
+          <motion.div
+            key="terminal-card"
+            initial={{ opacity: 0, scale: 0.94, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+            transition={{ type: "spring", stiffness: 380, damping: 28 }}
+            style={{
+              width: "100%",
+              maxWidth: "760px",
+              height: "480px",
+              maxHeight: "85vh",
+              background: isNightMode ? "rgba(10, 14, 23, 0.96)" : "rgba(15, 23, 42, 0.96)",
+              borderRadius: "14px",
+              border: "1px solid rgba(56, 189, 248, 0.3)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 24px rgba(56, 189, 248, 0.15)",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+              fontFamily: "var(--font-geist-mono, monospace)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
         {/* Title Bar */}
         <div
           style={{
@@ -515,7 +526,9 @@ Based in India, building high-performance web applications, autonomous AI agent 
           </div>
           <div ref={bottomRef} />
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

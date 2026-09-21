@@ -9,6 +9,7 @@ import { playCatPurr, playLaserChirp } from "@/lib/soundEffects";
 import { dampedLerp } from "@/lib/easings";
 import { getCatFurTexture } from "@/lib/catTexture";
 import { yarnWorldPosition, yarnIsRolling } from "./YarnBall";
+import { laserWorldPosition } from "./LaserPointer";
 
 /**
  * Shortest-arc angle interpolation with exponential damping.
@@ -50,7 +51,7 @@ export default function SleepingCat({
   position?: [number, number, number];
   rotation?: [number, number, number];
 }) {
-  const { isNightMode, isLaserActive, laserTarget } = useStudio();
+  const { isNightMode, isLaserActive } = useStudio();
 
   // Procedural fur texture
   const [furMap, setFurMap] = useState<THREE.CanvasTexture | null>(null);
@@ -161,38 +162,38 @@ export default function SleepingCat({
 
     const isYarnActive = !isLaserActive && (yarnIsRolling.current || (Date.now() - yarnIsRolling.lastBatTime < 4500));
 
-    if (isLaserActive && laserTarget) {
+    if (isLaserActive) {
       // Calculate world distance from cat to laser
       const curWorldX = COUCH_WORLD_X + currentPos.current.x * Math.cos(COUCH_ROT_Y) - currentPos.current.z * Math.sin(COUCH_ROT_Y);
       const curWorldZ = COUCH_WORLD_Z + currentPos.current.x * Math.sin(COUCH_ROT_Y) + currentPos.current.z * Math.cos(COUCH_ROT_Y);
-      const dwx = laserTarget[0] - curWorldX;
-      const dwy = laserTarget[1] - 0.54;
-      const dwz = laserTarget[2] - curWorldZ;
+      const dwx = laserWorldPosition.x - curWorldX;
+      const dwy = laserWorldPosition.y - 0.54;
+      const dwz = laserWorldPosition.z - curWorldZ;
       distToLaserWorld = Math.sqrt(dwx * dwx + dwy * dwy + dwz * dwz);
 
       // Coordinate transformation into Couch local space
-      const dxWorld = laserTarget[0] - COUCH_WORLD_X;
-      const dzWorld = laserTarget[2] - COUCH_WORLD_Z;
+      const dxWorld = laserWorldPosition.x - COUCH_WORLD_X;
+      const dzWorld = laserWorldPosition.z - COUCH_WORLD_Z;
       const cosR = Math.cos(-COUCH_ROT_Y);
       const sinR = Math.sin(-COUCH_ROT_Y);
       const couchLaserX = dxWorld * cosR - dzWorld * sinR;
       const couchLaserZ = dxWorld * sinR + dzWorld * cosR;
 
       // Detect edge scenarios relative to sofa geometry
-      isBehindSofa = couchLaserZ < -0.16 || laserTarget[2] < 1.10;
+      isBehindSofa = couchLaserZ < -0.16 || laserWorldPosition.z < 1.10;
       isFrontOfSofa = couchLaserZ > 0.38;
 
       if (isBehindSofa) {
-        // Stalk right up to the back cushion seam and face backwards
+        // Stalk right up to the back cushion seam and face backwards (-Z)
         targetX = Math.max(-0.62, Math.min(0.35, couchLaserX * 0.32 - 0.08));
         targetZ = -0.15; // Flush against sofa back cushion
-        targetYaw = Math.PI; // Face backwards toward the backrest
+        targetYaw = Math.PI / 2; // Face backwards (-Z) for +X forward model
         leanState.current = "back_lean";
       } else if (isFrontOfSofa) {
-        // Walk right to the front cushion edge and face forward
+        // Walk right to the front cushion edge and face forward (+Z)
         targetX = Math.max(-0.62, Math.min(0.35, couchLaserX * 0.32 - 0.08));
         targetZ = 0.22; // Front cushion edge
-        targetYaw = 0; // Face forward
+        targetYaw = -Math.PI / 2; // Face forward (+Z) for +X forward model
         leanState.current = "front_lean";
       } else {
         // Roaming across sofa cushions
@@ -205,10 +206,10 @@ export default function SleepingCat({
 
         // Deadband filter: don't flip yaw when tiny cursor twitch occurs
         if (moveDist > 0.045) {
-          targetYaw = Math.atan2(moveDx, moveDz);
+          targetYaw = Math.atan2(-moveDz, moveDx);
         } else {
           // Face the laser dot smoothly when stationary
-          targetYaw = Math.atan2(couchLaserX - currentPos.current.x, couchLaserZ - currentPos.current.z);
+          targetYaw = Math.atan2(-(couchLaserZ - currentPos.current.z), couchLaserX - currentPos.current.x);
         }
         leanState.current = distToLaserWorld < 0.85 ? "swat" : "normal";
       }
@@ -222,8 +223,8 @@ export default function SleepingCat({
       const couchYarnZ = dxWorld * sinR + dzWorld * cosR;
 
       // Cat stays perched on the couch cushion, but turns its gaze toward the yarn ball!
-      const targetYawToYarn = Math.atan2(couchYarnX - currentPos.current.x, couchYarnZ - currentPos.current.z);
-      targetYaw = Math.max(-0.35, Math.min(1.15, targetYawToYarn));
+      const targetYawToYarn = Math.atan2(-(couchYarnZ - currentPos.current.z), couchYarnX - currentPos.current.x);
+      targetYaw = Math.max(-Math.PI * 0.85, Math.min(Math.PI * 0.85, targetYawToYarn));
       leanState.current = "front_lean";
     } else {
       leanState.current = "normal";
@@ -274,34 +275,35 @@ export default function SleepingCat({
     const walk = walkWeight.current;
 
     if (bodyRef.current) {
-      // IDEAL SITTING POSE: Elevated chest, proud spine slope (~-0.28 rad)
+      // IDEAL SITTING POSE: Elevated chest, proud spine pitch
       // ACTIVE PROWLING POSE: Low predatory stance (y = 0.11, pitch = 0)
       let baseBodyY = (1 - sit) * 0.11 + sit * 0.155;
-      let pitchX = sit * -0.28;
+      let pitchZ = sit * 0.22; // In XY plane: +Z rotation raises +X (head)
 
       if (lean > 0.05) {
         // LEANING OVER BACK OF SOFA:
         // Cat rears up, front paws rest on sofa back cushion
         baseBodyY = 0.13 + lean * 0.08;
-        pitchX = -lean * 0.40;
+        pitchZ = lean * 0.35;
       } else if (lean < -0.05) {
         // LEANING OVER FRONT EDGE:
         // Chest dips down to inspect floor
         baseBodyY = 0.11 + Math.abs(lean) * 0.01;
-        pitchX = Math.abs(lean) * 0.26;
+        pitchZ = -Math.abs(lean) * 0.26;
       } else if (leanState.current === "swat" && walk < 0.2) {
         // Crouch low for pounce + feline pre-pounce hip wiggle
         baseBodyY = 0.095;
-        bodyRef.current.rotation.z = Math.sin(t * 22) * 0.035;
+        pitchZ = -0.08;
+        bodyRef.current.rotation.x = Math.sin(t * 22) * 0.035; // lateral hip roll
       } else {
-        // Subtle natural body roll during walk
-        bodyRef.current.rotation.z = Math.sin(walkPhase.current) * 0.032 * walk;
+        // Subtle natural body roll during walk (along spine axis)
+        bodyRef.current.rotation.x = Math.sin(walkPhase.current) * 0.025 * walk;
       }
 
       // Vertical stride bobbing
       const walkBob = walk * Math.abs(Math.sin(walkPhase.current * 2)) * 0.01;
       bodyRef.current.position.y = baseBodyY + walkBob;
-      bodyRef.current.rotation.x = pitchX;
+      bodyRef.current.rotation.z = pitchZ;
       bodyRef.current.scale.y = 1 + breath;
       bodyRef.current.scale.x = 1 - breath * 0.2;
 
@@ -314,60 +316,82 @@ export default function SleepingCat({
     // ── 4. LIMB KINEMATICS & SITTING / WALKING HARMONY ──
     const phase = walkPhase.current;
 
-    if (sit > 0.2) {
+    if (sit > 0.3) {
       // ── IDEAL SITTING LIMB ALIGNMENT ──
       // Front legs straight down, planted side-by-side on the sofa cushion
       // Rear haunches folded flat on cushion
       if (legFLRef.current) {
         legFLRef.current.position.set(0.08, -0.055, 0.04);
-        legFLRef.current.rotation.x = dampedLerp(legFLRef.current.rotation.x, 0.28, 8, dt);
+        legFLRef.current.rotation.z = dampedLerp(legFLRef.current.rotation.z, 0, 8, dt);
+        legFLRef.current.rotation.x = 0;
       }
       if (legFRRef.current) {
         legFRRef.current.position.set(0.08, -0.055, 0.10);
-        legFRRef.current.rotation.x = dampedLerp(legFRRef.current.rotation.x, 0.28, 8, dt);
+        legFRRef.current.rotation.z = dampedLerp(legFRRef.current.rotation.z, 0, 8, dt);
+        legFRRef.current.rotation.x = 0;
       }
       if (legBLRef.current) {
         legBLRef.current.position.set(-0.11, -0.065, -0.06);
-        legBLRef.current.rotation.x = dampedLerp(legBLRef.current.rotation.x, -0.15, 8, dt);
+        legBLRef.current.rotation.z = dampedLerp(legBLRef.current.rotation.z, 0.25, 8, dt);
+        legBLRef.current.rotation.x = 0;
       }
       if (legBRRef.current) {
         legBRRef.current.position.set(-0.11, -0.065, 0.08);
-        legBRRef.current.rotation.x = dampedLerp(legBRRef.current.rotation.x, -0.15, 8, dt);
+        legBRRef.current.rotation.z = dampedLerp(legBRRef.current.rotation.z, 0.25, 8, dt);
+        legBRRef.current.rotation.x = 0;
       }
     } else if (lean > 0.1) {
       // ── LEANING OVER BACKREST: Front paws placed on back cushion ──
       if (legFLRef.current) {
         legFLRef.current.position.set(0.08, 0.07 * lean, -0.07 * lean);
-        legFLRef.current.rotation.x = -0.48 * lean;
+        legFLRef.current.rotation.z = -0.48 * lean;
+        legFLRef.current.rotation.x = 0;
       }
       if (legFRRef.current) {
         legFRRef.current.position.set(0.08, 0.07 * lean, -0.07 * lean);
-        legFRRef.current.rotation.x = -0.48 * lean;
-      }
-      if (legBLRef.current) legBLRef.current.rotation.x = 0.22 * lean;
-      if (legBRRef.current) legBRRef.current.rotation.x = 0.22 * lean;
-    } else {
-      // ── WALKING / STALKING GAIT (4-beat feline sequence) ──
-      const swingFL = Math.sin(phase) * 0.38 * walk;
-      const swingFR = Math.sin(phase + Math.PI) * 0.38 * walk;
-      const swingBL = Math.sin(phase + Math.PI * 0.5) * 0.30 * walk;
-      const swingBR = Math.sin(phase + Math.PI * 1.5) * 0.30 * walk;
-
-      if (legFLRef.current) {
-        legFLRef.current.position.set(0.08, -0.04, 0.04);
-        legFLRef.current.rotation.x = swingFL;
-      }
-      if (legFRRef.current) {
-        legFRRef.current.position.set(0.08, -0.04, 0.10);
-        legFRRef.current.rotation.x = swingFR;
+        legFRRef.current.rotation.z = -0.48 * lean;
+        legFRRef.current.rotation.x = 0;
       }
       if (legBLRef.current) {
-        legBLRef.current.position.set(-0.11, -0.02, -0.06);
-        legBLRef.current.rotation.x = swingBL;
+        legBLRef.current.rotation.z = 0.22 * lean;
+        legBLRef.current.rotation.x = 0;
       }
       if (legBRRef.current) {
-        legBRRef.current.position.set(-0.11, -0.02, 0.08);
-        legBRRef.current.rotation.x = swingBR;
+        legBRRef.current.rotation.z = 0.22 * lean;
+        legBRRef.current.rotation.x = 0;
+      }
+    } else {
+      // ── WALKING / STALKING GAIT (4-beat feline sequence along spine direction) ──
+      const swingFL = Math.sin(phase) * 0.36 * walk;
+      const swingFR = Math.sin(phase + Math.PI) * 0.36 * walk;
+      const swingBL = Math.sin(phase + Math.PI * 0.5) * 0.28 * walk;
+      const swingBR = Math.sin(phase + Math.PI * 1.5) * 0.28 * walk;
+
+      // Vertical paw lift during swing phase
+      const liftFL = Math.max(0, Math.sin(phase)) * 0.02 * walk;
+      const liftFR = Math.max(0, Math.sin(phase + Math.PI)) * 0.02 * walk;
+      const liftBL = Math.max(0, Math.sin(phase + Math.PI * 0.5)) * 0.016 * walk;
+      const liftBR = Math.max(0, Math.sin(phase + Math.PI * 1.5)) * 0.016 * walk;
+
+      if (legFLRef.current) {
+        legFLRef.current.position.set(0.08, -0.045 + liftFL, 0.04);
+        legFLRef.current.rotation.z = -swingFL;
+        legFLRef.current.rotation.x = 0;
+      }
+      if (legFRRef.current) {
+        legFRRef.current.position.set(0.08, -0.045 + liftFR, 0.10);
+        legFRRef.current.rotation.z = -swingFR;
+        legFRRef.current.rotation.x = 0;
+      }
+      if (legBLRef.current) {
+        legBLRef.current.position.set(-0.11, -0.035 + liftBL, -0.06);
+        legBLRef.current.rotation.z = -swingBL;
+        legBLRef.current.rotation.x = 0;
+      }
+      if (legBRRef.current) {
+        legBRRef.current.position.set(-0.11, -0.035 + liftBR, 0.08);
+        legBRRef.current.rotation.z = -swingBR;
+        legBRRef.current.rotation.x = 0;
       }
 
       // Swatting physics when close to laser
@@ -383,8 +407,9 @@ export default function SleepingCat({
 
       if (pawFRRef.current) {
         const swat = swatProgress.current;
-        pawFRRef.current.position.z = swat * 0.14;
-        pawFRRef.current.position.y = Math.sin(swat * Math.PI) * 0.065;
+        pawFRRef.current.position.x = swat * 0.12;
+        pawFRRef.current.position.y = Math.sin(swat * Math.PI) * 0.055;
+        pawFRRef.current.rotation.z = swat * 0.35;
       }
     }
 
@@ -394,27 +419,29 @@ export default function SleepingCat({
         if (lean > 0.1) {
           // Peering over the backrest cushion
           headRef.current.position.set(0.18, 0.18 + lean * 0.06, 0.05);
-          headRef.current.rotation.x = -0.30 * lean + Math.sin(t * 3.5) * 0.02;
+          headRef.current.rotation.z = 0.15 + Math.sin(t * 3.5) * 0.02;
+          headRef.current.rotation.x = 0;
         } else if (lean < -0.1) {
           // Peering over front sofa rim
           headRef.current.position.set(0.19, 0.08, 0.06);
-          headRef.current.rotation.x = 0.24 + Math.sin(t * 3.5) * 0.02;
+          headRef.current.rotation.z = -0.22 + Math.sin(t * 3.5) * 0.02;
+          headRef.current.rotation.x = 0;
         } else {
           headRef.current.position.set(0.17, 0.12, 0.06);
-          headRef.current.rotation.x = 0.06 + Math.sin(t * 3.5) * 0.02;
+          headRef.current.rotation.z = -0.06 + Math.sin(t * 3.5) * 0.02;
+          headRef.current.rotation.x = Math.sin(t * 2.0) * 0.03;
         }
-        headRef.current.rotation.z = Math.sin(t * 2.0) * 0.025;
       } else if (isYarnActive) {
         // Peering down attentively at the rolling yarn ball on the living room rug
         headRef.current.position.set(0.18, 0.11, 0.05);
-        headRef.current.rotation.x = 0.28 + Math.sin(t * 3.5) * 0.025;
-        headRef.current.rotation.z = Math.sin(t * 2.2) * 0.035;
+        headRef.current.rotation.z = -0.20 + Math.sin(t * 3.5) * 0.025;
+        headRef.current.rotation.x = Math.sin(t * 2.2) * 0.035;
       } else {
         // Ideal sitting pose: head held high & regal with gentle purr / breathing sway
         headRef.current.position.set(0.16, 0.155, 0.05);
         const purrNuzzle = purring ? Math.sin(t * 6) * 0.06 : 0;
-        headRef.current.rotation.x = 0.10 + Math.sin(breathRef.current * 0.9) * 0.025 + purrNuzzle;
-        headRef.current.rotation.z = -0.06 + Math.cos(breathRef.current * 0.7) * 0.02;
+        headRef.current.rotation.z = 0.04 + Math.sin(breathRef.current * 0.9) * 0.025;
+        headRef.current.rotation.x = purrNuzzle + Math.cos(breathRef.current * 0.7) * 0.02;
       }
     }
 
@@ -488,11 +515,11 @@ export default function SleepingCat({
           <sphereGeometry args={[0.16, 24, 20]} />
           <meshStandardMaterial
             map={furMap ?? undefined}
-            color={furMap ? (hovered ? "#fff0dc" : "#ffffff") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
+            color={furMap ? (hovered ? "#fff2e2" : "#fef6ee") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
             roughness={0.65}
             metalness={0.02}
-            emissive="#522c0c"
-            emissiveIntensity={0.12}
+            emissive="#784010"
+            emissiveIntensity={0.09}
           />
         </mesh>
 
@@ -507,10 +534,10 @@ export default function SleepingCat({
           <sphereGeometry args={[0.145, 18, 16]} />
           <meshStandardMaterial
             map={furMap ?? undefined}
-            color={furMap ? (hovered ? "#fff0dc" : "#ffffff") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
+            color={furMap ? (hovered ? "#fff2e2" : "#fef6ee") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
             roughness={0.65}
-            emissive="#522c0c"
-            emissiveIntensity={0.12}
+            emissive="#784010"
+            emissiveIntensity={0.09}
           />
         </mesh>
 
@@ -545,11 +572,11 @@ export default function SleepingCat({
             <sphereGeometry args={[0.108, 22, 18]} />
             <meshStandardMaterial
               map={furMap ?? undefined}
-              color={furMap ? (hovered ? "#fff0dc" : "#ffffff") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
+              color={furMap ? (hovered ? "#fff2e2" : "#fef6ee") : (hovered ? "#f5b878" : PERSIAN_GOLD)}
               roughness={0.65}
               metalness={0.02}
-              emissive="#522c0c"
-              emissiveIntensity={0.12}
+              emissive="#784010"
+              emissiveIntensity={0.09}
             />
           </mesh>
 
@@ -703,7 +730,7 @@ export default function SleepingCat({
           <group ref={earLRef} position={[0.012, 0.092, 0.058]} rotation={[-0.16, 0.26, 0.28]}>
             <mesh castShadow scale={[1.05, 1.05, 0.75]}>
               <coneGeometry args={[0.035, 0.060, 4]} />
-              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#784010" emissiveIntensity={0.09} />
             </mesh>
             <mesh position={[0, 0, 0.004]} scale={[0.68, 0.70, 0.55]}>
               <coneGeometry args={[0.030, 0.050, 4]} />
@@ -720,7 +747,7 @@ export default function SleepingCat({
           <group ref={earRRef} position={[-0.028, 0.092, -0.042]} rotation={[-0.16, -0.30, -0.28]}>
             <mesh castShadow scale={[1.05, 1.05, 0.75]}>
               <coneGeometry args={[0.035, 0.060, 4]} />
-              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#784010" emissiveIntensity={0.09} />
             </mesh>
             <mesh position={[0, 0, 0.004]} scale={[0.68, 0.70, 0.55]}>
               <coneGeometry args={[0.030, 0.050, 4]} />
@@ -775,7 +802,7 @@ export default function SleepingCat({
         <group ref={legBLRef} position={[-0.11, -0.065, -0.06]}>
           <mesh castShadow scale={[1.28, 1.15, 0.98]}>
             <sphereGeometry args={[0.058, 14, 12]} />
-            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
+            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#784010" emissiveIntensity={0.09} />
           </mesh>
           {/* Hock to foot */}
           <mesh position={[0.01, -0.038, 0.02]} scale={[0.88, 0.48, 1.1]}>
@@ -788,7 +815,7 @@ export default function SleepingCat({
         <group ref={legBRRef} position={[-0.11, -0.065, 0.08]}>
           <mesh castShadow scale={[1.28, 1.15, 0.98]}>
             <sphereGeometry args={[0.058, 14, 12]} />
-            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
+            <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#784010" emissiveIntensity={0.09} />
           </mesh>
           <mesh position={[0.01, -0.038, 0.02]} scale={[0.88, 0.48, 1.1]}>
             <sphereGeometry args={[0.03, 8, 8]} />
@@ -801,17 +828,17 @@ export default function SleepingCat({
           <group ref={tailSeg1}>
             <mesh position={[0, 0.04, 0]}>
               <cylinderGeometry args={[0.025, 0.028, 0.08, 10]} />
-              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
+              <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#784010" emissiveIntensity={0.09} />
             </mesh>
             <group ref={tailSeg2} position={[0, 0.08, 0]}>
               <mesh position={[0, 0.04, 0]}>
                 <cylinderGeometry args={[0.022, 0.025, 0.08, 10]} />
-                <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
+                <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#784010" emissiveIntensity={0.09} />
               </mesh>
               <group ref={tailSeg3} position={[0, 0.08, 0]}>
                 <mesh position={[0, 0.035, 0]}>
                   <cylinderGeometry args={[0.018, 0.022, 0.07, 10]} />
-                  <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#522c0c" emissiveIntensity={0.12} />
+                  <meshStandardMaterial color={PERSIAN_GOLD} roughness={0.7} emissive="#784010" emissiveIntensity={0.09} />
                 </mesh>
                 {/* Fluffy Cream Feathered Tip */}
                 <mesh ref={tailTip} position={[0, 0.08, 0]}>

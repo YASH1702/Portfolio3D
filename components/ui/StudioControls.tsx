@@ -39,6 +39,7 @@ export default function StudioControls() {
       {/* ── LAMP TOGGLE ── */}
       <button
         onClick={toggleLamp}
+        className="studio-btn"
         aria-label={`Toggle desk lamp (currently ${isLampOn ? "on" : "off"})`}
         title="Toggle Desk Lamp (Press 'L')"
         style={{
@@ -77,6 +78,7 @@ export default function StudioControls() {
       {/* ── DAY / NIGHT TOGGLE ── */}
       <button
         onClick={toggleNightMode}
+        className="studio-btn"
         aria-label={`Switch to ${isNightMode ? "Day" : "Night"} mode`}
         title="Toggle Studio Lighting (Press 'N')"
         style={{
@@ -100,7 +102,6 @@ export default function StudioControls() {
           boxShadow: isNightMode
             ? "0 4px 16px rgba(0, 0, 0, 0.35)"
             : "0 2px 12px rgba(24, 20, 16, 0.06)",
-          transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
           gap: "5px",
@@ -113,6 +114,7 @@ export default function StudioControls() {
       {/* ── WEATHER CYCLE TOGGLE (Day: Rain/Sunny/Snow, Night: Rain/Snow) ── */}
       <button
         onClick={cycleWeather}
+        className="studio-btn"
         aria-label={`Cycle studio weather (currently ${weather})`}
         title={
           isNightMode
@@ -140,7 +142,6 @@ export default function StudioControls() {
           boxShadow: isNightMode
             ? "0 4px 16px rgba(0, 0, 0, 0.35)"
             : "0 2px 12px rgba(24, 20, 16, 0.06)",
-          transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
           gap: "5px",
@@ -157,6 +158,7 @@ export default function StudioControls() {
       {/* ── RED LASER POINTER TOGGLE ── */}
       <button
         onClick={() => toggleLaser()}
+        className="studio-btn"
         aria-label={`Toggle red laser pointer (currently ${isLaserActive ? "active" : "inactive"})`}
         title="Toggle Red Laser Pointer (Press 'P')"
         style={{
@@ -190,7 +192,6 @@ export default function StudioControls() {
             : isNightMode
               ? "0 4px 16px rgba(0, 0, 0, 0.35)"
               : "0 2px 12px rgba(24, 20, 16, 0.06)",
-          transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
           gap: "5px",
@@ -203,6 +204,7 @@ export default function StudioControls() {
       {/* ── ZEN / FOCUS MODE TOGGLE ── */}
       <button
         onClick={toggleFocusMode}
+        className="studio-btn"
         aria-label="Toggle Zen Focus Mode"
         title="Toggle Zen Mode (Press 'F')"
         style={{
@@ -232,7 +234,6 @@ export default function StudioControls() {
           boxShadow: isNightMode
             ? "0 4px 16px rgba(0, 0, 0, 0.35)"
             : "0 2px 12px rgba(24, 20, 16, 0.06)",
-          transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
           gap: "5px",
@@ -243,6 +244,17 @@ export default function StudioControls() {
       </button>
 
       <style>{`
+        .studio-btn {
+          transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        .studio-btn:hover {
+          transform: translateY(-1.5px);
+        }
+        .studio-btn:active {
+          transform: scale(0.93) translateY(0);
+        }
         @media (max-width: 767px) {
           .studio-controls-root {
             display: none !important;

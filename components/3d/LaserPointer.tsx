@@ -14,9 +14,12 @@ import { useStudio } from "@/context/StudioContext";
  * - Broadcasts world position to `StudioContext` so SleepingCat reacts in real-time.
  * - Point light illuminates nearby surfaces with vibrant red emission.
  */
+// Shared ref for instantaneous zero-latency frame-rate tracking by SleepingCat
+export const laserWorldPosition = new THREE.Vector3(0, 0.02, 0);
+
 export default function LaserPointer() {
-  const { isLaserActive, laserTarget, setLaserTarget } = useStudio();
-  const { camera, raycaster, pointer, scene } = useThree();
+  const { isLaserActive } = useStudio();
+  const { camera, raycaster, pointer } = useThree();
 
   const dotRef = useRef<THREE.Group>(null!);
   const ringRef = useRef<THREE.Mesh>(null!);
@@ -31,12 +34,12 @@ export default function LaserPointer() {
       document.body.classList.add("laser-active");
     } else {
       document.body.classList.remove("laser-active");
-      setLaserTarget(null);
+      laserWorldPosition.set(0, -999, 0);
     }
     return () => {
       document.body.classList.remove("laser-active");
     };
-  }, [isLaserActive, setLaserTarget]);
+  }, [isLaserActive]);
 
   useFrame((_, delta) => {
     if (!isLaserActive) return;
@@ -72,7 +75,8 @@ export default function LaserPointer() {
         ringRef.current.scale.set(scale, scale, scale);
       }
 
-      setLaserTarget([currentPos.current.x, currentPos.current.y, currentPos.current.z]);
+      // Direct Three.js vector synchronization — 0 React re-renders!
+      laserWorldPosition.copy(currentPos.current);
     }
   });
 
@@ -108,12 +112,12 @@ export default function LaserPointer() {
         />
       </mesh>
 
-      {/* ── DYNAMIC LOCAL RED POINT LIGHT ── */}
+      {/* ── DYNAMIC LOCAL RED POINT LIGHT (focused & non-glaring) ── */}
       <pointLight
         ref={lightRef}
         color="#ff0033"
-        intensity={2.2}
-        distance={1.6}
+        intensity={0.85}
+        distance={1.0}
         decay={2}
         position={[0, 0.12, 0]}
       />

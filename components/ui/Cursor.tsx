@@ -91,13 +91,9 @@ export default function Cursor() {
       if (ringRef.current) {
         const isProj = !!projectHoverRef.current;
         const isHover = hoveredRef.current || isProj;
-        const size = isLaserActive ? 28 : (isProj ? 44 : isHover ? 34 : 22);
+        const scale = isLaserActive ? 1.17 : isProj ? 1.83 : isHover ? 1.42 : 0.92;
 
-        ringRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
-        ringRef.current.style.width = `${size}px`;
-        ringRef.current.style.height = `${size}px`;
-        ringRef.current.style.marginLeft = `${-size / 2}px`;
-        ringRef.current.style.marginTop = `${-size / 2}px`;
+        ringRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0) scale(${scale})`;
 
         if (isLaserActive) {
           ringRef.current.style.borderColor = "#ff0033";
@@ -175,17 +171,17 @@ export default function Cursor() {
           position: "fixed",
           top: 0,
           left: 0,
-          width: "22px",
-          height: "22px",
+          width: "24px",
+          height: "24px",
           border: "1.5px solid rgba(26, 26, 24, 0.65)",
           borderRadius: "50%",
           pointerEvents: "none",
           zIndex: 999998,
           transform: "translate3d(-100px, -100px, 0)",
-          marginLeft: "-11px",
-          marginTop: "-11px",
+          marginLeft: "-12px",
+          marginTop: "-12px",
           opacity: 0.45,
-          transition: "width 0.22s ease, height 0.22s ease, opacity 0.22s ease, border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease",
+          transition: "opacity 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
           willChange: "transform",
         }}
       />

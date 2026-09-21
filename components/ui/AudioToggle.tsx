@@ -10,7 +10,8 @@ import { useStudio } from "@/context/StudioContext";
  * - Automatically shifts rain intensity when Day/Night mode changes
  */
 export default function AudioToggle() {
-  const { isNightMode, isAudioOn, toggleAudio } = useStudio();
+  const { isNightMode, isAudioOn, toggleAudio, weather } = useStudio();
+  const soundLabel = weather === "snow" ? "SNOW" : "RAIN";
 
   return (
     <div
@@ -25,8 +26,9 @@ export default function AudioToggle() {
     >
       <button
         onClick={toggleAudio}
-        aria-label={isAudioOn ? "Mute ambient rain sound" : "Enable ambient rain sound"}
-        title="Toggle Rain Sound (Press 'A')"
+        className="audio-btn"
+        aria-label={isAudioOn ? `Mute ambient ${soundLabel.toLowerCase()} sound` : `Enable ambient ${soundLabel.toLowerCase()} sound`}
+        title={`Toggle Sound (Press 'A')`}
         style={{
           fontFamily: "var(--font-geist-mono, monospace)",
           fontSize: "11px",
@@ -60,17 +62,27 @@ export default function AudioToggle() {
           boxShadow: isNightMode
             ? "0 4px 16px rgba(0, 0, 0, 0.35)"
             : "0 2px 12px rgba(24, 20, 16, 0.06)",
-          transition: "all 0.25s ease",
           display: "flex",
           alignItems: "center",
           gap: "5px",
         }}
       >
         <span style={{ fontSize: "11px" }}>{isAudioOn ? "🔊" : "🔇"}</span>
-        <span className="audio-btn-text">{isAudioOn ? "RAIN: ON" : "RAIN: OFF"}</span>
+        <span className="audio-btn-text">{isAudioOn ? `${soundLabel}: ON` : `${soundLabel}: OFF`}</span>
       </button>
 
       <style>{`
+        .audio-btn {
+          transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        .audio-btn:hover {
+          transform: translateY(-1.5px);
+        }
+        .audio-btn:active {
+          transform: scale(0.93) translateY(0);
+        }
         @media (max-width: 767px) {
           .audio-toggle-root {
             display: none !important;

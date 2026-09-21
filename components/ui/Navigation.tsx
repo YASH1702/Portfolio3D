@@ -51,6 +51,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
       {/* ── WORDMARK WITH FROSTED PILL CONTAINER ── */}
       <button
         onClick={() => scrollToProgress(0)}
+        className="nav-action-btn"
         aria-label="Scroll to top"
         style={{
           fontFamily: "var(--font-geist-sans, sans-serif)",
@@ -74,18 +75,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
           boxShadow: isNightMode
             ? "0 8px 24px -4px rgba(0, 0, 0, 0.4)"
             : "0 4px 18px -2px rgba(24, 20, 16, 0.05)",
-          transition: "all 0.25s ease",
           flexShrink: 0,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "translateY(-1px)";
-          e.currentTarget.style.borderColor = isNightMode ? "#dfba74" : "#8b7355";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.borderColor = isNightMode
-            ? "rgba(224, 184, 116, 0.30)"
-            : "rgba(255, 255, 255, 0.45)";
         }}
       >
         Yashwant
@@ -134,6 +124,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
                 <li key={item.section}>
                   <button
                     onClick={() => scrollToProgress(item.scrollTarget)}
+                    className="nav-link-btn"
                     aria-current={isActive ? "page" : undefined}
                     style={{
                       fontFamily: "var(--font-geist-mono, monospace)",
@@ -151,18 +142,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
                       alignItems: "center",
                       gap: "5px",
                       position: "relative",
-                      transition: "color 0.2s ease",
                       cursor: "pointer",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.color = isNightMode ? "#dfba74" : "#8b5820";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.color = isNightMode ? "#f0e6d6" : "#201c16";
-                      }
                     }}
                   >
                     <span
@@ -202,6 +182,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
         {/* ── COMMAND PALETTE TRIGGER BUTTON ── */}
         <button
           onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+          className="nav-action-btn"
           aria-label="Open Command Palette (Cmd+K)"
           title="Open Command Palette (Cmd+K / Ctrl+K)"
           style={{
@@ -226,18 +207,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
             boxShadow: isNightMode
               ? "0 10px 30px -5px rgba(0, 0, 0, 0.45)"
               : "0 6px 22px -3px rgba(24, 20, 16, 0.06)",
-            transition: "all 0.2s ease",
             flexShrink: 0,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-1px)";
-            e.currentTarget.style.borderColor = isNightMode ? "#dfba74" : "#8b7355";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.borderColor = isNightMode
-              ? "rgba(224, 184, 116, 0.30)"
-              : "rgba(255, 255, 255, 0.45)";
           }}
         >
           <svg
@@ -259,6 +229,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
         {/* ── RECRUITER FAST-TRACK BUTTON ── */}
         <button
           onClick={() => toggleRecruiterModal(true)}
+          className="recruiter-action-btn"
           aria-label="Open Recruiter Quick Dossier (R)"
           title="Recruiter Fast-Track (Press 'R' or Click)"
           style={{
@@ -283,18 +254,7 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
             boxShadow: isNightMode
               ? "0 8px 24px -4px rgba(0, 0, 0, 0.45)"
               : "0 4px 16px -2px rgba(16, 185, 129, 0.12)",
-            transition: "all 0.2s ease",
             flexShrink: 0,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-1px)";
-            e.currentTarget.style.borderColor = isNightMode ? "#34d399" : "#059669";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.borderColor = isNightMode
-              ? "rgba(52, 211, 153, 0.45)"
-              : "rgba(16, 185, 129, 0.4)";
           }}
         >
           <span style={{ fontSize: "12px", lineHeight: 1 }}>⚡</span>
@@ -314,6 +274,41 @@ export default function Navigation({ scrollProgress, currentSection }: Navigatio
       </div>
 
       <style>{`
+        .nav-action-btn {
+          transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        .nav-action-btn:hover {
+          transform: translateY(-1.5px);
+          border-color: ${isNightMode ? "#dfba74" : "#8b7355"} !important;
+        }
+        .nav-action-btn:active {
+          transform: scale(0.94) translateY(0);
+        }
+        .recruiter-action-btn {
+          transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        .recruiter-action-btn:hover {
+          transform: translateY(-1.5px);
+          border-color: ${isNightMode ? "#34d399" : "#059669"} !important;
+        }
+        .recruiter-action-btn:active {
+          transform: scale(0.94) translateY(0);
+        }
+        .nav-link-btn {
+          transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        .nav-link-btn:hover {
+          color: ${isNightMode ? "#dfba74" : "#8b5820"} !important;
+        }
+        .nav-link-btn:active {
+          transform: scale(0.94);
+        }
         @media (max-width: 520px) {
           .nav-item-num {
             display: none !important;

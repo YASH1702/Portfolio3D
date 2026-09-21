@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
 import { useStudio } from "@/context/StudioContext";
 
 interface Book {
@@ -56,41 +57,51 @@ const BOOKS: Book[] = [
 export default function BooksModal() {
   const { isBooksModalOpen, toggleBooksModal, isNightMode } = useStudio();
 
-  if (!isBooksModalOpen) return null;
-
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9999,
-        background: "rgba(0, 0, 0, 0.75)",
-        backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "16px",
-      }}
-      onClick={() => toggleBooksModal(false)}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "680px",
-          maxHeight: "85vh",
-          background: isNightMode ? "rgba(14, 18, 28, 0.96)" : "rgba(255, 255, 255, 0.96)",
-          borderRadius: "20px",
-          border: isNightMode
-            ? "1px solid rgba(224, 184, 116, 0.35)"
-            : "1px solid rgba(210, 180, 140, 0.5)",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.75), inset 0 1px 0 0 rgba(255, 255, 255, 0.15)",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {isBooksModalOpen && (
+        <motion.div
+          key="books-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "rgba(0, 0, 0, 0.75)",
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "16px",
+          }}
+          onClick={() => toggleBooksModal(false)}
+        >
+          <motion.div
+            key="books-card"
+            initial={{ opacity: 0, scale: 0.94, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+            transition={{ type: "spring", stiffness: 380, damping: 28 }}
+            style={{
+              width: "100%",
+              maxWidth: "680px",
+              maxHeight: "85vh",
+              background: isNightMode ? "rgba(14, 18, 28, 0.96)" : "rgba(255, 255, 255, 0.96)",
+              borderRadius: "20px",
+              border: isNightMode
+                ? "1px solid rgba(224, 184, 116, 0.35)"
+                : "1px solid rgba(210, 180, 140, 0.5)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.75), inset 0 1px 0 0 rgba(255, 255, 255, 0.15)",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
         {/* Header */}
         <div
           style={{
@@ -241,7 +252,9 @@ export default function BooksModal() {
             </div>
           ))}
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

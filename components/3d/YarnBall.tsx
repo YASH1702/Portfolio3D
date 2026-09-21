@@ -24,7 +24,7 @@ export default function YarnBall({
 }: {
   initialPosition?: [number, number, number];
 }) {
-  const { isNightMode, setYarnState } = useStudio();
+  const { isNightMode } = useStudio();
   const { camera } = useThree();
 
   const groupRef = useRef<THREE.Group>(null!);
@@ -229,13 +229,6 @@ export default function YarnBall({
       const targetScale = hovered ? 1 : 0;
       hoverBadgeRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), dt * 14);
       hoverBadgeRef.current.position.y = 0.12 + (hovered ? Math.sin(Date.now() * 0.004) * 0.01 : 0);
-    }
-
-    // Periodic broadcast to StudioContext (throttled to 10Hz to preserve 60FPS UI)
-    const now = Date.now();
-    if (now - lastBroadcastTime.current > 100) {
-      lastBroadcastTime.current = now;
-      setYarnState([pos.current.x, pos.current.y, pos.current.z], speed2D > 0.04);
     }
   });
 
