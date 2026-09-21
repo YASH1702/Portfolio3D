@@ -439,25 +439,53 @@ export default function RecruiterModal() {
                     transition: "all 0.18s ease",
                   }}
                 >
-                  <div>
+                  <div style={{ flex: 1, minWidth: 0, marginRight: "10px" }}>
                     <div
                       style={{
-                        fontFamily: "var(--font-geist-sans, sans-serif)",
-                        fontSize: "12px",
-                        fontWeight: 700,
-                        color: isNightMode ? "#ffffff" : "#11100d",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
                       }}
                     >
-                      {proj.title}
+                      <span
+                        style={{
+                          fontFamily: "var(--font-geist-sans, sans-serif)",
+                          fontSize: "12.5px",
+                          fontWeight: 700,
+                          color: isNightMode ? "#ffffff" : "#11100d",
+                        }}
+                      >
+                        {proj.title}
+                      </span>
+                      {proj.metrics && proj.metrics[0] && (
+                        <span
+                          style={{
+                            fontFamily: "var(--font-geist-mono, monospace)",
+                            fontSize: "9px",
+                            fontWeight: 700,
+                            padding: "1px 6px",
+                            borderRadius: "3px",
+                            background: isNightMode ? "rgba(56, 189, 248, 0.15)" : "rgba(14, 116, 144, 0.12)",
+                            color: isNightMode ? "#38bdf8" : "#0e7490",
+                            border: isNightMode ? "1px solid rgba(56, 189, 248, 0.3)" : "1px solid rgba(14, 116, 144, 0.25)",
+                          }}
+                        >
+                          {proj.metrics[0].value} {proj.metrics[0].label}
+                        </span>
+                      )}
                     </div>
                     <div
                       style={{
                         fontFamily: "var(--font-geist-sans, sans-serif)",
                         fontSize: "10.5px",
                         color: isNightMode ? "#a89c8c" : "#6c5d4b",
+                        marginTop: "2px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                       }}
                     >
-                      {proj.subtitle} · {proj.technologies.slice(0, 4).join(", ")}
+                      {proj.subtitle}
                     </div>
                   </div>
                   <span
@@ -467,10 +495,10 @@ export default function RecruiterModal() {
                       fontWeight: 700,
                       color: isNightMode ? "#dfba74" : "#8a5e28",
                       whiteSpace: "nowrap",
-                      marginLeft: "12px",
+                      flexShrink: 0,
                     }}
                   >
-                    Case Study →
+                    {proj.screenshots ? `${proj.screenshots.length} Views →` : "Case Study →"}
                   </span>
                 </Link>
               ))}

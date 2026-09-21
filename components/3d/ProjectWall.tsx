@@ -43,7 +43,7 @@ function ProjectFrame({ project, position, isInspecting, isActive }: FrameProps)
   const artworkMatRef = useRef<THREE.MeshBasicMaterial>(null!);
 
   const [hovered, setHovered] = useState(false);
-  const [texture, setTexture] = useState<THREE.CanvasTexture | null>(() => {
+  const [texture, setTexture] = useState<THREE.Texture | null>(() => {
     if (typeof window !== "undefined") {
       return getProjectTexture(project);
     }
@@ -56,13 +56,38 @@ function ProjectFrame({ project, position, isInspecting, isActive }: FrameProps)
   const dimRef           = useRef(1.0);
 
   useEffect(() => {
-    const tex = getProjectTexture(project);
-    if (tex) {
-      tex.needsUpdate = true;
-      setTexture(tex);
-    }
-    if (artworkMatRef.current) {
-      artworkMatRef.current.needsUpdate = true;
+    if (typeof window === "undefined") return;
+
+    if (project.image && project.image.startsWith("/images/")) {
+      const loader = new THREE.TextureLoader();
+      loader.load(
+        project.image,
+        (loadedTex) => {
+          loadedTex.colorSpace = THREE.SRGBColorSpace;
+          loadedTex.minFilter = THREE.LinearMipmapLinearFilter;
+          loadedTex.magFilter = THREE.LinearFilter;
+          loadedTex.generateMipmaps = true;
+          loadedTex.needsUpdate = true;
+          setTexture(loadedTex);
+          if (artworkMatRef.current) artworkMatRef.current.needsUpdate = true;
+        },
+        undefined,
+        () => {
+          const fallbackTex = getProjectTexture(project);
+          if (fallbackTex) {
+            fallbackTex.needsUpdate = true;
+            setTexture(fallbackTex);
+            if (artworkMatRef.current) artworkMatRef.current.needsUpdate = true;
+          }
+        }
+      );
+    } else {
+      const tex = getProjectTexture(project);
+      if (tex) {
+        tex.needsUpdate = true;
+        setTexture(tex);
+        if (artworkMatRef.current) artworkMatRef.current.needsUpdate = true;
+      }
     }
   }, [project]);
 
