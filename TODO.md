@@ -54,9 +54,9 @@
 
 ### PHASE 5 — Project Frames & Canvas Artworks
 - [x] `lib/projectTextures.ts` — procedural high-res (1024x720) canvas texture generator for all 3 projects:
-  - JobPilot AI: Copilot dashboard, match score, pipeline queue
-  - BusinessFlow: Stripe connected, calendar availability, revenue metrics
-  - AI Automation Platform: Visual multi-model node graph with connecting bezier wires
+  - CareerPulse: Copilot dashboard, match score, pipeline queue
+  - CoreDesk: Stripe connected & vault secured, subscriptions, revenue metrics
+  - TaskForge: Event-driven node graph, scheduler, and analytics suite
 - [x] Physical frame geometry: dark oak molding, inner museum matte, glass reflection plane
 - [x] Integrated project metadata on frame (number, title, subtitle, tech stack)
 - [x] Smooth hover interaction: frame scales to 1.025, emissive glow increases, local light brightens

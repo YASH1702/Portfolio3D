@@ -24,12 +24,12 @@ export function getProjectTexture(project: Project): THREE.CanvasTexture | null 
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
 
-  if (project.id === "jobpilot-ai") {
-    drawJobPilotUI(ctx, canvas.width, canvas.height);
-  } else if (project.id === "businessflow") {
-    drawBusinessFlowUI(ctx, canvas.width, canvas.height);
-  } else if (project.id === "ai-automation-platform") {
-    drawAIAutomationUI(ctx, canvas.width, canvas.height);
+  if (project.id === "careerpulse" || project.id === "jobpilot-ai") {
+    drawCareerPulseUI(ctx, canvas.width, canvas.height);
+  } else if (project.id === "coredesk" || project.id === "businessflow") {
+    drawCoreDeskUI(ctx, canvas.width, canvas.height);
+  } else if (project.id === "taskforge" || project.id === "ai-automation-platform") {
+    drawTaskForgeUI(ctx, canvas.width, canvas.height);
   } else {
     drawDefaultUI(ctx, canvas.width, canvas.height, project);
   }
@@ -45,8 +45,8 @@ export function getProjectTexture(project: Project): THREE.CanvasTexture | null 
   return texture;
 }
 
-// ── PROJECT 01: JOBPILOT AI ──
-function drawJobPilotUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
+// ── PROJECT 01: CAREERPULSE ──
+function drawCareerPulseUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
   // Background
   const bgGrad = ctx.createLinearGradient(0, 0, w, h);
   bgGrad.addColorStop(0, "#080c14");
@@ -64,7 +64,7 @@ function drawJobPilotUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
   // Title in header
   ctx.fillStyle = "#94a3b8";
   ctx.font = "600 16px monospace";
-  ctx.fillText("jobpilot-ai.app/dashboard — Autonomous Career Copilot", 100, 34);
+  ctx.fillText("app.careerpulse.ai/dashboard — Career Application Copilot", 100, 34);
 
   // Live status badge
   drawBadge(ctx, w - 180, 16, "● AI COPILOT ACTIVE", "#10b981", "#064e3b");
@@ -197,8 +197,8 @@ function drawJobPilotUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.fillText("Synced with PostgreSQL & Chrome Extension • Realtime WebSockets", mx + 20, ty + 404);
 }
 
-// ── PROJECT 02: BUSINESSFLOW ──
-function drawBusinessFlowUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
+// ── PROJECT 02: COREDESK ──
+function drawCoreDeskUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
   // Background
   const bgGrad = ctx.createLinearGradient(0, 0, w, h);
   bgGrad.addColorStop(0, "#08140c");
@@ -214,9 +214,9 @@ function drawBusinessFlowUI(ctx: CanvasRenderingContext2D, w: number, h: number)
 
   ctx.fillStyle = "#86efac";
   ctx.font = "600 16px monospace";
-  ctx.fillText("businessflow.io/admin — Booking Platform & Invoicing", 100, 34);
+  ctx.fillText("coredesk.io/billing — Business Operations & Subscription Platform", 100, 34);
 
-  drawBadge(ctx, w - 210, 16, "● STRIPE CONNECTED", "#4ade80", "#052e16");
+  drawBadge(ctx, w - 230, 16, "● STRIPE & VAULT ONLINE", "#4ade80", "#052e16");
 
   // Left sidebar
   ctx.fillStyle = "#0a1a0f";
@@ -224,7 +224,7 @@ function drawBusinessFlowUI(ctx: CanvasRenderingContext2D, w: number, h: number)
   ctx.strokeStyle = "#173b22";
   ctx.strokeRect(0, 56, 210, h - 56);
 
-  const menu = ["Calendar", "Bookings", "Client CRM", "Invoicing", "Stripe Payouts", "Automations"];
+  const menu = ["Subscriptions", "Invoicing", "PBKDF2 Vault", "Role Access", "Audit Logs", "Settings"];
   menu.forEach((item, i) => {
     const isSelected = i === 0;
     if (isSelected) {
@@ -330,8 +330,8 @@ function drawBusinessFlowUI(ctx: CanvasRenderingContext2D, w: number, h: number)
   });
 }
 
-// ── PROJECT 03: AI AUTOMATION PLATFORM ──
-function drawAIAutomationUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
+// ── PROJECT 03: TASKFORGE ──
+function drawTaskForgeUI(ctx: CanvasRenderingContext2D, w: number, h: number) {
   // Background
   const bgGrad = ctx.createLinearGradient(0, 0, w, h);
   bgGrad.addColorStop(0, "#090d16");
@@ -347,7 +347,7 @@ function drawAIAutomationUI(ctx: CanvasRenderingContext2D, w: number, h: number)
 
   ctx.fillStyle = "#38bdf8";
   ctx.font = "600 16px monospace";
-  ctx.fillText("app.socialpilot.io/studio — Multi-Platform AI Copywriting Studio", 100, 34);
+  ctx.fillText("app.taskforge.ai/studio — Event-Driven Workflow Automation Engine", 100, 34);
 
   drawBadge(ctx, w - 210, 16, "● GPT-4o STREAMING", "#00d2b4", "#042f2e");
 

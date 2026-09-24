@@ -88,9 +88,9 @@ lib/
 | Desk | `[2.2, 0, -1.2]` | Midground right workstation with monitor & accessories |
 | Bookshelf | `[5.2, 0, -3.5]` | Wall bookshelf with colored books |
 | Floor Plant | `[-5.4, 0, -4.2]`| Large potted plant in back-left corner |
-| Project 01 | `[-5.92, 1.95, -2.2]` | JobPilot AI framed display |
-| Project 02 | `[-5.92, 1.95,  0.0]` | BusinessFlow framed display |
-| Project 03 | `[-5.92, 1.95,  2.2]` | AI Automation Platform framed display |
+| Project 01 | `[-5.92, 1.95, -2.2]` | CareerPulse framed display |
+| Project 02 | `[-5.92, 1.95,  0.0]` | CoreDesk framed display |
+| Project 03 | `[-5.92, 1.95,  2.2]` | TaskForge framed display |
 
 ---
 

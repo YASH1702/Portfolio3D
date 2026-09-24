@@ -42,9 +42,9 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 98,
     highlights: "App Router, React Server Components (RSC), dynamic streaming SSR, ISR & edge API middleware.",
     projects: [
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "SSR & WebAssembly client" },
-      { id: "businessflow", name: "BusinessFlow", role: "Dynamic booking funnel" },
-      { id: "ai-automation-platform", name: "AI Automation Platform", role: "Flow pipeline GUI" },
+      { id: "careerpulse", name: "CareerPulse", role: "SSR & WebAssembly client" },
+      { id: "coredesk", name: "CoreDesk", role: "Dynamic billing & dashboard" },
+      { id: "taskforge", name: "TaskForge", role: "Flow pipeline GUI" },
     ],
   },
   {
@@ -56,8 +56,8 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 96,
     highlights: "Fiber concurrent rendering, custom hook patterns, React Three Fiber (R3F) 3D canvases, and Framer Motion layout animations.",
     projects: [
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "Interactive job dashboard" },
-      { id: "businessflow", name: "BusinessFlow", role: "Stateful booking calendar" },
+      { id: "careerpulse", name: "CareerPulse", role: "Interactive job dashboard" },
+      { id: "coredesk", name: "CoreDesk", role: "Operations dashboard" },
     ],
   },
   {
@@ -69,9 +69,9 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 95,
     highlights: "Generic type utilities, discriminated unions, end-to-end type safety with Prisma models and Zod validation.",
     projects: [
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "Type-safe resume parsers" },
-      { id: "businessflow", name: "BusinessFlow", role: "Stripe payment schemas" },
-      { id: "ai-automation-platform", name: "AI Automation Platform", role: "Workflow node typing" },
+      { id: "careerpulse", name: "CareerPulse", role: "Type-safe resume parsers" },
+      { id: "coredesk", name: "CoreDesk", role: "Stripe payment schemas" },
+      { id: "taskforge", name: "TaskForge", role: "Workflow node typing" },
     ],
   },
   {
@@ -83,8 +83,8 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 94,
     highlights: "Custom token systems, responsive fluid layouts, modern glassmorphism palettes and CSS variables.",
     projects: [
-      { id: "businessflow", name: "BusinessFlow", role: "Marketing UI & booking flow" },
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "Dark/light responsive layout" },
+      { id: "coredesk", name: "CoreDesk", role: "Operations UI & billing flow" },
+      { id: "careerpulse", name: "CareerPulse", role: "Dark/light responsive layout" },
     ],
   },
   {
@@ -96,7 +96,7 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 88,
     highlights: "Lightweight reactive micro-stores, persistent local storage caches, and decoupled selector performance.",
     projects: [
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "Client app state store" },
+      { id: "careerpulse", name: "CareerPulse", role: "Client app state store" },
     ],
   },
   {
@@ -108,8 +108,8 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 95,
     highlights: "Non-blocking event loop execution, custom middleware architecture, webhook handlers and microservice endpoints.",
     projects: [
-      { id: "ai-automation-platform", name: "AI Automation Platform", role: "Execution engine runtime" },
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "API routing layer" },
+      { id: "taskforge", name: "TaskForge", role: "Execution engine runtime" },
+      { id: "careerpulse", name: "CareerPulse", role: "API routing layer" },
     ],
   },
   {
@@ -121,9 +121,9 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 94,
     highlights: "Complex relational queries, indexing, schema migrations, ACID transactional locking, and connection pooling.",
     projects: [
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "Relational applicant DB" },
-      { id: "businessflow", name: "BusinessFlow", role: "Transactional appointments" },
-      { id: "ai-automation-platform", name: "AI Automation Platform", role: "Workflow definition schema" },
+      { id: "careerpulse", name: "CareerPulse", role: "Relational applicant DB" },
+      { id: "coredesk", name: "CoreDesk", role: "Transactional accounts" },
+      { id: "taskforge", name: "TaskForge", role: "Workflow definition schema" },
     ],
   },
   {
@@ -135,8 +135,8 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 90,
     highlights: "Distributed concurrency locks to avoid double-bookings, event-driven background job queues & auto-retries.",
     projects: [
-      { id: "businessflow", name: "BusinessFlow", role: "Concurrency locking & email queues" },
-      { id: "ai-automation-platform", name: "AI Automation Platform", role: "Async job pipeline" },
+      { id: "coredesk", name: "CoreDesk", role: "Concurrency locking & email queues" },
+      { id: "taskforge", name: "TaskForge", role: "Async job pipeline" },
     ],
   },
   {
@@ -148,8 +148,8 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 92,
     highlights: "Stateless HMAC/RSA authentication, refresh token rotation, CORS headers, rate limiting and RBAC security.",
     projects: [
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "Multi-tenant auth" },
-      { id: "businessflow", name: "BusinessFlow", role: "Customer portal security" },
+      { id: "careerpulse", name: "CareerPulse", role: "Multi-tenant auth" },
+      { id: "coredesk", name: "CoreDesk", role: "Customer portal security" },
     ],
   },
   {
@@ -161,8 +161,8 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 96,
     highlights: "Structured JSON outputs, function calling, tool use, prompt chaining, streaming completions & agent loops.",
     projects: [
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "Resume tailoring & cover letters" },
-      { id: "ai-automation-platform", name: "AI Automation Platform", role: "LLM integration nodes" },
+      { id: "careerpulse", name: "CareerPulse", role: "Resume tailoring & cover letters" },
+      { id: "taskforge", name: "TaskForge", role: "LLM integration nodes" },
     ],
   },
   {
@@ -174,7 +174,7 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 86,
     highlights: "Multi-stage container optimization, GitHub Actions pipelines, automated lint/test/deploy workflows.",
     projects: [
-      { id: "ai-automation-platform", name: "AI Automation Platform", role: "Isolated runner containers" },
+      { id: "taskforge", name: "TaskForge", role: "Isolated runner containers" },
     ],
   },
   {
@@ -186,8 +186,8 @@ const SKILLS_DATABASE: SkillItem[] = [
     confidencePct: 85,
     highlights: "S3 asset buckets with presigned URLs, Vercel edge deployment, SSL certificates & serverless databases.",
     projects: [
-      { id: "jobpilot-ai", name: "JobPilot AI", role: "Document storage on S3" },
-      { id: "businessflow", name: "BusinessFlow", role: "Cloud hosting & Stripe webhooks" },
+      { id: "careerpulse", name: "CareerPulse", role: "Document storage on S3" },
+      { id: "coredesk", name: "CoreDesk", role: "Cloud hosting & Stripe webhooks" },
     ],
   },
 ];

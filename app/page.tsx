@@ -184,21 +184,21 @@ function PortfolioExperience() {
             <h2>Projects</h2>
             <ul>
               <li>
-                <a href="/projects/jobpilot-ai">
-                  JobPilot AI — Autonomous Job Application &amp; Career Copilot
-                  (Next.js, TypeScript, OpenAI, PostgreSQL)
+                <a href="/projects/careerpulse">
+                  CareerPulse — Career Application Copilot &amp; Extension
+                  (Next.js, TypeScript, PostgreSQL, OpenAI)
                 </a>
               </li>
               <li>
-                <a href="/projects/businessflow">
-                  BusinessFlow — Business Website + Booking Platform
-                  (Next.js, Stripe, Inngest, Redis)
+                <a href="/projects/coredesk">
+                  CoreDesk — Business Operations &amp; Subscription Platform
+                  (Next.js, TypeScript, Tailwind CSS, MongoDB, Stripe)
                 </a>
               </li>
               <li>
-                <a href="/projects/ai-automation-platform">
-                  AI Automation Platform — Workflow automation with AI
-                  (Next.js, Node.js, OpenAI, Redis)
+                <a href="/projects/taskforge">
+                  TaskForge — Event-Driven Workflow Automation Engine
+                  (Next.js, TypeScript, OpenAI, Prisma, PostgreSQL)
                 </a>
               </li>
             </ul>

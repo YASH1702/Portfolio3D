@@ -144,10 +144,9 @@ export default function ResumePage() {
         <section style={{ marginBottom: "28px" }}>
           <h2 style={sectionHeadingStyle}>Professional Summary</h2>
           <p style={{ lineHeight: 1.7, color: "#33312b", fontSize: "13.5px" }}>
-            Web Developer with 1+ years of experience developing backend APIs and web
-            services using Node.js, Express, and PostgreSQL. Experienced in
-            authentication workflows, database query optimization, and secure API
-            integration.
+            Full-Stack Developer with 1+ years of professional experience building responsive, secure, and scalable web applications using
+            React, Next.js, TypeScript, Node.js, and PostgreSQL/MongoDB. Experienced in RESTful API architecture, Tailwind CSS, Stripe
+            payment workflows, and production AI-powered tools.
           </p>
         </section>
 
@@ -163,19 +162,19 @@ export default function ResumePage() {
           >
             <SkillBox
               title="Frontend"
-              items="Next.js, TypeScript, JavaScript, React.js, Tailwind CSS, Redux, Zustand, Material UI, HTML, CSS, WebSocket"
+              items="React.js, Next.js, TypeScript, JavaScript, Tailwind CSS, Redux Toolkit, Zustand, Material UI, HTML5, CSS3"
             />
             <SkillBox
               title="Backend"
-              items="RESTful APIs, Node.js, Express.js, JWT Authentication, Socket.io, WebSocket, Python, Django, OpenAI API"
+              items="Node.js, Express.js, RESTful APIs, JWT Authentication, WebSockets (Socket.io), Stripe API"
             />
             <SkillBox
-              title="Databases"
-              items="MongoDB, Mongoose, PostgreSQL, MySQL, Prisma ORM"
+              title="Databases & ORM"
+              items="PostgreSQL, MongoDB, Prisma ORM, Mongoose, MySQL"
             />
             <SkillBox
               title="Cloud, DevOps & Tools"
-              items="Docker, CI/CD Pipelines, Linux, AWS, Git, GitHub, Vite, Figma"
+              items="Docker, AWS, Linux, CI/CD Pipelines, DevOps Fundamentals, Git, GitHub, Postman, Vite, Figma"
             />
           </div>
         </section>
@@ -303,8 +302,7 @@ export default function ResumePage() {
                 high-load database endpoints.
               </li>
               <li>
-                Implemented JWT authentication and optimized database queries in
-                Django and PostgreSQL for secure data access.
+                Delivered interactive CRUD solutions that improved reporting workflows and overall client satisfaction.
               </li>
             </ul>
             <div
@@ -324,40 +322,33 @@ export default function ResumePage() {
         <section style={{ marginBottom: "28px" }}>
           <h2 style={sectionHeadingStyle}>Projects (Client &amp; Academic)</h2>
 
-          {/* AI Automation Platform */}
+          {/* CareerPulse */}
           <ProjectItem
-            title="AI Automation Platform"
+            title="CareerPulse — Career Application Copilot & Extension"
+            tech="Next.js, TypeScript, PostgreSQL, OpenAI"
             points={[
-              "Built AI-powered workflows to automate repetitive business tasks.",
-              "Implemented asynchronous background requests and streaming responses for OpenAI API calls to keep UI interactions responsive.",
-            ]}
-          />
-
-          {/* FanConnect - Subscription Platform */}
-          <ProjectItem
-            title="FanConnect — Subscription Platform"
-            points={[
-              "Built authentication, subscriptions, and payment features.",
-              "Integrated Stripe checkout workflows and webhook listeners to manage active subscriptions reliably.",
-            ]}
-          />
-
-          {/* CipherBox - Password Manager */}
-          <ProjectItem
-            title="CipherBox — Password Manager"
-            points={[
-              "Implemented authentication and CRUD operations for credential management.",
-              "Implemented client-side password hashing with PBKDF2 and encrypted storage in MongoDB for secure credential management.",
-            ]}
-          />
-
-          {/* JobPilot AI */}
-          <ProjectItem
-            title="JobPilot AI — AI Job Application Agent"
-            tech="Next.js, TypeScript, PostgreSQL, OpenAI, Chrome Extension"
-            points={[
-              "Engineered an AI job application platform with automated resume tailoring, ATS scoring, and multi-source job aggregation.",
+              "Engineered an automated application platform with intelligent resume tailoring, ATS scoring, and multi-source job tracking.",
               "Developed a Manifest V3 Chrome extension for 1-click form autofill and real-time application tracking across career portals.",
+            ]}
+          />
+
+          {/* TaskForge */}
+          <ProjectItem
+            title="TaskForge — Event-Driven Workflow Automation Engine"
+            tech="Next.js, TypeScript, OpenAI, Prisma, PostgreSQL"
+            points={[
+              "Built AI-powered workflows to automate repetitive business tasks with asynchronous background job processing.",
+              "Developed responsive dashboards with authentication and automated workflows.",
+            ]}
+          />
+
+          {/* CoreDesk */}
+          <ProjectItem
+            title="CoreDesk — Business Operations & Subscription Platform"
+            tech="Next.js, TypeScript, Tailwind CSS, MongoDB, Stripe"
+            points={[
+              "Architected a subscription platform with Stripe integration, recurring billing, webhooks, and role-based access control.",
+              "Implemented an encrypted credential and password management vault with PBKDF2 hashing and secure MongoDB CRUD workflows.",
             ]}
           />
         </section>

@@ -10,7 +10,15 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return projects.map((p) => ({ id: p.id }));
+  const ids = [
+    "careerpulse",
+    "coredesk",
+    "taskforge",
+    "jobpilot-ai",
+    "businessflow",
+    "ai-automation-platform",
+  ];
+  return ids.map((id) => ({ id }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

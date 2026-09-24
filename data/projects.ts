@@ -64,25 +64,25 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: "jobpilot-ai",
+    id: "careerpulse",
     number: "01",
-    title: "JobPilot AI",
-    subtitle: "Autonomous Job Application & Career Copilot with Anti-Hallucination AI",
+    title: "CareerPulse",
+    subtitle: "Career Application Copilot & Extension using Next.js, TypeScript, PostgreSQL, OpenAI",
     description:
-      "A production-grade AI co-pilot that automates the entire job application workflow — from discovering relevant vacancies to running 2-pass deep fit evaluation, generating strictly truthful tailored resumes, crafting dynamic cover letters, capturing job board listings with a Chrome extension, and tracking applications through an interactive Kanban pipeline.",
+      "A production-grade AI career application copilot and browser extension that automates the entire job application workflow — from intelligent resume tailoring and ATS scoring to multi-source job tracking, 1-click portal autofill via Chrome extension, and Inngest background event processing.",
     problem:
       "Job hunting is exhausting and error-prone. Software engineers spend 40–60 hours per month manually reading job listings, copy-pasting descriptions, rewriting resumes, and formatting cover letters. Generic AI tools frequently hallucinate false experience, exaggerated metrics, or non-existent companies, ruining candidate credibility and failing strict ATS scans.",
     solution:
-      "Engineered an end-to-end autonomous agent with strict anti-hallucination verification rules enforced at both prompt and post-processing AST validation layers. JobPilot combines SHA-256 deduplication and deterministic pre-filtering (saving 74% token spend) with GPT-4o deep matching, dynamic cover letter generation, a Manifest V3 Chrome extension for 1-click job ingestion, and Inngest-powered automated morning digests.",
+      "Engineered an automated application platform with intelligent resume tailoring, ATS scoring, and multi-source job tracking. Built with strict anti-hallucination verification rules enforced at prompt and AST validation layers, combined with SHA-256 deduplication and deterministic pre-filtering (saving 74% token spend), dynamic cover letter generation, a Manifest V3 Chrome extension for 1-click job capture & portal autofill, and Inngest-powered automated morning digests.",
     features: [
+      "Intelligent resume tailoring & strict ATS scoring calibrated for enterprise portals",
       "2-Pass AI Matching Engine (GPT-4o-mini fast extraction + GPT-4o deep evaluation)",
       "Strict Anti-Hallucination Validation (zero fabricated skills, dates, or companies)",
+      "Manifest V3 Chrome Extension for 1-click job capture & portal autofill",
+      "Interactive Kanban Pipeline Tracker (Ready to Apply, Applied, Interviewing, Offer, Archived)",
       "Deterministic Pre-Filtering & SHA-256 Deduplication Hashing across job boards",
       "Dynamic Cover Letter Generator with 4 selectable tones (Professional, Startup, Enthusiastic, Executive)",
-      "Interactive Kanban Pipeline Tracker (Ready to Apply, Applied, Interviewing, Offer, Archived)",
-      "Manifest V3 Chrome Extension for 1-click job capture & portal autofill",
       "Inngest Event-Driven Background Crons for daily 8:00 AM match digests",
-      "Standardized, single-page ATS-compliant resume layout with 1-click Print to PDF",
     ],
     technologies: [
       "Next.js 16 (App Router)",
@@ -113,28 +113,28 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
-        url: "/images/projects/jobpilot/dashboard.png",
-        caption: "Application Tracking Pipeline Dashboard with funnel conversion metrics and stage breakdown",
+        url: "/images/projects/careerpulse/dashboard.png",
+        caption: "CareerPulse Application Pipeline Dashboard with funnel conversion metrics and stage breakdown",
         tag: "Dashboard",
       },
       {
-        url: "/images/projects/jobpilot/myjobs.png",
+        url: "/images/projects/careerpulse/myjobs.png",
         caption: "Active Applications Kanban Board with priority flags, company notes, and stage management",
         tag: "Kanban",
       },
       {
-        url: "/images/projects/jobpilot/jobtracker.png",
+        url: "/images/projects/careerpulse/jobtracker.png",
         caption: "Comprehensive Market Skill Gap Radar & Company Intelligence Tracking",
         tag: "Analytics",
       },
       {
-        url: "/images/projects/jobpilot/jobsync-ai-jobmatch.gif",
+        url: "/images/projects/careerpulse/jobsync-ai-jobmatch.gif",
         caption: "Live 2-Pass AI Fit Evaluation displaying verified strengths, missing skills, and match scoring",
         tag: "AI Engine",
         isAnimated: true,
       },
       {
-        url: "/images/projects/jobpilot/jobsync-ai.gif",
+        url: "/images/projects/careerpulse/jobsync-ai.gif",
         caption: "Live AI Resume Tailoring & Bullet Point Rewriter with strict zero-hallucination verification",
         tag: "Tailoring",
         isAnimated: true,
@@ -142,14 +142,24 @@ export const projects: Project[] = [
     ],
     architectureHighlights: [
       {
-        title: "2-Pass AI Matching Engine",
-        desc: "GPT-4o-mini extracts raw unstructured job requirements into typed schemas, followed by GPT-4o computing a 0–100% weighted fit score based on verified background.",
+        title: "Intelligent Resume Tailoring & ATS Scoring",
+        desc: "Analyzes candidate resume AST against vacancy requirements, computing a 0–100% ATS score and tailoring accomplishments to highlight verified relevant competencies.",
+        tag: "ATS Engine",
+      },
+      {
+        title: "Manifest V3 Chrome Extension",
+        desc: "Captures vacancies from LinkedIn, Greenhouse, and Lever in 1-click; content scripts bridge DOM nodes for automated application portal autofill.",
+        tag: "Browser Extension",
+      },
+      {
+        title: "2-Pass AI Matching Pipeline",
+        desc: "GPT-4o-mini rapidly extracts structured job criteria followed by GPT-4o deep evaluation to verify candidate strengths and generate custom cover letters.",
         tag: "AI Pipeline",
       },
       {
         title: "Anti-Hallucination Safety Guard",
-        desc: "Code-level validation cross-checks tailored resumes against the canonical user profile, rejecting any fabricated skills, dates, or non-existent companies.",
-        tag: "Safety",
+        desc: "Enforces strict JSON schema contracts and set-difference AST validation against the canonical user profile, preventing fabricated skills or experiences.",
+        tag: "Verification",
       },
       {
         title: "Deterministic Pre-Filter & Deduplication",
@@ -157,25 +167,15 @@ export const projects: Project[] = [
         tag: "Cost Control",
       },
       {
-        title: "Manifest V3 Chrome Extension",
-        desc: "Captures jobs directly from LinkedIn and job board pages in 1-click, with DOM content scripts supporting automated application form autofill.",
-        tag: "Extension",
-      },
-      {
         title: "Inngest Event Automations",
         desc: "Scheduled background crons execute daily 8:00 AM match digests and trigger follow-up reminders across the active Kanban pipeline.",
         tag: "Background Jobs",
-      },
-      {
-        title: "Single-Page ATS Resume Export",
-        desc: "Generates clean, standardized single-page ATS-compliant resume layouts formatted for instant 1-click browser Print-to-PDF.",
-        tag: "Export",
       },
     ],
     deepDiveSections: [
       {
         title: "Anti-Hallucination Verification Architecture",
-        summary: "How JobPilot guarantees 100% truthful resume tailoring without sacrificing ATS relevance.",
+        summary: "How CareerPulse guarantees 100% truthful resume tailoring without sacrificing ATS relevance.",
         points: [
           "Enforces strict JSON schema contracts with zero-temperature extraction on candidate profile data.",
           "Validates generated strength claims against the user's canonical profile skills set using set-difference algorithms.",
@@ -198,7 +198,7 @@ export const projects: Project[] = [
       "Guaranteeing that AI models never fabricate claims on resumes; solved using strict prompt contracts combined with post-generation AST/JSON set-difference validation against the user's verified profile data. Solved job board rate limits and token costs through SHA-256 deduplication and deterministic pre-filtering.",
     whatIBuilt:
       "Full-stack Next.js 16 web application with Server Actions, Prisma v7 PostgreSQL schema, dual-pass OpenAI GPT-4o agent, Chrome extension with background service worker and content scripts, Inngest event functions, and Upstash Redis rate limiting.",
-    image: "/images/projects/jobpilot/dashboard.png",
+    image: "/images/projects/careerpulse/dashboard.png",
     github: undefined,
     demo: undefined,
     status: "live",
@@ -207,45 +207,98 @@ export const projects: Project[] = [
     frameRotation: [0, Math.PI / 2, 0],
   },
   {
-    id: "businessflow",
+    id: "coredesk",
     number: "02",
-    title: "BusinessFlow",
-    subtitle: "Business Website + Booking Platform",
+    title: "CoreDesk",
+    subtitle: "Business Operations & Subscription Platform using Next.js, TypeScript, Tailwind CSS, MongoDB, Stripe",
     description:
-      "A full-featured business platform combining a marketing website with an integrated booking system, payment processing, and background job scheduling.",
+      "An enterprise business operations and subscription platform architected with Stripe recurring billing, webhooks, role-based access control, and an encrypted credential and password management vault utilizing PBKDF2 hashing.",
     problem:
-      "Small and medium businesses need a professional online presence with integrated booking and payment capabilities, but most solutions are fragmented and expensive.",
+      "Growing businesses and engineering teams struggle with fragmented SaaS tools for subscription management, client billing, access control, and secure credential storage — often compromising security by storing sensitive credentials in unencrypted or shared spaces.",
     solution:
-      "BusinessFlow unifies a polished marketing website with a booking engine, Stripe-powered payments, and Inngest for reliable background jobs — all in a single deployable application.",
+      "Architected a unified subscription platform with Stripe integration, recurring billing, webhooks, and role-based access control. Implemented an encrypted credential and password management vault with PBKDF2 hashing and secure MongoDB CRUD workflows, providing businesses with a single, highly secure control plane.",
     features: [
-      "Service booking with calendar availability",
-      "Stripe payment integration",
-      "Automated email confirmations via Inngest",
-      "Redis-cached availability engine",
-      "Admin dashboard for business owners",
-      "Mobile-responsive booking flow",
+      "Stripe integration with recurring billing cycles, tier upgrades, and customer portal",
+      "Stripe webhook lifecycle listeners for real-time payment status and subscription synchronizations",
+      "Encrypted credential and password management vault with client-side & server-side PBKDF2 hashing",
+      "Secure MongoDB CRUD workflows with strict Mongoose schema validation and indexing",
+      "Role-Based Access Control (RBAC) with granular admin and member permission gates",
+      "Automated invoice dispatch and transaction auditing trails",
+      "High-security session management with HTTP-only signed JWT cookies",
+      "Responsive, sleek dashboard interface built with Next.js, TypeScript, and Tailwind CSS",
     ],
     technologies: [
       "Next.js",
       "React",
       "TypeScript",
-      "PostgreSQL",
-      "Prisma",
-      "Stripe",
-      "Inngest",
-      "Redis",
       "Tailwind CSS",
+      "MongoDB",
+      "Mongoose",
+      "Stripe API",
+      "Node.js",
+      "PBKDF2 / Web Crypto",
+      "JWT Authentication",
     ],
     techCategories: {
       frontend: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
-      backend: ["Prisma", "Inngest"],
-      database: ["PostgreSQL", "Redis"],
-      other: ["Stripe"],
+      backend: ["Node.js", "Next.js API Routes", "Stripe Webhooks", "PBKDF2 Encryption"],
+      database: ["MongoDB", "Mongoose ORM"],
+      other: ["Stripe API", "Role-Based Access Control", "JWT Auth"],
     },
+    metrics: [
+      { label: "Stripe Uptime", value: "99.99%", subtext: "Webhook Event Processing", color: "#4ade80" },
+      { label: "Vault Security", value: "PBKDF2", subtext: "Zero-Knowledge Encryption", color: "#38bdf8" },
+      { label: "Billing Cycle", value: "100%", subtext: "Automated Recurring Invoices", color: "#fbbf24" },
+      { label: "Role Latency", value: "<15ms", subtext: "RBAC Token Verification", color: "#a855f7" },
+    ],
+    architectureHighlights: [
+      {
+        title: "Stripe Recurring Billing & Webhook Engine",
+        desc: "Complete subscription lifecycle management with Stripe Checkout, tiered plans, customer portal redirects, and webhook listeners verifying signatures.",
+        tag: "Fintech",
+      },
+      {
+        title: "PBKDF2 Encrypted Credential Vault",
+        desc: "End-to-end encrypted password and secret storage utilizing PBKDF2 key derivation and AES-GCM encryption before persistence in MongoDB.",
+        tag: "Cryptography",
+      },
+      {
+        title: "Role-Based Access Control (RBAC)",
+        desc: "Granular authorization hierarchy separating billing administrators from team members, enforced at API gateway and middleware layers.",
+        tag: "Security",
+      },
+      {
+        title: "High-Throughput MongoDB Schemas",
+        desc: "Mongoose models with compound indexes for instant sub-10ms query execution across tenant records, audit logs, and credential vaults.",
+        tag: "Data Layer",
+      },
+    ],
+    deepDiveSections: [
+      {
+        title: "Stripe Webhook Idempotency & Lifecycle",
+        summary: "Ensuring fault-tolerant recurring billing without duplicate charge processing.",
+        points: [
+          "Verifies Stripe cryptographic signatures on all incoming webhook payloads before parsing.",
+          "Atomic upsert operations update customer subscription status from invoice.paid and customer.subscription.updated events.",
+          "Graceful handling of payment failures with automated retry notifications and grace-period account state transitions.",
+          "Seamless sync between Stripe Customer IDs and MongoDB tenant documents.",
+        ],
+      },
+      {
+        title: "PBKDF2 Vault Architecture",
+        summary: "Zero-knowledge architecture ensuring user credentials cannot be decrypted even in the event of a database dump.",
+        points: [
+          "Derives cryptographic keys using PBKDF2 with 100,000+ iterations and per-user cryptographic salts.",
+          "Payloads encrypted via AES-256-GCM ensuring both confidentiality and tamper-proof authenticity.",
+          "Decryption keys reside strictly in client memory and are never persisted on the server.",
+          "Strict CORS and Content Security Policies prevent unauthorized cross-origin credential extraction.",
+        ],
+      },
+    ],
     challenges:
-      "Preventing double-bookings under concurrent requests using Redis locking. Designing a smooth booking UX that works across all device sizes.",
+      "Securing multi-tenant subscription states against race conditions during Stripe webhook processing, and designing a zero-knowledge credential vault where sensitive business credentials are encrypted using PBKDF2 before storage in MongoDB.",
     whatIBuilt:
-      "End-to-end booking platform with real-time availability checking, payment flows, and a reliable background job system for notifications and reminders.",
+      "Full-stack business platform integrating Stripe recurring billing and webhook synchronizations, PBKDF2 encrypted credential vault, role-based access control, and MongoDB data modeling with Mongoose and Next.js.",
     image: "/textures/project-02-placeholder.jpg",
     github: undefined,
     demo: undefined,
@@ -255,25 +308,25 @@ export const projects: Project[] = [
     frameRotation: [0, Math.PI / 2, 0],
   },
   {
-    id: "ai-automation-platform",
+    id: "taskforge",
     number: "03",
-    title: "AI Automation Platform",
-    subtitle: "Enterprise Social Media Automation SaaS with Drag-and-Drop Scheduling & Analytics",
+    title: "TaskForge",
+    subtitle: "Event-Driven Workflow Automation Engine using Next.js, TypeScript, OpenAI, Prisma, PostgreSQL",
     description:
-      "A production-ready AI SaaS platform engineered across 15 complete phases. Enables creators, agencies, and marketing teams to generate platform-optimized content across Instagram, Twitter/X, LinkedIn, and TikTok using GPT-4o, plan schedules on an interactive drag-and-drop calendar, publish automatically via serverless cron jobs, and analyze reach with an extensive Recharts visualization suite.",
+      "An event-driven AI workflow automation engine built to automate repetitive business tasks and multi-channel content workflows with asynchronous background job processing, OpenAI GPT-4o intelligence, drag-and-drop calendar scheduling, and Recharts analytics.",
     problem:
-      "Managing multi-channel social media requires constantly adapting copy and tone for different algorithms, juggling scheduling spreadsheets, and manually compiling fragmented analytics across multiple disconnected platforms.",
+      "Modern businesses and creators face hundreds of hours of repetitive manual operations: writing platform-specific copy, synchronizing schedules across disjointed channels, and analyzing disparate analytics without centralized intelligence.",
     solution:
-      "Developed a unified, high-performance platform featuring GPT-4o multi-channel content generation with tone and platform controls, an HTML5 drag-and-drop calendar scheduler, automated cron publishing, team role-based collaboration, and an advanced analytics dashboard featuring geographic reach maps, activity density, and engagement trend lines.",
+      "Built AI-powered workflows to automate repetitive business tasks with asynchronous background job processing. Developed responsive dashboards with authentication, automated workflows, GPT-4o multi-channel content generation, an HTML5 drag-and-drop calendar scheduler, and an advanced analytics dashboard featuring geographic reach maps, activity density, and engagement trend lines.",
     features: [
+      "AI-powered workflows to automate repetitive business tasks with asynchronous background jobs",
+      "Responsive dashboards with authentication and automated workflows",
       "Multi-Platform AI Generation Studio (GPT-4o) with tone & hashtag calibration",
       "Interactive Month & Week Calendar Views with HTML5 drag-and-drop rescheduling",
       "Automated Serverless Post Publishing via Vercel Cron & node-cron with Bearer security",
       "Comprehensive Recharts Analytics Suite (KPI cards, time-series area charts, platform donut charts)",
       "Global Audience Demographics & Reach Map with peak engagement hours",
-      "Content Library with debounced search, platform filters, and in-place editing",
       "Team Workspace Management with role-based access control (Admin, Editor, Viewer)",
-      "Liquid Glass Design System with Deep Vintage Mood palette and custom cursor",
     ],
     technologies: [
       "Next.js 14 (App Router)",
@@ -303,37 +356,42 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
-        url: "/images/projects/ai-automation/ai_content.png",
-        caption: "AI Generation Studio with topic prompt, tone selection, and multi-platform preview cards",
+        url: "/images/projects/taskforge/ai_content.png",
+        caption: "TaskForge AI Generation Studio with topic prompt, tone selection, and multi-platform preview cards",
         tag: "AI Studio",
       },
       {
-        url: "/images/projects/ai-automation/scheduling.png",
+        url: "/images/projects/taskforge/scheduling.png",
         caption: "Interactive Month Calendar Scheduler with HTML5 drag-and-drop rescheduling",
         tag: "Scheduler",
       },
       {
-        url: "/images/projects/ai-automation/predictive.png",
+        url: "/images/projects/taskforge/predictive.png",
         caption: "Predictive Analytics Dashboard with impressions, engagement trends, and KPI cards",
         tag: "Analytics",
       },
       {
-        url: "/images/projects/ai-automation/audience.png",
+        url: "/images/projects/taskforge/audience.png",
         caption: "Global Audience Demographics & Reach Map tracking regional engagement and peak time windows",
         tag: "Audience",
       },
       {
-        url: "/images/projects/ai-automation/optimization.png",
+        url: "/images/projects/taskforge/optimization.png",
         caption: "Posting Activity Density Heatmap (52 weeks) and Content Score Health Card (88/100)",
         tag: "Heatmap",
       },
       {
-        url: "/images/projects/ai-automation/cross_platform.png",
+        url: "/images/projects/taskforge/cross_platform.png",
         caption: "Multi-Channel Distribution Matrix optimizing copy constraints for X, LinkedIn, IG, and TikTok",
         tag: "Distribution",
       },
     ],
     architectureHighlights: [
+      {
+        title: "Event-Driven Workflow Automation Engine",
+        desc: "Built AI-powered workflows to automate repetitive business tasks with asynchronous background job processing and webhook dispatching.",
+        tag: "Workflow Engine",
+      },
       {
         title: "Multi-Platform AI Generation Studio",
         desc: "GPT-4o chat completions calibrated with custom system prompts for 4 platforms (Instagram, Twitter/X, LinkedIn, TikTok) and 4 tones.",
@@ -358,11 +416,6 @@ export const projects: Project[] = [
         title: "Multi-Tenant Team Workspace",
         desc: "Role-based access control (Admin, Editor, Viewer) with secure email invitation tokens and granular permission gates.",
         tag: "Security",
-      },
-      {
-        title: "Liquid Glass Design System",
-        desc: "Deep Vintage Mood color palette (#0F0F1A), custom glow cursor, frosted glass cards, and skeleton loading states.",
-        tag: "Design System",
       },
     ],
     deepDiveSections: [
@@ -390,8 +443,8 @@ export const projects: Project[] = [
     challenges:
       "Designing a normalized database schema and prompt pipeline that accommodates the starkly different formatting constraints of Twitter (280 chars), LinkedIn (longform + hashtag blocks), Instagram (caption + first comment tags), and TikTok. Implemented robust drag-and-drop calendar rescheduling with instant optimistic UI updates and server synchronization.",
     whatIBuilt:
-      "15 complete architecture phases encompassing full authentication (Credentials + Google OAuth), Prisma relational database schema, AI copywriting engine with streaming JSON responses, drag-and-drop calendar scheduler, cron background publisher, Recharts visualization suite, and team workspace management.",
-    image: "/images/projects/ai-automation/ai_content.png",
+      "15 complete architecture phases encompassing full authentication (Credentials + Google OAuth), Prisma relational database schema, AI copywriting engine with streaming responses, drag-and-drop calendar scheduler, cron background publisher, Recharts visualization suite, and team workspace management.",
+    image: "/images/projects/taskforge/ai_content.png",
     github: undefined,
     demo: undefined,
     status: "live",
@@ -402,5 +455,15 @@ export const projects: Project[] = [
 ];
 
 export function getProjectById(id: string): Project | undefined {
-  return projects.find((p) => p.id === id);
+  const normalized = id.toLowerCase();
+  if (normalized === "careerpulse" || normalized === "jobpilot-ai" || normalized === "jobpilot") {
+    return projects.find((p) => p.id === "careerpulse");
+  }
+  if (normalized === "coredesk" || normalized === "businessflow" || normalized === "cipherbox") {
+    return projects.find((p) => p.id === "coredesk");
+  }
+  if (normalized === "taskforge" || normalized === "ai-automation-platform" || normalized === "ai-automation") {
+    return projects.find((p) => p.id === "taskforge");
+  }
+  return projects.find((p) => p.id === normalized);
 }

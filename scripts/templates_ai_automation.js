@@ -5,7 +5,7 @@ function getAIContentHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Automation - Content Studio</title>
+<title>TaskForge - Content Studio</title>
 <style>
 ${BASE_CSS}
 .studio-grid {
@@ -216,7 +216,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.socialpilot.io/studio/content-generator</span>
+      <span>https://app.taskforge.ai/studio/content-generator</span>
     </div>
     <div class="top-status">
       <span>Workspace: <strong>Acme Cloud SaaS</strong></span>
@@ -228,7 +228,7 @@ ${BASE_CSS}
     <div class="sidebar">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #00D2B4, #0284C7);">⚡</div>
-        <div class="logo-text">OmniSocial AI</div>
+        <div class="logo-text">TaskForge</div>
         <div class="logo-badge" style="background: rgba(0, 210, 180, 0.15); color: #00D2B4;">v2.4</div>
       </div>
       <div class="nav-group-title">Studio Features</div>
@@ -397,7 +397,7 @@ function getSchedulingHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Automation - Scheduler</title>
+<title>TaskForge - Scheduler</title>
 <style>
 ${BASE_CSS}
 .calendar-container {
@@ -547,7 +547,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.socialpilot.io/scheduler/drag-and-drop-calendar</span>
+      <span>https://app.taskforge.ai/scheduler/drag-and-drop-calendar</span>
     </div>
     <div class="top-status">
       <span>Auto-Dispatch: <strong>Vercel Serverless Cron (1m tick)</strong></span>
@@ -559,7 +559,7 @@ ${BASE_CSS}
     <div class="sidebar">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #00D2B4, #0284C7);">⚡</div>
-        <div class="logo-text">OmniSocial AI</div>
+        <div class="logo-text">TaskForge</div>
         <div class="logo-badge" style="background: rgba(0, 210, 180, 0.15); color: #00D2B4;">v2.4</div>
       </div>
       <div class="nav-group-title">Studio Features</div>
@@ -739,7 +739,7 @@ function getPredictiveHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Automation - Predictive Analytics</title>
+<title>TaskForge - Predictive Analytics</title>
 <style>
 ${BASE_CSS}
 .analytics-grid {
@@ -807,7 +807,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.socialpilot.io/analytics/predictive-performance</span>
+      <span>https://app.taskforge.ai/analytics/predictive-performance</span>
     </div>
     <div class="top-status">
       <span>Recharts Suite: <strong>30-Day Aggregation Window</strong></span>
@@ -819,7 +819,7 @@ ${BASE_CSS}
     <div class="sidebar">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #00D2B4, #0284C7);">⚡</div>
-        <div class="logo-text">OmniSocial AI</div>
+        <div class="logo-text">TaskForge</div>
         <div class="logo-badge" style="background: rgba(0, 210, 180, 0.15); color: #00D2B4;">v2.4</div>
       </div>
       <div class="nav-group-title">Studio Features</div>
@@ -976,7 +976,7 @@ function getAudienceHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Automation - Audience World Map</title>
+<title>TaskForge - Audience World Map</title>
 <style>
 ${BASE_CSS}
 .audience-layout {
@@ -1048,7 +1048,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.socialpilot.io/analytics/audience-demographics</span>
+      <span>https://app.taskforge.ai/analytics/audience-demographics</span>
     </div>
     <div class="top-status">
       <span>Reach: <strong>452,000 Unique Viewers</strong></span>
@@ -1060,7 +1060,7 @@ ${BASE_CSS}
     <div class="sidebar">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #00D2B4, #0284C7);">⚡</div>
-        <div class="logo-text">OmniSocial AI</div>
+        <div class="logo-text">TaskForge</div>
         <div class="logo-badge" style="background: rgba(0, 210, 180, 0.15); color: #00D2B4;">v2.4</div>
       </div>
       <div class="nav-group-title">Studio Features</div>
@@ -1216,7 +1216,7 @@ function getOptimizationHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Automation - Optimization & Heatmap</title>
+<title>TaskForge - Optimization & Heatmap</title>
 <style>
 ${BASE_CSS}
 .opt-layout {
@@ -1318,7 +1318,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.socialpilot.io/analytics/activity-health-score</span>
+      <span>https://app.taskforge.ai/analytics/activity-health-score</span>
     </div>
     <div class="top-status">
       <span>Consistency: <strong>48-Day Publishing Streak</strong></span>
@@ -1330,7 +1330,7 @@ ${BASE_CSS}
     <div class="sidebar">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #00D2B4, #0284C7);">⚡</div>
-        <div class="logo-text">OmniSocial AI</div>
+        <div class="logo-text">TaskForge</div>
         <div class="logo-badge" style="background: rgba(0, 210, 180, 0.15); color: #00D2B4;">v2.4</div>
       </div>
       <div class="nav-group-title">Studio Features</div>
@@ -1468,7 +1468,7 @@ function getCrossPlatformHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Automation - Cross Platform Matrix</title>
+<title>TaskForge - Cross Platform Matrix</title>
 <style>
 ${BASE_CSS}
 .matrix-grid {
@@ -1523,7 +1523,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.socialpilot.io/studio/cross-platform-repurposer</span>
+      <span>https://app.taskforge.ai/studio/cross-platform-repurposer</span>
     </div>
     <div class="top-status">
       <span>Omni Engine: <strong>Single Source → 4 Auto-Tuned Variants</strong></span>
@@ -1535,7 +1535,7 @@ ${BASE_CSS}
     <div class="sidebar">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #00D2B4, #0284C7);">⚡</div>
-        <div class="logo-text">OmniSocial AI</div>
+        <div class="logo-text">TaskForge</div>
         <div class="logo-badge" style="background: rgba(0, 210, 180, 0.15); color: #00D2B4;">v2.4</div>
       </div>
       <div class="nav-group-title">Studio Features</div>

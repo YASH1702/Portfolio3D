@@ -181,13 +181,13 @@ Based in India, building high-performance web applications, autonomous AI agent 
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                   <div>
-                    <strong style={{ color: "#dfba74" }}>1. JobPilot AI:</strong> Multi-agent autonomous job discovery & tailored resume pipeline.
+                    <strong style={{ color: "#dfba74" }}>1. CareerPulse:</strong> Career Application Copilot &amp; Extension (Next.js, TypeScript, PostgreSQL, OpenAI).
                   </div>
                   <div>
-                    <strong style={{ color: "#dfba74" }}>2. BusinessFlow:</strong> Enterprise workflow automation engine with real-time telemetry.
+                    <strong style={{ color: "#dfba74" }}>2. CoreDesk:</strong> Business Operations &amp; Subscription Platform (Next.js, TypeScript, Tailwind, MongoDB, Stripe).
                   </div>
                   <div>
-                    <strong style={{ color: "#dfba74" }}>3. AI Automation Platform:</strong> Scalable agentic orchestration framework.
+                    <strong style={{ color: "#dfba74" }}>3. TaskForge:</strong> Event-Driven Workflow Automation Engine (Next.js, TypeScript, OpenAI, Prisma, PostgreSQL).
                   </div>
                 </div>
               </div>

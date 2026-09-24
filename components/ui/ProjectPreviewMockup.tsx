@@ -7,17 +7,17 @@ interface MockupProps {
 }
 
 export default function ProjectPreviewMockup({ project }: MockupProps) {
-  if (project.id === "jobpilot-ai") {
-    return <JobPilotMockup />;
-  } else if (project.id === "businessflow") {
-    return <BusinessFlowMockup />;
+  if (project.id === "careerpulse" || project.id === "jobpilot-ai") {
+    return <CareerPulseMockup />;
+  } else if (project.id === "coredesk" || project.id === "businessflow") {
+    return <CoreDeskMockup />;
   } else {
-    return <AIAutomationMockup />;
+    return <TaskForgeMockup />;
   }
 }
 
-// ── JOBPILOT AI MOCKUP ──
-function JobPilotMockup() {
+// ── CAREERPULSE MOCKUP ──
+function CareerPulseMockup() {
   return (
     <div
       style={{
@@ -59,7 +59,7 @@ function JobPilotMockup() {
             maxWidth: "380px",
           }}
         >
-          app.jobpilot.ai/pipeline/active-applications
+          app.careerpulse.ai/pipeline/active-applications
         </div>
         <span
           style={{
@@ -88,7 +88,7 @@ function JobPilotMockup() {
         >
           <MetricCard title="CANDIDATE MATCH" value="98.4%" sub="Profile vs Vacancy" color="#38bdf8" />
           <MetricCard title="PIPELINE STAGE" value="Technical Screen" sub="Linear App • Round 2" color="#4ade80" />
-          <MetricCard title="AUTO-TAILOR LATENCY" value="1.4s" sub="Wasm Document Engine" color="#c084fc" />
+          <MetricCard title="AUTO-TAILOR LATENCY" value="1.4s" sub="2-Pass Verified AST Engine" color="#c084fc" />
         </div>
 
         {/* Live Application Stream */}
@@ -150,8 +150,8 @@ function JobPilotMockup() {
   );
 }
 
-// ── BUSINESSFLOW MOCKUP ──
-function BusinessFlowMockup() {
+// ── COREDESK MOCKUP ──
+function CoreDeskMockup() {
   return (
     <div
       style={{
@@ -192,7 +192,7 @@ function BusinessFlowMockup() {
             maxWidth: "380px",
           }}
         >
-          businessflow.io/calendar/dispatch
+          coredesk.io/billing/subscriptions
         </div>
         <span
           style={{
@@ -204,7 +204,7 @@ function BusinessFlowMockup() {
             borderRadius: "3px",
           }}
         >
-          STRIPE CONNECTED
+          STRIPE CONNECTED &amp; VAULT SECURED
         </span>
       </div>
 
@@ -218,11 +218,11 @@ function BusinessFlowMockup() {
           }}
         >
           <MetricCard title="PROCESSED REVENUE" value="$24,850" sub="Stripe verified transactions" color="#4ade80" />
-          <MetricCard title="BOOKINGS CONFIRMED" value="164" sub="Zero double-bookings (Redis locked)" color="#86efac" />
-          <MetricCard title="BACKGROUND JOBS" value="99.9%" sub="Inngest confirmation triggers" color="#38bdf8" />
+          <MetricCard title="ACTIVE SUBSCRIBERS" value="164" sub="Auto-renewing monthly recurring" color="#86efac" />
+          <MetricCard title="PBKDF2 VAULT" value="Encrypted" sub="Zero-knowledge MongoDB security" color="#38bdf8" />
         </div>
 
-        {/* Calendar Schedule Snippet */}
+        {/* Live Subscriptions Snippet */}
         <div
           style={{
             background: "#0c2415",
@@ -241,13 +241,13 @@ function BusinessFlowMockup() {
               marginBottom: "12px",
             }}
           >
-            Live Availability &amp; Booking Dispatch
+            Live Subscriptions &amp; Credential Vault Access
           </div>
 
           {[
-            { time: "09:00 AM", event: "Strategy Architecture Intensive", client: "Acme Digital", status: "Confirmed ($1,200)" },
-            { time: "01:30 PM", event: "Product Scoping Session", client: "Starlight SaaS", status: "Deposit Received ($450)" },
-            { time: "04:00 PM", event: "Engineering Review", client: "Kinetix Team", status: "Invoice Settled ($750)" },
+            { time: "09:00 AM", event: "Enterprise Plan ($1,200/mo)", client: "Acme Digital", status: "Active (Stripe Verified)" },
+            { time: "01:30 PM", event: "Pro Workspace ($450/mo)", client: "Starlight SaaS", status: "Renewed Successfully" },
+            { time: "04:00 PM", event: "Credential Vault Access Key", client: "RBAC Admin", status: "PBKDF2 Authenticated" },
           ].map((row, i) => (
             <div
               key={i}
@@ -284,8 +284,8 @@ function BusinessFlowMockup() {
   );
 }
 
-// ── AI AUTOMATION PLATFORM MOCKUP ──
-function AIAutomationMockup() {
+// ── TASKFORGE MOCKUP ──
+function TaskForgeMockup() {
   return (
     <div
       style={{
@@ -326,7 +326,7 @@ function AIAutomationMockup() {
             maxWidth: "380px",
           }}
         >
-          workflow.ai/builder/pipeline-graph
+          app.taskforge.ai/builder/pipeline-graph
         </div>
         <span
           style={{
@@ -338,7 +338,7 @@ function AIAutomationMockup() {
             borderRadius: "3px",
           }}
         >
-          NODE ENGINE ONLINE
+          EVENT ENGINE ONLINE
         </span>
       </div>
 

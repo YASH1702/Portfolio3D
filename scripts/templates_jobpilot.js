@@ -5,7 +5,7 @@ function getJobPilotDashboardHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>JobPilot AI - Career Copilot Dashboard</title>
+<title>CareerPulse - Career Copilot Dashboard</title>
 <style>
 ${BASE_CSS}
 .dashboard-grid {
@@ -117,7 +117,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.jobpilot.ai/pipeline/active-applications</span>
+      <span>https://app.careerpulse.ai/pipeline/active-applications</span>
     </div>
     <div class="top-status">
       <span>Anti-Hallucination Guard: <strong style="color: #34D399;">Active (Strict AST Verification)</strong></span>
@@ -129,7 +129,7 @@ ${BASE_CSS}
     <div class="sidebar" style="background: #0B101E; border-right-color: #1A243B;">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #38BDF8, #818CF8);">⚡</div>
-        <div class="logo-text">JobPilot AI</div>
+        <div class="logo-text">CareerPulse</div>
         <div class="logo-badge" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8;">COPILOT</div>
       </div>
       <div class="nav-group-title">Career Pipeline</div>
@@ -301,7 +301,7 @@ function getJobPilotKanbanHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>JobPilot AI - Applications Kanban</title>
+<title>CareerPulse - Applications Kanban</title>
 <style>
 ${BASE_CSS}
 .kanban-board {
@@ -392,7 +392,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.jobpilot.ai/pipeline/kanban</span>
+      <span>https://app.careerpulse.ai/pipeline/kanban</span>
     </div>
     <div class="top-status">
       <span>Applications Pipeline: <strong>5 Stages Active</strong></span>
@@ -404,7 +404,7 @@ ${BASE_CSS}
     <div class="sidebar" style="background: #0B101E; border-right-color: #1A243B;">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #38BDF8, #818CF8);">⚡</div>
-        <div class="logo-text">JobPilot AI</div>
+        <div class="logo-text">CareerPulse</div>
         <div class="logo-badge" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8;">COPILOT</div>
       </div>
       <div class="nav-group-title">Career Pipeline</div>
@@ -581,7 +581,7 @@ function getJobTrackerRadarHTML() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>JobPilot AI - 2-Pass AI Fit Evaluation</title>
+<title>CareerPulse - 2-Pass AI Fit Evaluation</title>
 <style>
 ${BASE_CSS}
 .tracker-modal-layout {
@@ -684,7 +684,7 @@ ${BASE_CSS}
     </div>
     <div class="address-bar">
       <span class="lock">🔒</span>
-      <span>https://app.jobpilot.ai/match-evaluation/linear-staff-frontend</span>
+      <span>https://app.careerpulse.ai/match-evaluation/linear-staff-frontend</span>
     </div>
     <div class="top-status">
       <span>Evaluation Target: <strong>Linear (Staff Frontend Engineer)</strong></span>
@@ -696,7 +696,7 @@ ${BASE_CSS}
     <div class="sidebar" style="background: #0B101E; border-right-color: #1A243B;">
       <div class="sidebar-logo">
         <div class="logo-icon" style="background: linear-gradient(135deg, #38BDF8, #818CF8);">⚡</div>
-        <div class="logo-text">JobPilot AI</div>
+        <div class="logo-text">CareerPulse</div>
         <div class="logo-badge" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8;">COPILOT</div>
       </div>
       <div class="nav-group-title">Career Pipeline</div>
